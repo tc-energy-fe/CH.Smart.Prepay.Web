@@ -1,0 +1,24 @@
+
+// 绝对居中，请注意父元素设置position: relative
+@mixin absoluteCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// 清除浮动
+@mixin clearFix {
+  &:after {
+    display: table;
+    content: '';
+    clear: both;
+  }
+}
+
+// 超出容器宽度的文本省略...
+@mixin textEllipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
