@@ -11,7 +11,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const Auth = sessionStorage.getItem('Auth')
+  const Auth = true // sessionStorage.getItem('Token')
   console.log('to => ' + to.path)
   if (Auth) {
     next()

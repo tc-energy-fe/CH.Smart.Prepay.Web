@@ -2,9 +2,9 @@
 let apiUrl = ''
 
 if (process.env.VUE_APP_API_MODE === 'production') {
-  apiUrl = 'http://:8000/api'
+  apiUrl = 'http://prepay-test.api.eshangneng.com:8000/api'
 } else {
-  apiUrl = ''
+  apiUrl = 'http://prepay-test.api.eshangneng.com:8000/api'
 }
 
 export default apiUrl

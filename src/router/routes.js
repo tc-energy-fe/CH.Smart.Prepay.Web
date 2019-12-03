@@ -7,7 +7,7 @@ const routes = [
     name: 'home',
     component: (resolve) => {
       Store.registerModule('home', {})
-      return import('../views/home/index')
+      return import('../views/main/home/index')
     }
   },
   // 404Page

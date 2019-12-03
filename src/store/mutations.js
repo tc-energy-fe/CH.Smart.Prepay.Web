@@ -30,7 +30,7 @@ const Mutations = {
     let req = state.requests.get(item)
     if (req) {
       req.__abort = 1
-      req.abort()
+      req.cancel()
     }
   },
   [types.SET_LOADING_STATUS] (state, { item, value }) {
