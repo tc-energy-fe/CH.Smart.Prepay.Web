@@ -4,17 +4,19 @@ const webpack = require('webpack')
 const baseUrl = '/'
 
 module.exports = {
+  publicPath: baseUrl,
   pages: {
     login: {
       entry: 'src/views/login/login.js',
       template: 'public/login.html',
-      filename: 'login.html'
+      filename: 'login.html',
+      title: '登录'
     },
     index: {
       entry: 'src/views/main/main.js',
       template: 'public/main.html',
       filename: 'index.html',
-      title: ''
+      title: '预付费管理系统'
     }
   },
   devServer: {
@@ -23,7 +25,7 @@ module.exports = {
       // 重定向每个模块的对应模板HTML文件
       rewrites: [
         { from: new RegExp(`^${baseUrl}login`, 'i'), to: '/login.html' },
-        { from: new RegExp(`^${baseUrl}`, 'i'), to: '/main.html' }
+        { from: new RegExp(`^${baseUrl}`, 'i'), to: '/index.html' }
       ]
     }
   },

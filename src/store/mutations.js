@@ -33,6 +33,9 @@ const Mutations = {
       req.cancel()
     }
   },
+  [types.ADD_REQUEST_CANCEL] (state, { item, value }) {
+    state.reqCancels.set(item, value)
+  },
   [types.SET_LOADING_STATUS] (state, { item, value }) {
     if (state.hasOwnProperty(item)) {
       state[item] = value
@@ -66,7 +69,7 @@ const Mutations = {
       alert({ key: 'dataError', content: '数据错误或数据异常' })
     } else if (!err.abort) {
       let code = err.code.toString()
-      let errorMsg = err.msg || ERROR_CODE['default'][code] || `未知错误${code}`
+      let errorMsg = err.Msg || ERROR_CODE['default'][code] || `未知错误${code}`
       alert({ key: 'msg', content: errorMsg })
     }
   },

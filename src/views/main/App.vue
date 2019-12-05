@@ -1,11 +1,42 @@
 <template>
   <div id="app">
-    main
-    <router-view></router-view>
+    <header class="app-header">
+      <div class="app-header--left">
+        <p class="app-title">预付费管理系统</p>
+        <el-select
+          class="no-border"
+          :value="areaId"
+        >
+          <el-option
+            v-for="item in userAreas"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
+      <div class="app-header--right">
+        <span>欢迎您，</span>
+        <span class="app-header_user">{{account.Name || ''}}</span>
+        <i class="app-header_split"></i>
+        <div class="app-logout">
+          <span class="app-logout_text">退出</span>
+        </div>
+      </div>
+    </header>
+    <div class="app-content">
+      <div class="app-side-bar">
+        <p @click="toProject">项目管理</p>
+      </div>
+      <div class="app-main">
+        <router-view></router-view>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+  import './app.scss'
   import { mapState, mapGetters, mapActions } from 'vuex'
   export default {
     data () {
@@ -13,15 +44,23 @@
     },
     computed: {
       ...mapState([
+        'userAreas',
+        'areaId',
+        'account'
       ]),
       ...mapGetters([
       ])
     },
     methods: {
       ...mapActions([
-      ])
+        'getUserManage'
+      ]),
+      toProject () {
+        this.$router.push('/resource/project').catch(err => err)
+      }
     },
     created () {
+      this.getUserManage()
     },
     beforeDestroy () {
     }
@@ -29,4 +68,3 @@
 </script>
 
 <style lang="scss" src="@/assets/css/common.scss"></style>
-<style lang="scss" src="./app.scss"></style>

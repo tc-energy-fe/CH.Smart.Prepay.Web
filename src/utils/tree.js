@@ -3,24 +3,21 @@
  *          Path: '/' or '/1000/' or '/1000/1100/'
  * @param options [Object]
  *          customProps [Object] 自定义键名 eg. {Id: 'GroupId', Name: 'GroupName', ParentId: 'FatherGroupId'}
- *          rootId [Number, Array]
+ *          rootId [Number, Array] !!暂未实现多rootId
  *          rootLevel [Number]
  * @return [Array]
  * */
 
-const defaultOptions = {
-  rootLevel: 0,
-  rootId: 1000, // 多个根节点Id的情况还未实现，可与rootLevel二选一
-  // 支持自定义字段名
-  customProps: {
-    Id: 'GroupId',
-    Name: 'GroupName',
-    ParentId: 'FatherGroupId'
-  }
+const defaultProps = {
+  Id: 'GroupId',
+  Name: 'GroupName',
+  ParentId: 'ParentId',
+  Level: 'Level',
+  Path: 'Path'
 }
 
-const initTree = function (data, options = defaultOptions, fn) {
-  let props = defaultOptions.customProps
+const initTree = function (data, { rootLevel = 0, rootId = 100, customProps }, fn) {
+  let props = Object.assign(defaultProps, customProps)
 
   // 判断数据是否为数组并且不为空
   if (!data || !Array.isArray(data)) return null
@@ -33,7 +30,7 @@ const initTree = function (data, options = defaultOptions, fn) {
   // 开始生成树形数据
   data.forEach(item => {
     let groupId = item[props.Id]
-    if (item.Level === options.rootLevel || groupId === options.rootId) {
+    if (item.Level === rootLevel || groupId === rootId) {
       // 筛选根节点
       rootList.push(item)
     } else {
@@ -54,10 +51,10 @@ const initTree = function (data, options = defaultOptions, fn) {
     }
     // 处理元素的字段
     if (fn && fn instanceof Function) {
+      fn(item)
+    } else {
       item.value = groupId
       item.label = item[props.Name]
-    } else {
-      fn(item)
     }
     if (!item.children || !Array.isArray(item.children)) item.children = []
     // 将元素放入查找对象
@@ -68,9 +65,9 @@ const initTree = function (data, options = defaultOptions, fn) {
     // 如果临时数组_tempList中包含元素，则说明原始数组并不是按照父节点一定在子节点前面的规则排列的, 或者有多余的节点。
     // 这种情况在本项目中暂时不会出现，若需要兼容其他情况，只需利用_tempList进行嵌套循环。
     // console.error('算法出错！')
-    console.log(rootList)
-    console.log(_tempList)
-    throw new Error('算法出错！')
+    console.log('tree:', rootList)
+    console.log('remainder:', _tempList)
+    // throw new Error('算法出错！')
   }
 
   return rootList

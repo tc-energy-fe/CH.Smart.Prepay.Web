@@ -10,14 +10,15 @@ const axiosIns = axios.create({
 })
 axiosIns.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8'
 axiosIns.defaults.headers.put['Content-Type'] = 'application/json;charset=UTF-8'
+// axiosIns.defaults.headers['Authorization'] = sessionStorage.getItem('Token')
 
 // request拦截器
 axiosIns.interceptors.request.use(function (config) {
-  let Token = localStorage.getItem('Token')
+  let Token = sessionStorage.getItem('Token')
   let headers = config.headers
 
   if (Token) {
-    headers.Authorization = `Auth ${Token}`
+    headers.Authorization = `CAuth ${Token}`
   }
   return config
 }, function (error) {
@@ -37,43 +38,50 @@ axiosIns.interceptors.response.use(function (response) {
       // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject({
         code: state,
-        msg: response.data.Msg
+        msg: response.data.Msg,
+        desc: response.data.Desc
       })
     }
   } else {
     // eslint-disable-next-line prefer-promise-reject-errors
     return Promise.reject({
       code: state,
-      msg: response.data.Msg
+      msg: response.data.Msg,
+      desc: response.data.Desc
     })
   }
 }, function (error) {
   // 请求主动cancel
   if (axios.isCancel(error)) {
     console.error('Response canceled', error)
+    // eslint-disable-next-line prefer-promise-reject-errors
+    return Promise.reject({
+      code: 'cancel',
+      abort: true
+    })
   } else {
     // 处理错误
     console.error('Response error', error)
+    return Promise.reject(error)
   }
-  return Promise.reject(error)
 })
 
-const http = (params) => {
+const http = (data) => {
   let cancel = null
   let config = Object.assign({
+    // 请求的中止函数
     cancelToken: new CancelToken(c => {
-      // 请求的中止函数
       cancel = c
     }),
+    // params序列化函数
     paramsSerializer: function (params) {
-      // params序列化函数
       let str = ''
       Object.entries(params).forEach(item => {
         str += `${encodeURIComponent(item[0])}=${encodeURIComponent(item[1])}`
       })
       return str
     }
-  }, params)
+  }, data)
 
   return {
     request: axiosIns.request(config),

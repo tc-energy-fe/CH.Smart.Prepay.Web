@@ -1,0 +1,12 @@
+.resource-project{
+  background-color: #FFF;
+  .eg-box__header--left{
+    display: flex;
+    > *{
+      margin-right: 1rem;
+    }
+  }
+  .project-table_container{
+    padding: $normal-padding;
+  }
+}

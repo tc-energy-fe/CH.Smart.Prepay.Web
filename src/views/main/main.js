@@ -3,10 +3,22 @@ import App from './App.vue'
 import router from '@/router'
 import store from '@/store'
 
+import { Tree, Table, TableColumn, Select, Option, Button } from 'element-ui'
+import 'css/element-ui.scss'
+import { box, input } from 'tc-ui-lib'
+import 'tc-ui-lib/lib/style.css'
+
 // 按需引入element-ui组件
-import { Tree, Table } from 'element-ui'
 Vue.use(Tree)
 Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Select)
+Vue.use(Option)
+Vue.use(Button)
+
+// 按需引入tc-ui组件
+Vue.use(box)
+Vue.use(input)
 
 Vue.config.productionTip = false
 

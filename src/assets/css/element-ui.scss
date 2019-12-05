@@ -1,0 +1,54 @@
+/***********
+ * 变量重写 *
+ ***********/
+$pay-normal-form-height: 2.5rem;
+
+// select
+$--select-input-focus-border-color: $main-color;
+$--select-input-font-size: $font-size;
+$--select-font-size: $small-font-size;
+
+// table
+$--table-font-color: $font-color;
+$--table-header-font-color: $font-color;
+$--table-header-background-color: $background-color;
+
+/* 改变 icon 字体路径变量，必需 */
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+@import "~element-ui/packages/theme-chalk/src/index";
+
+/***********
+ * 样式重写 *
+ ***********/
+
+// select
+.el-select{
+  width: 12rem;
+  .el-input__inner{
+    height: $pay-normal-form-height;
+    line-height: $pay-normal-form-height;
+    font-size: $font-size;
+    border: 1px solid $border-color;
+  }
+  .el-input__icon{
+    height: $pay-normal-form-height;
+    line-height: $pay-normal-form-height;
+  }
+
+  &.no-border{
+    .el-input__inner{
+      border: none;
+    }
+  }
+}
+
+// table
+.el-table{
+  th{
+    font-weight: normal;
+  }
+  tr:nth-child(even) {
+    background-color: $background-color;
+  }
+}
