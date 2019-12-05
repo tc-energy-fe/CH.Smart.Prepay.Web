@@ -8137,9 +8137,9 @@ tar@^4:
     yallist "^3.0.3"
 
 tc-ui-lib@^0.2.2:
-  version "0.2.2"
-  resolved "https://registry.npm.taobao.org/tc-ui-lib/download/tc-ui-lib-0.2.2.tgz?cache=0&sync_timestamp=1575451063345&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftc-ui-lib%2Fdownload%2Ftc-ui-lib-0.2.2.tgz#87a229f465ff11391781f63ef15c56144d7c7078"
-  integrity sha1-h6Ip9GX/ETkXgfY+8VxWFE18cHg=
+  version "0.2.4"
+  resolved "https://registry.npm.taobao.org/tc-ui-lib/download/tc-ui-lib-0.2.4.tgz#423dc6ba847557a6e5d83549e67a6779f986ccc8"
+  integrity sha1-Qj3GuoR1V6bl2DVJ5npnefmGzMg=
   dependencies:
     "@babel/polyfill" "^7.7.0"
 

@@ -21,15 +21,15 @@
       <template v-slot:headerRight>
         <el-button>新建项目</el-button>
       </template>
-      <div class="project-table_container" slot="content">
+      <template v-slot:content>
         <el-table :data="projectList">
-          <el-table-column label="项目名称" align="center"></el-table-column>
-          <el-table-column label="项目类型" align="center"></el-table-column>
-          <el-table-column label="项目描述" align="center"></el-table-column>
-          <el-table-column label="创建时间" align="center"></el-table-column>
+          <el-table-column label="项目名称" prop="Name" align="center"></el-table-column>
+          <el-table-column label="项目类型" prop="TypeText" align="center"></el-table-column>
+          <el-table-column label="项目描述" prop="Desc" align="center"></el-table-column>
+          <el-table-column label="创建时间" prop="CreateTime" align="center"></el-table-column>
           <el-table-column label="操作" align="center"></el-table-column>
         </el-table>
-      </div>
+      </template>
     </eg-box>
   </div>
 </template>
