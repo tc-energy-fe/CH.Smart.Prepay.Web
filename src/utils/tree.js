@@ -16,7 +16,7 @@ const defaultProps = {
   Path: 'Path'
 }
 
-const initTree = function (data, { rootLevel = 0, rootId = 100, customProps }, fn) {
+const initTree = function (data, { rootLevel = 0, rootId = 100, customProps } = { rootLevel: 0, rootId: 100, customProps: {} }, fn) {
   let props = Object.assign(defaultProps, customProps)
 
   // 判断数据是否为数组并且不为空

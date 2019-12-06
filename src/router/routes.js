@@ -23,6 +23,13 @@ const routes = [
           Store.registerModule(['resource', 'project'], require('@/views/main/resource/project/project').default)
           return import('@/views/main/resource/project/index')
         }
+      },
+      {
+        path: 'group',
+        component: (resolve) => {
+          Store.registerModule(['resource', 'group'], require('@/views/main/resource/group/group').default)
+          return import('@/views/main/resource/group/index')
+        }
       }
     ]
   },

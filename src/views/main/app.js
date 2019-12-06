@@ -1,11 +1,8 @@
 import Actions from '@/store/actions.js'
 import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
-import api from '@/api/user'
+import api from '@/api'
 import tree from '@/utils/tree'
-// import apiUrl from '@/api/analysis/apiUrl'
-// import download from '@/utils/download'
-// import moment from 'moment'
 
 const state = {
   reqCancels: new Map(),
@@ -14,7 +11,9 @@ const state = {
   areaId: null,
   account: {
     Name: '管理员'
-  }
+  },
+  mainGroupList: [],
+  isLoadingMainGroupList: false
 }
 
 const getters = {
@@ -23,13 +22,16 @@ const getters = {
       return state.userAreas.find(a => a.value === state.areaId)
     }
     return null
+  },
+  projectId (state, getters) {
+    return getters.project ? getters.project.Id : null
   }
 }
 
 const actions = {
   ...Actions,
-  getUserManage ({ state, commit }) {
-    let getUserManageAuthReq = api.getUserManageAuth()
+  getUserManage ({ state, commit, dispatch }) {
+    let getUserManageAuthReq = api.user.getUserManageAuth()
     commit(types.ADD_REQUEST_CANCEL, { item: 'getUserManageAuthReq', value: getUserManageAuthReq.cancel })
     getUserManageAuthReq.request.then(res => {
       let data = res.Data || {}
@@ -57,8 +59,22 @@ const actions = {
       } else {
         commit(types.SET_DATA, { item: 'userMenus', value: [] })
       }
+      dispatch('getGroupList')
     }).catch(err => {
-      console.log(err)
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally()
+  },
+  getGroupList ({ state, getters, commit }) {
+    let postData = {
+      ProjectId: getters.projectId
+    }
+    let getUserManageAuthReq = api.group.getGroupList(postData)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getUserManageAuthReq', value: getUserManageAuthReq.cancel })
+    getUserManageAuthReq.request.then(res => {
+      let groups = res.Data
+      commit(types.SET_DATA, { item: 'mainGroupList', value: groups })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
     }).finally()
   }
 }

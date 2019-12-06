@@ -4,6 +4,7 @@
       <template v-slot:headerLeft>
         <eg-input
           placeholder="项目名称搜索"
+          v-model="searchName"
         ></eg-input>
         <el-select
           :value="typeId"
@@ -23,7 +24,7 @@
         <eg-button @click="showEdit">新建项目</eg-button>
       </template>
       <template v-slot:content>
-        <el-table :data="projectList">
+        <el-table :data="projectList" v-loading="isLoadingProjectList">
           <el-table-column label="项目名称" prop="Name" align="center"></el-table-column>
           <el-table-column label="项目类型" prop="typeText" align="center"></el-table-column>
           <el-table-column label="项目描述" prop="Desc" align="center"></el-table-column>
@@ -101,9 +102,16 @@
         'isModify',
         'projectTypeList',
         'editData',
-        'isShowEdit'
+        'isShowEdit',
+        'isLoadingProjectList'
       ]),
       ...mapGetters([]),
+      searchName: {
+        get () { return this.$store.state.resource.project.searchName },
+        set (val) {
+          this.updateFormData({ item: 'searchName', value: val })
+        }
+      },
       editName: {
         get () { return this.editData.Name },
         set (val) {
@@ -146,6 +154,7 @@
       this.getProjectType()
     },
     beforeDestroy () {
+      this.showEdit({ isShow: false })
     }
   }
 </script>

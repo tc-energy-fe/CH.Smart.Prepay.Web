@@ -2,16 +2,14 @@ import Actions from '@/store/actions'
 import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
+import initTree from '@/utils/tree'
 // import apiUrl from '@/api/analysis/apiUrl'
 // import download from '@/utils/download'
-import moment from 'moment'
 
 const state = {
   reqCancels: new Map(),
-  projectTypeList: [],
-  projectList: [],
-  typeId: null,
-  editTypeId: null,
+  currentNode: {},
+  groupList: [],
   isModify: false,
   searchName: '',
   editData: {
@@ -20,81 +18,59 @@ const state = {
     Desc: ''
   },
   isShowEdit: false,
-  isLoadingProjectList: false
+  isLoadingGroupList: false
 }
 
-const getters = {}
+const getters = {
+  groupTree: (state, getters, rootState) => initTree(rootState.mainGroupList, { rootLevel: 1 }) || [],
+  projectId: (state, getters, rootState, rootGetters) => rootGetters.projectId,
+  currentNodeId: state => state.currentNode.value,
+  isLoadingMainGroupList: (state, getters, rootState) => rootState.isLoadingMainGroupList
+}
 
 const actions = {
   ...Actions,
+  nodeOnChange ({ state, commit }, val) {
+    commit(types.SET_DATA, { item: 'currentNode', value: val })
+  },
   showEdit ({ state, commit, dispatch }, { data, isShow = true }) {
     if (!isShow) {
       commit(types.SET_DATA, { item: 'isShowEdit', value: false })
       return
     }
-    let typeList = state.projectTypeList
     commit(types.SET_DATA, { item: 'editData', value: { Id: null, Name: '', Desc: '' } })
-    commit(types.SET_DATA, { item: 'editTypeId', value: typeList[0] ? typeList[0].value : null })
     if (data) {
       commit(types.SET_DATA, { item: 'isModify', value: true })
       Object.keys(state.editData).forEach(k => {
         commit(types.UPDATE_OBJ_DATA, { obj: 'editData', item: k, value: data[k] })
       })
-      let type = data.Type
-      commit(types.SET_DATA, { item: 'editTypeId', value: window.isEmpty(type) ? null : type })
     } else {
       commit(types.SET_DATA, { item: 'isModify', value: false })
     }
 
     commit(types.SET_DATA, { item: 'isShowEdit', value: true })
   },
-  getProjectType ({ state, getters, commit, dispatch }) {
-    let getProjectTypeReq = api.project.getProjectType()
-    commit(types.ADD_REQUEST_CANCEL, { item: 'getProjectTypeReq', value: getProjectTypeReq.cancel })
-    getProjectTypeReq.request.then(res => {
-      let data = res.Data || {}
-      let typeList = []
-      let protypes = Object.entries(data) || []
-      protypes.forEach(type => {
-        typeList.push({
-          value: Number(type[0]),
-          label: type[1]
-        })
-      })
-      commit(types.SET_DATA, { item: 'typeId', value: typeList[0] ? typeList[0].value : null })
-      commit(types.SET_DATA, { item: 'editTypeId', value: typeList[0] ? typeList[0].value : null })
-      commit(types.SET_DATA, { item: 'projectTypeList', value: typeList })
-      dispatch('getProjectList')
-    }).catch(err => {
-      commit(types.CHECKOUT_FAILURE, err)
-    }).finally(() => {})
-  },
-  getProjectList ({ state, getters, commit }) {
-    let params = {
-      name: state.searchName
-    }
-    if (!window.isEmpty(state.typeId)) params.type = state.typeId
-    let getProjectListReq = api.project.getProjectList(params)
-    commit(types.SET_LOADING_STATUS, { item: 'isLoadingProjectList', value: true })
-    commit(types.ADD_REQUEST_CANCEL, { item: 'getProjectListReq', value: getProjectListReq.cancel })
-    getProjectListReq.request.then(res => {
+  getGroupList ({ state, getters, commit }) {
+    let getGroupListReq = api.group.getGroupList({
+      ProjectId: getters.projectId,
+      GroupId: getters.currentNodeId,
+      Name: state.searchName
+    })
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingGroupList', value: true })
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getGroupListReq', value: getGroupListReq.cancel })
+    getGroupListReq.request.then(res => {
       let data = res.Data || []
-      data.forEach(p => {
-        p.typeText = state.projectTypeList.find(t => t.value === p.Type).label || '-'
-        p.CreateTime = moment(p.CreateTime).format('YYYY-MM-DD HH:mm')
-      })
-      commit(types.SET_DATA, { item: 'projectList', value: data })
+      commit(types.SET_DATA, { item: 'groupList', value: data })
     }).catch(err => {
-      commit(types.CHECKOUT_FAILURE, err)
+      console.error(err)
     }).finally(() => {
-      commit(types.SET_LOADING_STATUS, { item: 'isLoadingProjectList', value: false })
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingGroupList', value: false })
     })
   },
   editProject ({ state, getters, commit, dispatch }) {
     let editData = state.editData
     let postData = {
       Name: editData.Name,
-      Type: state.editTypeId,
       Desc: editData.Desc || ''
     }
     if (!postData.Name || postData.Name === '') {

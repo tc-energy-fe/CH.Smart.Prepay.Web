@@ -76,8 +76,8 @@ const http = (data) => {
     // params序列化函数
     paramsSerializer: function (params) {
       let str = ''
-      Object.entries(params).forEach(item => {
-        str += `${encodeURIComponent(item[0])}=${encodeURIComponent(item[1])}`
+      Object.entries(params).forEach((item, index, arr) => {
+        str += `${encodeURIComponent(item[0])}=${encodeURIComponent(item[1])}${index === arr.length - 1 ? '' : '&'}`
       })
       return str
     }

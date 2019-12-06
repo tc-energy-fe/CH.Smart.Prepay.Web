@@ -27,8 +27,9 @@
     </header>
     <div class="app-content">
       <div class="app-side-bar">
-        <p @click="toProject">项目管理</p>
-        <router-link to="/system/role">角色管理</router-link>
+        <p><router-link to="/resource/project">项目管理</router-link></p>
+        <p><router-link to="/resource/group">区域管理</router-link></p>
+        <p><router-link to="/system/role">角色管理</router-link></p>
       </div>
       <div class="app-main">
         <router-view></router-view>
@@ -58,9 +59,6 @@
         'getUserManage',
         'updateFormData'
       ]),
-      toProject () {
-        this.$router.push('/resource/project').catch(err => err)
-      },
       projectOnChange (val) {
         this.updateFormData({ item: 'areaId', value: val })
       }
