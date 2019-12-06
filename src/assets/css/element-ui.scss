@@ -6,7 +6,8 @@ $pay-normal-form-height: 2.5rem;
 // select
 $--select-input-focus-border-color: $main-color;
 $--select-input-font-size: $font-size;
-$--select-font-size: $small-font-size;
+$--select-font-size: $font-size;
+$--color-text-placeholder: #5e5e5e;
 
 // table
 $--table-font-color: $font-color;
@@ -24,7 +25,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 // select
 .el-select{
-  width: 12rem;
+  width: 11.25rem; //默认宽度
   .el-input__inner{
     height: $pay-normal-form-height;
     line-height: $pay-normal-form-height;

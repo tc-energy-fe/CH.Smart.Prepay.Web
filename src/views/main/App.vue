@@ -27,6 +27,7 @@
     <div class="app-content">
       <div class="app-side-bar">
         <p @click="toProject">项目管理</p>
+        <router-link to="/system/role">角色管理</router-link>
       </div>
       <div class="app-main">
         <router-view></router-view>

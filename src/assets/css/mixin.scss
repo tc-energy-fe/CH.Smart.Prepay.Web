@@ -22,3 +22,25 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+//设置等距离宽度，默认margin-right
+@mixin setEqualInterval($interval: 1rem, $marginDirection: right) {
+  > * {
+    @if $marginDirection == right {
+      margin-right: $interval;
+      &:last-child {
+        margin-right: 0;
+      }
+    } @else if $marginDirection == left {
+      margin-left: $interval;
+      &:first-child {
+        margin-left: 0;
+      }
+    } @else if $marginDirection == down {
+      margin-bottom: $interval;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

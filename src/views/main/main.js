@@ -5,7 +5,7 @@ import store from '@/store'
 
 import { Tree, Table, TableColumn, Select, Option, Button } from 'element-ui'
 import 'css/element-ui.scss'
-import { box, input } from 'tc-ui-lib'
+import EgUi from 'tc-ui-lib'
 import 'tc-ui-lib/lib/style.css'
 
 // 按需引入element-ui组件
@@ -17,8 +17,7 @@ Vue.use(Option)
 Vue.use(Button)
 
 // 按需引入tc-ui组件
-Vue.use(box)
-Vue.use(input)
+Vue.use(EgUi)
 
 Vue.config.productionTip = false
 

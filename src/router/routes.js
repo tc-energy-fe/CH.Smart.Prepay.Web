@@ -26,6 +26,23 @@ const routes = [
       }
     ]
   },
+  {
+    path: '/system',
+    component: () => {
+      Store.registerModule('system', { namespaced: true })
+      return import('../views/main/system/index')
+    },
+    children: [
+      { path: '', redirect: 'role' },
+      {
+        path: 'role',
+        component: () => {
+          Store.registerModule(['system', 'role'], require('@/views/main/system/role/role').default)
+          return import('@/views/main/system/role/index')
+        }
+      }
+    ]
+  },
   // 404Page
   {
     path: '*',
