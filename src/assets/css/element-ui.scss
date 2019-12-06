@@ -1,17 +1,18 @@
 /***********
  * 变量重写 *
  ***********/
-$pay-normal-form-height: 2.5rem;
 
 // select
 $--select-input-focus-border-color: $main-color;
 $--select-input-font-size: $font-size;
 $--select-font-size: $small-font-size;
+$--select-option-selected-font-color: $main-color;
 
 // table
 $--table-font-color: $font-color;
 $--table-header-font-color: $font-color;
 $--table-header-background-color: $background-color;
+$--table-row-hover-background-color: #e5eeff;
 
 /* 改变 icon 字体路径变量，必需 */
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
@@ -26,14 +27,14 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 .el-select{
   width: 12rem;
   .el-input__inner{
-    height: $pay-normal-form-height;
-    line-height: $pay-normal-form-height;
+    height: $normal-input-height;
+    line-height: $normal-input-height;
     font-size: $font-size;
     border: 1px solid $border-color;
   }
   .el-input__icon{
-    height: $pay-normal-form-height;
-    line-height: $pay-normal-form-height;
+    height: $normal-input-height;
+    line-height: $normal-input-height;
   }
 
   &.no-border{
@@ -42,6 +43,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     }
   }
 }
+.el-select-dropdown{}
 
 // table
 .el-table{
@@ -50,5 +52,19 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   }
   tr:nth-child(even) {
     background-color: $background-color;
+  }
+}
+
+// pagination
+.el-pagination {
+  .el-pagination__rightwrapper{
+    .el-select{
+      width: initial;
+      height: 100%;
+      .el-input__inner, .el-input__icon {
+        height: 28px;
+        line-height: 28px;
+      }
+    }
   }
 }

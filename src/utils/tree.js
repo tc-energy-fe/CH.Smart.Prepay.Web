@@ -61,11 +61,11 @@ const initTree = function (data, { rootLevel = 0, rootId = 100, customProps }, f
     treeListObj[groupId] = item
   })
 
+  console.log('tree:', rootList)
   if (_tempList.length > 0) {
     // 如果临时数组_tempList中包含元素，则说明原始数组并不是按照父节点一定在子节点前面的规则排列的, 或者有多余的节点。
     // 这种情况在本项目中暂时不会出现，若需要兼容其他情况，只需利用_tempList进行嵌套循环。
     // console.error('算法出错！')
-    console.log('tree:', rootList)
     console.log('remainder:', _tempList)
     // throw new Error('算法出错！')
   }

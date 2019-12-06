@@ -27,7 +27,7 @@ const Actions = {
     commit(types.SET_DATA, { item: 'currentPage', value: current })
   },
   pageSizeOnChange ({ commit }, size) {
-    commit(types.SET_DATA, { item: 'tablePageSize', value: size }, { root: true })
+    commit(types.SET_DATA, { item: 'pageSize', value: size })
   },
   closeSelect ({ commit }) {
     commit(types.SET_SELECT, { item: 'selectStates', value: { open: false } })

@@ -3,9 +3,9 @@ import App from './App.vue'
 import router from '@/router'
 import store from '@/store'
 
-import { Tree, Table, TableColumn, Select, Option, Button } from 'element-ui'
+import { Tree, Table, TableColumn, Pagination, Select, Option, Input } from 'element-ui'
 import 'css/element-ui.scss'
-import { box, input } from 'tc-ui-lib'
+import TCUI from 'tc-ui-lib'
 import 'tc-ui-lib/lib/style.css'
 
 // 按需引入element-ui组件
@@ -14,11 +14,11 @@ Vue.use(Table)
 Vue.use(TableColumn)
 Vue.use(Select)
 Vue.use(Option)
-Vue.use(Button)
+Vue.use(Pagination)
+Vue.use(Input)
 
 // 按需引入tc-ui组件
-Vue.use(box)
-Vue.use(input)
+Vue.use(TCUI)
 
 Vue.config.productionTip = false
 
