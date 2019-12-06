@@ -20,6 +20,10 @@ Vue.use(Input)
 // 按需引入tc-ui组件
 Vue.use(EgUi)
 
+window.isEmpty = function (value) {
+  return value === undefined || value === null
+}
+
 Vue.config.productionTip = false
 
 new Vue({

@@ -9,5 +9,19 @@ export default {
   getProjectType: () => http({
     method: 'get',
     url: '/Project/Type'
+  }),
+  addProject: (data) => http({
+    method: 'post',
+    url: '/Project',
+    data
+  }),
+  modifyProject: (data) => http({
+    method: 'put',
+    url: '/Project',
+    data
+  }),
+  deleteProject: (id) => http({
+    method: 'delete',
+    url: `/Project/${id}`
   })
 }

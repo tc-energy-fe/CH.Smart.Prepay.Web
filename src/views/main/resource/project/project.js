@@ -8,42 +8,60 @@ import moment from 'moment'
 
 const state = {
   reqCancels: new Map(),
-  projectTypes: {},
+  projectTypeList: [],
   projectList: [],
   typeId: null,
   editTypeId: null,
   isModify: false,
   editData: {
+    Id: null,
     Name: '',
-    Type: 0,
-    Decs: ''
-  }
+    Desc: ''
+  },
+  isShowEdit: false
 }
 
 const getters = {}
 
 const actions = {
   ...Actions,
-  setEditData ({ state, commit, dispatch }, data) {
-    commit(types.SET_DATA, { item: 'isModify', value: { Name: '', Type: 0, Decs: '' } })
+  showEdit ({ state, commit, dispatch }, { data, isShow = true }) {
+    if (!isShow) {
+      commit(types.SET_DATA, { item: 'isShowEdit', value: false })
+      return
+    }
+    let typeList = state.projectTypeList
+    commit(types.SET_DATA, { item: 'editData', value: { Id: null, Name: '', Desc: '' } })
+    commit(types.SET_DATA, { item: 'editTypeId', value: typeList[0] ? typeList[0].value : null })
     if (data) {
       commit(types.SET_DATA, { item: 'isModify', value: true })
       Object.keys(state.editData).forEach(k => {
-        state.editData[k] = data[k] || null
+        commit(types.UPDATE_OBJ_DATA, { obj: 'editData', item: k, value: data[k] })
       })
+      let type = data.Type
+      commit(types.SET_DATA, { item: 'editTypeId', value: window.isEmpty(type) ? null : type })
     } else {
       commit(types.SET_DATA, { item: 'isModify', value: false })
     }
+
+    commit(types.SET_DATA, { item: 'isShowEdit', value: true })
   },
   getProjectType ({ state, getters, commit, dispatch }) {
     let getProjectTypeReq = api.project.getProjectType()
     commit(types.ADD_REQUEST_CANCEL, { item: 'getProjectTypeReq', value: getProjectTypeReq.cancel })
     getProjectTypeReq.request.then(res => {
       let data = res.Data || {}
-      let typeList = Object.keys(data) || []
-      commit(types.SET_DATA, { item: 'typeId', value: typeList[0] || null })
-      commit(types.SET_DATA, { item: 'editTypeId', value: typeList[0] || null })
-      commit(types.SET_DATA, { item: 'projectTypes', value: data })
+      let typeList = []
+      let protypes = Object.entries(data) || []
+      protypes.forEach(type => {
+        typeList.push({
+          value: Number(type[0]),
+          label: type[1]
+        })
+      })
+      commit(types.SET_DATA, { item: 'typeId', value: typeList[0] ? typeList[0].value : null })
+      commit(types.SET_DATA, { item: 'editTypeId', value: typeList[0] ? typeList[0].value : null })
+      commit(types.SET_DATA, { item: 'projectTypeList', value: typeList })
       dispatch('getProjectList')
     }).catch(err => {
       console.error(err)
@@ -55,12 +73,51 @@ const actions = {
     getProjectListReq.request.then(res => {
       let data = res.Data || []
       data.forEach(p => {
-        p.typeText = state.projectTypes[p.Type] || '-'
+        p.typeText = state.projectTypeList.find(t => t.value === p.Type).label || '-'
         p.CreateTime = moment(p.CreateTime).format('YYYY-MM-DD HH:mm')
       })
       commit(types.SET_DATA, { item: 'projectList', value: data })
     }).catch(err => {
       console.error(err)
+    }).finally(() => {})
+  },
+  editProject ({ state, getters, commit, dispatch }) {
+    let editData = state.editData
+    let postData = {
+      Name: editData.Name,
+      Type: state.editTypeId,
+      Desc: editData.Desc || ''
+    }
+    if (!postData.Name || postData.Name === '') {
+      alert('项目名称不能为空！')
+    } else if (postData.Type === null || postData.Type === undefined) {
+      alert('项目类型不能为空！')
+    }
+    if (state.isModify) {
+      postData.Id = editData.Id
+    }
+    console.log(postData)
+    let addProjectReq = state.isModify ? api.project.modifyProject(postData) : api.project.addProject(postData)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getProjectListReq', value: addProjectReq.cancel })
+    addProjectReq.request.then(res => {
+      commit(types.CHECKOUT_SUCCEED, res.State)
+      dispatch('getUserManage', null, { root: true })
+      dispatch('getProjectList')
+      dispatch('showEdit', { isShow: false })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {})
+  },
+  deleteProject ({ state, commit, dispatch }, id) {
+    let deleteProjectReq = api.project.deleteProject(id)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'deleteProjectReq', value: deleteProjectReq.cancel })
+    deleteProjectReq.request.then(res => {
+      commit(types.CHECKOUT_SUCCEED, res.State)
+      dispatch('getUserManage', null, { root: true })
+      dispatch('getProjectList')
+      dispatch('showEdit', { isShow: false })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {})
   }
 }

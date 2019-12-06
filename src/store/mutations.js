@@ -76,7 +76,7 @@ const Mutations = {
   },
   [types.CHECKOUT_SUCCEED] (state, stateCode) {
     if (stateCode === 0) {
-      alert({ content: '执行成功' })
+      alert('执行成功')
     }
   },
   [types.SET_BAR] (state, { item, value }) {

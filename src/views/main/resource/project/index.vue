@@ -8,6 +8,7 @@
         <el-select
           :value="typeId"
           placeholder="项目类型"
+          @change="typeOnChange"
         >
           <el-option
             v-for="item in projectTypeList"
@@ -26,9 +27,12 @@
           <el-table-column label="项目名称" prop="Name" align="center"></el-table-column>
           <el-table-column label="项目类型" prop="typeText" align="center"></el-table-column>
           <el-table-column label="项目描述" prop="Desc" align="center"></el-table-column>
-          <el-table-column label="创建时间" prop="CreateTime" align="center"></el-table-column>
-          <el-table-column label="操作" align="center">
-            <template></template>
+          <el-table-column label="创建时间" prop="CreateTime" align="center" min-width="140"></el-table-column>
+          <el-table-column label="操作" align="center" min-width="130">
+            <template slot-scope="{ row }">
+              <eg-button type="text" @click="showEdit({ data: row })" style="margin-right: 1.5rem;">编辑</eg-button>
+              <eg-button type="text" color="danger" @click="deleteProject(row.Id)">删除</eg-button>
+            </template>
           </el-table-column>
         </el-table>
         <el-pagination
@@ -50,11 +54,11 @@
       <template v-slot:content>
         <p class="project-edit__row">
           <label>项目名称</label>
-          <eg-input></eg-input>
+          <eg-input v-model="editName"></eg-input>
         </p>
         <p class="project-edit__row">
           <label>项目类型</label>
-          <el-select :value="editTypeId">
+          <el-select :value="editTypeId" @change="editTypeOnChange">
             <el-option
               v-for="item in projectTypeList"
               :key="item.value"
@@ -65,11 +69,11 @@
         </p>
         <p class="project-edit__row">
           <label>项目描述</label>
-          <el-input type="textarea"></el-input>
+          <el-input type="textarea" v-model="editDesc"></el-input>
         </p>
         <p class="project-edit__footer">
           <eg-button style="margin-right: 2rem" type="minor" @click="showEdit({ isShow: false })">取消</eg-button>
-          <eg-button>保存</eg-button>
+          <eg-button @click="editProject">保存</eg-button>
         </p>
       </template>
     </eg-box>
@@ -85,49 +89,56 @@
     data () {
       return {
         currentPage: 1,
-        pageSize: 10,
-        isShowEdit: false
+        pageSize: 10
       }
     },
     components: {},
     computed: {
       ...mapState([
         'projectList',
-        'projectTypes',
         'typeId',
         'editTypeId',
-        'isModify'
+        'isModify',
+        'projectTypeList',
+        'editData',
+        'isShowEdit'
       ]),
       ...mapGetters([]),
-      projectTypeList () {
-        let typeList = []
-        let types = Object.entries(this.projectTypes) || []
-        types.forEach(type => {
-          typeList.push({
-            value: type[0],
-            label: type[1]
-          })
-        })
-        return typeList
+      editName: {
+        get () { return this.editData.Name },
+        set (val) {
+          this.updateObjectData({ obj: 'editData', item: 'Name', value: val })
+        }
+      },
+      editDesc: {
+        get () { return this.editData.Desc },
+        set (val) {
+          this.updateObjectData({ obj: 'editData', item: 'Desc', value: val })
+        }
       }
     },
     methods: {
       ...mapActions([
         'getProjectType',
         'getProjectList',
-        'setEditData'
+        'setEditData',
+        'updateObjectData',
+        'editProject',
+        'updateFormData',
+        'deleteProject',
+        'showEdit'
       ]),
+      typeOnChange (val) {
+        this.updateFormData({ item: 'typeId', value: val })
+      },
+      editTypeOnChange (val) {
+        this.updateFormData({ item: 'editTypeId', value: val })
+      },
       currentOnChange (val) {
         this.currentPage = val
       },
       pageSizeOnChange (val) {
         this.pageSize = val
-      },
-      showEdit ({ data, isShow = true }) {
-        if (isShow) {
-          this.setEditData(data)
-        }
-        this.isShowEdit = isShow
       }
     },
     watch: {},

@@ -6,6 +6,7 @@
         <el-select
           class="no-border"
           :value="areaId"
+          @change="projectOnChange"
         >
           <el-option
             v-for="item in userAreas"
@@ -54,10 +55,14 @@
     },
     methods: {
       ...mapActions([
-        'getUserManage'
+        'getUserManage',
+        'updateFormData'
       ]),
       toProject () {
         this.$router.push('/resource/project').catch(err => err)
+      },
+      projectOnChange (val) {
+        this.updateFormData({ item: 'areaId', value: val })
       }
     },
     created () {
