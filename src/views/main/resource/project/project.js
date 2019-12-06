@@ -10,13 +10,31 @@ const state = {
   reqCancels: new Map(),
   projectTypes: {},
   projectList: [],
-  typeId: null
+  typeId: null,
+  editTypeId: null,
+  isModify: false,
+  editData: {
+    Name: '',
+    Type: 0,
+    Decs: ''
+  }
 }
 
 const getters = {}
 
 const actions = {
   ...Actions,
+  setEditData ({ state, commit, dispatch }, data) {
+    commit(types.SET_DATA, { item: 'isModify', value: { Name: '', Type: 0, Decs: '' } })
+    if (data) {
+      commit(types.SET_DATA, { item: 'isModify', value: true })
+      Object.keys(state.editData).forEach(k => {
+        state.editData[k] = data[k] || null
+      })
+    } else {
+      commit(types.SET_DATA, { item: 'isModify', value: false })
+    }
+  },
   getProjectType ({ state, getters, commit, dispatch }) {
     let getProjectTypeReq = api.project.getProjectType()
     commit(types.ADD_REQUEST_CANCEL, { item: 'getProjectTypeReq', value: getProjectTypeReq.cancel })
@@ -24,6 +42,7 @@ const actions = {
       let data = res.Data || {}
       let typeList = Object.keys(data) || []
       commit(types.SET_DATA, { item: 'typeId', value: typeList[0] || null })
+      commit(types.SET_DATA, { item: 'editTypeId', value: typeList[0] || null })
       commit(types.SET_DATA, { item: 'projectTypes', value: data })
       dispatch('getProjectList')
     }).catch(err => {
@@ -40,7 +59,6 @@ const actions = {
         p.CreateTime = moment(p.CreateTime).format('YYYY-MM-DD HH:mm')
       })
       commit(types.SET_DATA, { item: 'projectList', value: data })
-      console.log(res)
     }).catch(err => {
       console.error(err)
     }).finally(() => {})

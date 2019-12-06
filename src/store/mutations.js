@@ -57,20 +57,21 @@ const Mutations = {
   [types.CHECKOUT_FAILURE] (state, err) {
     console.log(err)
     if (err.code === -2) {
-      alert({ key: 'account', content: '未登录或者登录信息过期', time: 2 })
+      alert('未登录或者登录信息过期')
       setTimeout(() => {
+        location.replace(location.origin + '/login')
       }, 2000)
     } else if (err.code === -15) {
-      alert({ key: 'account', content: '账号异地登录', time: 2 })
+      alert('账号异地登录')
       setTimeout(() => {
-        // router.push('/login')
+        location.replace(location.origin + '/login')
       }, 2000)
     } else if (!err.hasOwnProperty('code')) {
-      alert({ key: 'dataError', content: '数据错误或数据异常' })
+      alert('数据错误或数据异常')
     } else if (!err.abort) {
       let code = err.code.toString()
       let errorMsg = err.Msg || ERROR_CODE['default'][code] || `未知错误${code}`
-      alert({ key: 'msg', content: errorMsg })
+      alert(errorMsg)
     }
   },
   [types.CHECKOUT_SUCCEED] (state, stateCode) {
