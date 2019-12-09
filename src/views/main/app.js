@@ -2,7 +2,7 @@ import Actions from '@/store/actions.js'
 import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
-import tree from '@/utils/tree'
+import initTree from '@/utils/tree'
 
 const state = {
   reqCancels: new Map(),
@@ -13,6 +13,7 @@ const state = {
     Name: '管理员'
   },
   mainGroupList: [],
+  mainGroupTree: [],
   isLoadingMainGroupList: false
 }
 
@@ -54,7 +55,7 @@ const actions = {
           Id: 'Id',
           Name: 'Name'
         }
-        let menusTree = tree(menus, { customProps, rootLevel: 1 })
+        let menusTree = initTree(menus, { customProps, rootLevel: 1 })
         commit(types.SET_DATA, { item: 'userMenus', value: menusTree })
       } else {
         commit(types.SET_DATA, { item: 'userMenus', value: [] })
@@ -73,6 +74,7 @@ const actions = {
     getUserManageAuthReq.request.then(res => {
       let groups = res.Data
       commit(types.SET_DATA, { item: 'mainGroupList', value: groups })
+      commit(types.SET_DATA, { item: 'mainGroupTree', value: initTree(groups, { rootLevel: 1 }) })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally()

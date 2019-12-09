@@ -6,6 +6,10 @@ export default {
     url: '/Project',
     params
   }),
+  getProjectDetail: (id) => http({
+    method: 'get',
+    url: `/Project/${id}`
+  }),
   getProjectType: () => http({
     method: 'get',
     url: '/Project/Type'

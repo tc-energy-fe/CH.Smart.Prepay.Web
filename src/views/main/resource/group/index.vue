@@ -7,6 +7,7 @@
         :data="groupTree"
         node-key="value"
         :highlight-current="true"
+        :current-node-key="currentNodeId"
         :expand-on-click-node="false"
         @current-change="nodeOnChange"
       ></el-tree>
@@ -20,16 +21,16 @@
           <eg-button @click="getGroupList">查询</eg-button>
         </template>
         <template v-slot:headerRight>
-          <eg-button @click="showEdit">新建项目</eg-button>
+          <eg-button @click="showEdit">新建区域</eg-button>
         </template>
         <template v-slot:content>
           <el-table :data="groupList" v-loading="isLoadingGroupList">
             <el-table-column label="区域名称" prop="Name" align="center"></el-table-column>
             <el-table-column label="上级区域" prop="ParentName" align="center"></el-table-column>
-            <el-table-column label="操作" align="center" min-width="130">
+            <el-table-column label="操作" align="center">
               <template slot-scope="{ row }">
                 <eg-button type="text" @click="showEdit({ data: row })" style="margin-right: 1.5rem;">编辑</eg-button>
-                <eg-button type="text" color="danger" @click="deleteProject(row.Id)">删除</eg-button>
+                <eg-button type="text" color="danger" @click="deleteGroup(row)">删除</eg-button>
               </template>
             </el-table-column>
           </el-table>
@@ -46,21 +47,36 @@
       </eg-box>
       <eg-box class="project-edit" v-if="isShowEdit">
         <template v-slot:headerLeft>
-          <span class="project-edit__title">{{isModify ? '编辑' : '添加'}}项目</span>
+          <span class="project-edit__title">{{isModify ? '编辑' : '添加'}}区域</span>
           <span class="project-edit__back" @click="showEdit({ isShow: false })">返回列表</span>
         </template>
         <template v-slot:content>
           <p class="project-edit__row">
-            <label>项目名称</label>
+            <label>区域名称</label>
             <eg-input v-model="editName"></eg-input>
           </p>
           <p class="project-edit__row">
-            <label>项目描述</label>
-            <el-input type="textarea" v-model="editDesc"></el-input>
+            <label>上级区域</label>
+            <el-select
+              :disabled="isModify"
+              :value="editParentId"
+              @change="updateFormData({ item: 'editParentId', value: $event })"
+            >
+              <el-option
+                :label="'不选择'"
+                :value="-1"
+              ></el-option>
+              <el-option
+                v-for="item in mainGroupList"
+                :key="item.value"
+                :label="item.FullName"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </p>
           <p class="project-edit__footer">
             <eg-button style="margin-right: 2rem" type="minor" @click="showEdit({ isShow: false })">取消</eg-button>
-            <eg-button @click="editProject">保存</eg-button>
+            <eg-button @click="editGroup">保存</eg-button>
           </p>
         </template>
       </eg-box>
@@ -83,19 +99,18 @@
     components: {},
     computed: {
       ...mapState([
-        'currentNode',
         'groupList',
         'isModify',
-        'projectTypeList',
+        'editParentId',
         'editData',
         'isShowEdit',
         'isLoadingGroupList'
       ]),
       ...mapGetters([
+        'mainGroupList',
         'groupTree',
         'projectId',
-        'currentNodeId',
-        'isLoadingMainGroupList'
+        'currentNodeId'
       ]),
       editName: {
         get () { return this.editData.Name },
@@ -116,9 +131,9 @@
         'getGroupList',
         'setEditData',
         'updateObjectData',
-        'editProject',
+        'editGroup',
         'updateFormData',
-        'deleteProject',
+        'deleteGroup',
         'showEdit'
       ]),
       currentOnChange (val) {
@@ -130,20 +145,26 @@
     },
     watch: {
       projectId (newValue) {
-        if (!window.isEmpty(newValue)) {
-        }
       },
-      groupTree (newValue) {
-        if (!window.isEmpty(newValue)) {
+      groupTree (newValue, oldValue) {
+        if (newValue.length && newValue !== oldValue) {
           this.$nextTick(function () {
             this.$refs.tree.setCurrentKey(newValue[0].value)
           })
           this.updateFormData({ item: 'currentNode', value: newValue[0] || {} })
+          this.getGroupList()
         }
       }
     },
     created () {
-      if (!window.isEmpty(this.projectId)) {
+      if (this.groupTree.length) {
+        this.$nextTick(function () {
+          this.$refs.tree.setCurrentKey(this.currentNodeId)
+        })
+        if (isEmpty(this.currentNodeId)) {
+          this.updateFormData({ item: 'currentNode', value: this.groupTree[0] || {} })
+        }
+        this.getGroupList()
       }
     },
     beforeDestroy () {
