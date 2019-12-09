@@ -1,9 +1,10 @@
 import http from '@/api/http'
 
 export default {
-  getRoleList: ({ q = '', uid, pageSize, pageIndex }) => http({
-    url: `/Role?q=${q}${isEmpty(pageSize) ? '' : `&pageSize=${pageSize}`}${isEmpty(pageIndex) ? '' : `&pageIndex=${pageIndex}`}${isEmpty(uid) ? '' : `&uid=${uid}`}`,
-    method: 'GET'
+  getRoleList: (params) => http({
+    url: `/Role`,
+    method: 'GET',
+    params
   }),
   putRoleData: (data) => http({
     url: `/Role`,
