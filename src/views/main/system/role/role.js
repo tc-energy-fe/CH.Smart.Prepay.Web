@@ -8,7 +8,12 @@ const state = {
   searchName: '',
   searchTypeId: null,
   searchRoleTypeList: [],
-  roleList: []
+  roleList: [],
+  currentPage: 1,
+  pageSize: 10,
+  totalCount: 0,
+  isShowEdit: false,
+  isModify: false
 }
 
 const getters = {
@@ -16,16 +21,52 @@ const getters = {
 
 const actions = {
   ...Actions,
-  getRoleList ({ commit, state, getters, dispatch }) {
-    let getRoleListReq = api.role.getRoleList({ q: '' })
+  showEdit ({ commit, state, getters, dispatch }, { isShow, row }) {
+    if (!isShow) {
+    } else {
+      if (row) {
+        commit(types.SET_DATA, { item: 'isModify', value: true })
+      } else {
+        commit(types.SET_DATA, { item: 'isModify', value: false })
+      }
+    }
+    commit(types.SET_DATA, { item: 'isShowEdit', value: isShow })
+  },
+  getRoleType ({ commit, state, getters, dispatch }, canEdit = false) {
+    let getRoleTypeReq = api.role.getRoleCreateType(canEdit)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getRoleTypeReq', value: getRoleTypeReq.cancel })
+    getRoleTypeReq.request.then(res => {
+      let data = res.Data || {}
+      if (canEdit) {
+        // 有编辑权限的角色列表
+        let searchRoleTypeList = Object.entries(data).map(([key, value]) => ({
+          label: value,
+          value: key
+        }))
+        commit(types.SET_DATA, { item: 'searchRoleTypeList', value: searchRoleTypeList })
+        commit(types.SET_DATA, { item: 'searchTypeId', value: searchRoleTypeList.length ? searchRoleTypeList[0].value : null })
+      } else {
+        // 创建角色的角色列表
+      }
+    }).catch(err => {
+      alert(err)
+    })
+  },
+  getRoleListData ({ commit, state, getters, dispatch }) {
+    let params = {
+      q: state.searchName,
+      pageSize: state.pageSize,
+      pageIndex: state.currentPage
+    }
+    let getRoleListReq = api.role.getRoleList(params)
     commit(types.ADD_REQUEST_CANCEL, { item: 'getRoleListReq', value: getRoleListReq.cancel })
     getRoleListReq.request.then(res => {
       let data = res.Data || []
       let roleList = data.map(item => {
-        return Object.assign(item, {})
+        return Object.assign({}, item, {})
       })
-      console.log(roleList)
       commit(types.SET_DATA, { item: 'roleList', value: roleList })
+      commit(types.SET_DATA, { item: 'totalCount', value: res.Count })
     }).catch(err => {
       alert(err)
     }).finally(() => {

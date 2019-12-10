@@ -6,7 +6,19 @@
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            @include setEqualInterval(1rem)
+            @include setEqualInterval(1rem);
+        }
+    }
+    .role-edit {
+        &__header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: baseline;
+            @include setEqualInterval(1rem);
+            &-title {
+                font-size: 1.125rem;
+                font-weight: bold;
+            }
         }
     }
 }
