@@ -1,6 +1,6 @@
 <template>
   <div class="system-role main-container">
-    <eg-box v-if="!isShowEdit" class="role-box">
+    <eg-box v-show="!isShowEdit" class="role-box">
       <template v-slot:headerLeft>
         <eg-input placeholder="角色名称搜索" v-model="searchNameValue"/>
         <el-select
@@ -45,14 +45,42 @@
         />
       </template>
     </eg-box>
-    <eg-box v-if="isShowEdit" class="role-edit">
+    <eg-box v-show="isShowEdit" class="role-edit">
       <template v-slot:headerLeft>
         <div class="role-edit__header">
-          <h4 class="role-edit__header-title">编辑角色</h4>
+          <h4 class="role-edit__header-title">{{isModify ? '编辑角色' : '添加角色'}}</h4>
           <eg-button type="text" @click="showEdit({isShow: false})">返回列表</eg-button>
         </div>
       </template>
       <template v-slot:content>
+        <div class="role-edit__row">
+          <label class="role-edit__row-title">角色名称</label>
+          <eg-input width-type="medium"/>
+        </div>
+        <div class="role-edit__row">
+          <label class="role-edit__row-title">角色类型</label>
+          <el-select
+            placeholder="角色类型"
+            v-model="editRoleType"
+          >
+            <el-option
+              v-for="item of editRoleTypeList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+        <div class="role-edit__row">
+          <label class="role-edit__row-title align-top">权限菜单</label>
+          <div class="role-edit__row-box">
+          </div>
+        </div>
+        <div class="role-edit__row">
+          <label class="role-edit__row-title"/>
+          <eg-button type="minor">取消</eg-button>
+          <eg-button>保存</eg-button>
+        </div>
       </template>
     </eg-box>
   </div>
@@ -78,7 +106,9 @@
         'pageSize',
         'totalCount',
         'isModify',
-        'isShowEdit'
+        'isShowEdit',
+        'editRoleTypeList',
+        'editData'
       ]),
       ...mapGetters([
       ]),
@@ -89,6 +119,10 @@
       searchNameValue: {
         get () { return this.searchName },
         set (value) { this.updateStateData({ item: 'searchName', value }) }
+      },
+      editRoleType: {
+        get () { return this.editData.RoleType },
+        set (value) { this.updateObjectData({ obj: 'editData', item: 'RoleType', value }) }
       }
     },
     methods: {
@@ -98,10 +132,12 @@
         'getRoleType',
         'currentPageOnChange',
         'pageSizeOnChange',
-        'updateStateData'
+        'updateStateData',
+        'updateObjectData'
       ]),
       searchClick () {
         this.getRoleType(true)
+        this.getRoleType(false)
         this.getRoleListData()
       }
     },

@@ -13,7 +13,14 @@ const state = {
   pageSize: 10,
   totalCount: 0,
   isShowEdit: false,
-  isModify: false
+  isModify: false,
+  editData: {
+    RoleId: null,
+    RoleName: '',
+    RoleType: null,
+    Menus: []
+  },
+  editRoleTypeList: []
 }
 
 const getters = {
@@ -47,6 +54,12 @@ const actions = {
         commit(types.SET_DATA, { item: 'searchTypeId', value: searchRoleTypeList.length ? searchRoleTypeList[0].value : null })
       } else {
         // 创建角色的角色列表
+        let editRoleTypeList = Object.entries(data).map(([key, value]) => ({
+          label: value,
+          value: key
+        }))
+        commit(types.SET_DATA, { item: 'editRoleTypeList', value: editRoleTypeList })
+        commit(types.UPDATE_OBJ_DATA, { obj: 'editData', item: 'RoleType', value: editRoleTypeList.length ? editRoleTypeList[0].value : null })
       }
     }).catch(err => {
       alert(err)
