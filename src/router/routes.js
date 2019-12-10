@@ -30,6 +30,13 @@ const routes = [
           Store.registerModule(['resource', 'group'], require('@/views/main/resource/group/group').default)
           return import('@/views/main/resource/group/index')
         }
+      },
+      {
+        path: 'room',
+        component: (resolve) => {
+          Store.registerModule(['resource', 'room'], require('@/views/main/resource/room/room').default)
+          return import('@/views/main/resource/room/index')
+        }
       }
     ]
   },

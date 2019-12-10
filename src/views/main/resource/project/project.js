@@ -99,8 +99,10 @@ const actions = {
     }
     if (!postData.Name || postData.Name === '') {
       alert('项目名称不能为空！')
+      return
     } else if (postData.Type === null || postData.Type === undefined) {
       alert('项目类型不能为空！')
+      return
     }
     if (state.isModify) {
       postData.Id = editData.Id

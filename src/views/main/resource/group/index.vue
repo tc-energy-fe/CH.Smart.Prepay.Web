@@ -1,11 +1,12 @@
 <template>
   <div class="resource-group main-container has-search">
-    <div class="main-search">
+    <div class="main-search" v-show="!isShowEdit">
       <p>选择区域</p>
       <el-tree
         ref="tree"
         :data="groupTree"
         node-key="value"
+        :default-expanded-keys="[-1, currentNodeId]"
         :highlight-current="true"
         :current-node-key="currentNodeId"
         :expand-on-click-node="false"
@@ -13,10 +14,11 @@
       ></el-tree>
     </div>
     <div class="main-content">
-      <eg-box v-if="!isShowEdit">
+      <eg-box v-show="!isShowEdit">
         <template v-slot:headerLeft>
           <eg-input
             placeholder="区域名称搜索"
+            v-model="searchName"
           ></eg-input>
           <eg-button @click="getGroupList">查询</eg-button>
         </template>
@@ -35,7 +37,7 @@
             </el-table-column>
           </el-table>
           <el-pagination
-            @current-change="currentOnChange"
+            @current-change="currentPageOnChange"
             @size-change="pageSizeOnChange"
             :page-sizes="[10, 15, 20, 25]"
             :current-page="currentPage"
@@ -92,7 +94,6 @@
     name: 'resource-group',
     data () {
       return {
-        currentPage: 1,
         pageSize: 10
       }
     },
@@ -104,6 +105,7 @@
         'editParentId',
         'editData',
         'isShowEdit',
+        'currentPage',
         'isLoadingGroupList'
       ]),
       ...mapGetters([
@@ -112,6 +114,12 @@
         'projectId',
         'currentNodeId'
       ]),
+      searchName: {
+        get () { return this.$store.state.resource.group.searchName },
+        set (val) {
+          this.updateFormData({ item: 'searchName', value: val })
+        }
+      },
       editName: {
         get () { return this.editData.Name },
         set (val) {
@@ -134,11 +142,9 @@
         'editGroup',
         'updateFormData',
         'deleteGroup',
-        'showEdit'
+        'showEdit',
+        'currentPageOnChange'
       ]),
-      currentOnChange (val) {
-        this.currentPage = val
-      },
       pageSizeOnChange (val) {
         this.pageSize = val
       }
@@ -147,7 +153,7 @@
       projectId (newValue) {
       },
       groupTree (newValue, oldValue) {
-        if (newValue.length && newValue !== oldValue) {
+        if (newValue.length && newValue[0].children !== oldValue[0].children) {
           this.$nextTick(function () {
             this.$refs.tree.setCurrentKey(newValue[0].value)
           })
