@@ -8,8 +8,8 @@
           v-model="searchTypeIdValue"
         >
           <el-option
-            v-for="item of searchRoleTypeList"
-            :key="item.value"
+            v-for="(item, index) of searchRoleTypeList"
+            :key="index"
             :label="item.label"
             :value="item.value"
           />
@@ -22,8 +22,12 @@
       <template v-slot:content>
         <el-table :data="roleList">
           <el-table-column label="角色名称" prop="RoleName" align="center"/>
-          <el-table-column label="角色类型" prop="RoleType" align="center"/>
-          <el-table-column label="权限范围" align="center"/>
+          <el-table-column label="角色类型" prop="RoleTypeText" align="center"/>
+          <el-table-column label="权限范围" align="center">
+            <template v-slot="{row}">
+              <eg-button type="text">查看权限</eg-button>
+            </template>
+          </el-table-column>
           <el-table-column label="用户数" prop="UserCount" align="center"/>
           <el-table-column label="创建人" prop="CreatorName" align="center"/>
           <el-table-column label="操作" align="center">
@@ -63,6 +67,7 @@
           <el-select
             placeholder="角色类型"
             v-model="editRoleType"
+            :disabled="isModify"
           >
             <el-option
               v-for="item of editRoleTypeList"
@@ -139,6 +144,9 @@
       editRoleName: {
         get () { return this.editData.RoleName },
         set (value) { this.updateObjectData({ obj: 'editData', item: 'RoleName', value }) }
+      },
+      menusCheckedIds () {
+        return this.editData.Menus.map(item => (item.Id))
       }
     },
     methods: {
@@ -148,6 +156,7 @@
         'getRoleType',
         'getRoleMenus',
         'addRoleData',
+        'saveRoleData',
         'currentPageOnChange',
         'pageSizeOnChange',
         'updateStateData',
@@ -158,23 +167,31 @@
       },
       saveClick () {
         if (this.isModify) {
+          this.saveRoleData()
         } else {
           this.addRoleData()
         }
       },
       handleCheck (node, { checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys }) {
         let totalNodes = [...checkedNodes, ...halfCheckedNodes]
-        // let Menus = totalNodes.map(menu => ({ Id: menu.value }))
         this.updateObjectData({ obj: 'editData', item: 'Menus', value: totalNodes })
       }
     },
     watch: {
+      menusCheckedIds (newValue) {
+        newValue.forEach(id => {
+          this.$refs.editTree.setChecked(id, true, false)
+        })
+      }
     },
     created () {
       this.getRoleType(true)
       this.searchClick()
       this.getRoleType(false)
       this.getRoleMenus()
+    },
+    beforeDestroy () {
+      this.showEdit({ isShow: false })
     }
   }
 </script>

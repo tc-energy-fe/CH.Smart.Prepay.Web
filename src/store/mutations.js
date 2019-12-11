@@ -74,7 +74,7 @@ const Mutations = {
   },
   [types.CHECKOUT_SUCCEED] (state, stateCode) {
     if (stateCode === 0) {
-      ElAlert('提示', '执行成功!').then(() => {})
+      ElAlert('执行成功!', '提示').then(() => {})
     }
   },
   [types.SET_BAR] (state, { item, value }) {

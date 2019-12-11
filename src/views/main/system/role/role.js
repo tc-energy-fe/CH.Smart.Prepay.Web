@@ -52,6 +52,7 @@ const actions = {
         // 编辑模式
         commit(types.SET_DATA, { item: 'isModify', value: true })
         dispatch('getRoleMenus', row.CreatorId)
+        dispatch('getSingleRoleData', row.RoleId)
       } else {
         // 添加模式
         commit(types.SET_DATA, { item: 'isModify', value: false })
@@ -77,7 +78,7 @@ const actions = {
         // 创建角色的角色列表
         let editRoleTypeList = Object.entries(data).map(([key, value]) => ({
           label: value,
-          value: key
+          value: parseInt(key)
         }))
         commit(types.SET_DATA, { item: 'editRoleTypeList', value: editRoleTypeList })
         commit(types.UPDATE_OBJ_DATA, { obj: 'editData', item: 'RoleType', value: editRoleTypeList.length ? editRoleTypeList[0].value : null })
@@ -100,8 +101,11 @@ const actions = {
     commit(types.ADD_REQUEST_CANCEL, { item: 'getRoleListReq', value: getRoleListReq.cancel })
     getRoleListReq.request.then(res => {
       let data = res.Data || []
+      let searchRoleTypeList = state.searchRoleTypeList
       let roleList = data.map(item => {
-        return Object.assign({}, item, {})
+        return Object.assign({}, item, {
+          RoleTypeText: searchRoleTypeList.find(type => (type.value === item.RoleType)).label
+        })
       })
       commit(types.SET_DATA, { item: 'roleList', value: roleList })
       commit(types.SET_DATA, { item: 'totalCount', value: res.Count })
@@ -121,8 +125,26 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     })
   },
+  getSingleRoleData ({ commit, state, getters, dispatch }, id) {
+    let getSingleRoleData = api.role.getSingleRole(id)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getSingleRoleData', value: getSingleRoleData.cancel })
+    getSingleRoleData.request.then(res => {
+      let data = res.Data || {}
+      commit(types.SET_DATA, { item: 'editData', value: Object.assign({}, state.editData, data) })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    })
+  },
   addRoleData ({ commit, state, getters, dispatch }) {
     let editData = state.editData
+    if (editData.RoleName === '') {
+      ElAlert('请输入角色名称', '表单参数错误')
+      return
+    }
+    if (editData.RoleType === null) {
+      ElAlert('请选择角色类型', '表单参数错误')
+      return
+    }
     let postData = {
       RoleName: editData.RoleName,
       RoleType: editData.RoleType,
@@ -131,6 +153,26 @@ const actions = {
     let addRoleData = api.role.postRoleData(postData)
     commit(types.ADD_REQUEST_CANCEL, { item: 'addRoleData', value: addRoleData.cancel })
     addRoleData.request.then(res => {
+      commit(types.CHECKOUT_SUCCEED, res.State)
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    })
+  },
+  saveRoleData ({ commit, state, getters, dispatch }) {
+    let editData = state.editData
+    if (editData.RoleName === '') {
+      ElAlert('请输入角色名称', '表单参数错误')
+      return
+    }
+    let postData = {
+      RoleId: editData.RoleId,
+      RoleName: editData.RoleName,
+      RoleType: editData.RoleType,
+      Menus: editData.Menus.map(menu => ({ Id: menu.Id }))
+    }
+    let saveRoleData = api.role.putRoleData(postData)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'saveRoleData', value: saveRoleData.cancel })
+    saveRoleData.request.then(res => {
       commit(types.CHECKOUT_SUCCEED, res.State)
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
