@@ -6,7 +6,8 @@
         ref="tree"
         :data="groupTree"
         node-key="value"
-        :default-expanded-keys="[-1, currentNodeId]"
+        default-expand-all
+        auto-expand-parent
         :highlight-current="true"
         :current-node-key="currentNodeId"
         :expand-on-click-node="false"
@@ -26,7 +27,7 @@
           <eg-button @click="showEdit">新建区域</eg-button>
         </template>
         <template v-slot:content>
-          <el-table :data="groupList" v-loading="isLoadingGroupList">
+          <el-table :data="paginationData" v-loading="isLoadingGroupList">
             <el-table-column label="区域名称" prop="Name" align="center"></el-table-column>
             <el-table-column label="上级区域" prop="ParentName" align="center"></el-table-column>
             <el-table-column label="操作" align="center">
@@ -56,6 +57,7 @@
           <p class="project-edit__row">
             <label>区域名称</label>
             <eg-input v-model="editName"></eg-input>
+            <i class="iconfont icon-content_icon_required"></i>
           </p>
           <p class="project-edit__row">
             <label>上级区域</label>
@@ -114,6 +116,9 @@
         'projectId',
         'currentNodeId'
       ]),
+      paginationData () {
+        return this.groupList.slice(this.pageSize * (this.currentPage - 1), this.pageSize * this.currentPage)
+      },
       searchName: {
         get () { return this.$store.state.resource.group.searchName },
         set (val) {
@@ -153,7 +158,7 @@
       projectId (newValue) {
       },
       groupTree (newValue, oldValue) {
-        if (newValue.length && newValue[0].children !== oldValue[0].children) {
+        if (newValue.length && newValue !== oldValue) {
           this.$nextTick(function () {
             this.$refs.tree.setCurrentKey(newValue[0].value)
           })

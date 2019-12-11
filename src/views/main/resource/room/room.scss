@@ -35,8 +35,11 @@
     .room-edit__row {
       display: flex;
       align-items: center;
-      margin-bottom: 1rem;
-
+      margin-top: 1rem;
+      .iconfont{
+        font-size: .9rem;
+        margin-left: .5rem;
+      }
       > label {
         display: block;
         width: 5rem;

@@ -33,6 +33,10 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     font-size: $font-size;
     border: 1px solid $border-color;
   }
+  .el-input__inner::placeholder{
+    font-size: .9rem;
+    color: #a4a4a4;
+  }
   .el-input__icon{
     height: $normal-input-height;
     line-height: $normal-input-height;
@@ -48,6 +52,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 // table
 .el-table{
+  font-size: 1rem;
   th{
     font-weight: normal;
   }
@@ -72,6 +77,9 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 // tree
 .el-tree{
+  .el-tree-node__label{
+    font-size: 1rem;
+  }
   &.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
     background-color: #e5eeff;
     color: $main-color;

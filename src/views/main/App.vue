@@ -21,7 +21,7 @@
         <span class="app-header_user">{{account.Name || ''}}</span>
         <i class="app-header_split"></i>
         <div class="app-logout">
-          <span class="app-logout_text">退出</span>
+          <span class="app-logout_text" @click="logout">退出</span>
         </div>
       </div>
     </header>
@@ -30,6 +30,7 @@
         <p><router-link to="/resource/project">项目管理</router-link></p>
         <p><router-link to="/resource/group">区域管理</router-link></p>
         <p><router-link to="/resource/room">房间管理</router-link></p>
+        <p><router-link to="/resource/roomUser">开户销户管理</router-link></p>
         <p><router-link to="/system/role">角色管理</router-link></p>
       </div>
       <div class="app-main">
@@ -50,7 +51,8 @@
       ...mapState([
         'userAreas',
         'areaId',
-        'account'
+        'account',
+        'isLoadingMainGroupList'
       ]),
       ...mapGetters([
       ])
@@ -62,6 +64,11 @@
       ]),
       projectOnChange (val) {
         this.updateFormData({ item: 'areaId', value: val })
+      },
+      logout () {
+        sessionStorage.removeItem('Token')
+        sessionStorage.removeItem('FileToken')
+        location.replace(location.origin + '/login')
       }
     },
     created () {

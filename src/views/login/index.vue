@@ -30,7 +30,7 @@
     methods: {
       loginOnClick () {
         if (this.username === '' || this.password === '') {
-          alert('请输入用户名和登录密码')
+          ElAlert('请输入用户名和登录密码！', '提示').then(() => {})
           return
         }
         this.login()
@@ -66,11 +66,11 @@
         }).catch(err => {
           console.error(err)
           if (!err.hasOwnProperty('code')) {
-            alert('数据处理出错！')
+            ElAlert('数据处理出错!', '错误').then(() => {})
           } else if (!err.abort) {
             let code = err.code.toString()
             let errorMsg = ERROR_CODE['login'][code] || err.desc || `未知错误：${code}`
-            alert(errorMsg)
+            ElAlert(errorMsg, '错误').then(() => {})
           }
         }).finally(() => {
           this.isLogin = false

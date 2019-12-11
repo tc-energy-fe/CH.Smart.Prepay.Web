@@ -43,5 +43,10 @@ export default {
   deleteRoom: (id) => http({
     url: `/Group/Room/${id}`,
     method: 'delete'
+  }),
+  getRoomAccountList: (data) => http({
+    method: 'post',
+    url: '/Group/Room/Account/List',
+    data
   })
 }

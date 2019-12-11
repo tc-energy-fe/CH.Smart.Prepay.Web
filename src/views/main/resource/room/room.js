@@ -22,7 +22,7 @@ const state = {
     Name: '',
     GroupNo: ''
   },
-  editParentId: -1,
+  editParentId: null,
   isModify: false,
   gatewayList: [],
   editGatewayId: null,
@@ -37,7 +37,7 @@ const state = {
 
 const getters = {
   mainGroupList: (state, getters, rootState) => rootState.mainGroupList,
-  groupTree: (state, getters, rootState) => rootState.mainGroupTree || [],
+  groupTree: (state, getters, rootState) => rootState.mainGroupTreeHasRoot,
   projectId: (state, getters, rootState, rootGetters) => rootGetters.projectId,
   currentNodeId: state => state.currentNode.value
 }
@@ -74,10 +74,12 @@ const actions = {
   },
   getRoomList ({ state, getters, commit, dispatch }) {
     dispatch('currentPageOnChange', 1)
-    let getRoomListReq = api.group.getRoomList(Object.assign({
-      ProjectId: getters.projectId,
-      GroupId: getters.currentNodeId
-    }, state.searchData))
+    let groupId = getters.currentNodeId
+    let postData = Object.assign({
+      ProjectId: getters.projectId
+    }, state.searchData)
+    if (!isEmpty(groupId) && groupId !== getters.projectId) postData.GroupId = groupId
+    let getRoomListReq = api.group.getRoomList(postData)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingRoomList', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'getRoomListReq', value: getRoomListReq.cancel })
     getRoomListReq.request.then(res => {
@@ -140,7 +142,7 @@ const actions = {
       Name: editData.Name
     }
     if (!postData.Name || postData.Name === '') {
-      alert('请填写房间名称！')
+      ElAlert('请填写房间名称！', '提示').then(() => {})
       return
     }
     if (state.isModify) {
@@ -148,7 +150,7 @@ const actions = {
     } else {
       let parentId = state.editParentId
       if (isEmpty(parentId) || parentId === -1) {
-        alert('请选择所属区域！')
+        ElAlert('请选择所属区域！', '提示').then(() => {})
         return
       } else {
         postData.ParentId = parentId

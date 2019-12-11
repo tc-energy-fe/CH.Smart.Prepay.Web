@@ -57,26 +57,24 @@ const Mutations = {
   [types.CHECKOUT_FAILURE] (state, err) {
     console.log(err)
     if (err.code === -2) {
-      alert('未登录或者登录信息过期')
-      setTimeout(() => {
+      ElAlert('未登录或者登录信息过期！', '提示').then(() => {
         location.replace(location.origin + '/login')
-      }, 2000)
+      })
     } else if (err.code === -15) {
-      alert('账号异地登录')
-      setTimeout(() => {
+      ElAlert('账号异地登录！', '错误').then(() => {
         location.replace(location.origin + '/login')
-      }, 2000)
+      })
     } else if (!err.hasOwnProperty('code')) {
-      alert('数据错误或数据异常')
+      ElAlert('数据错误或数据异常！', '错误').then(() => {})
     } else if (!err.abort) {
       let code = err.code.toString()
       let errorMsg = err.Msg || ERROR_CODE['default'][code] || `未知错误${code}`
-      alert(errorMsg)
+      ElAlert(errorMsg, '错误').then(() => {})
     }
   },
   [types.CHECKOUT_SUCCEED] (state, stateCode) {
     if (stateCode === 0) {
-      alert('执行成功')
+      ElAlert('提示', '执行成功!').then(() => {})
     }
   },
   [types.SET_BAR] (state, { item, value }) {

@@ -7,6 +7,8 @@
         ref="tree"
         :data="groupTree"
         node-key="value"
+        default-expand-all
+        auto-expand-parent
         :highlight-current="true"
         :current-node-key="currentNodeId"
         :expand-on-click-node="false"
@@ -31,7 +33,7 @@
           <eg-button @click="showEdit">新建房间</eg-button>
         </template>
         <template v-slot:content>
-          <el-table :data="roomList" v-loading="isLoadingRoomList">
+          <el-table :data="paginationData" v-loading="isLoadingRoomList">
             <el-table-column label="户号" prop="GroupNo" align="center"></el-table-column>
             <el-table-column label="门牌号" prop="Name" align="center"></el-table-column>
             <el-table-column label="所属区域" prop="ParentFullName" align="center"></el-table-column>
@@ -67,23 +69,26 @@
           <p class="room-edit__row">
             <label>门牌编号</label>
             <eg-input v-model="editName"></eg-input>
+            <i class="iconfont icon-content_icon_required"></i>
           </p>
           <div class="room-edit__row">
             <label>所属区域</label>
-            <div class="room-edit__group" v-if="!isModify">
-              <el-tree
-                :key="'editTree'"
-                :data="editGroupTree"
-                node-key="value"
-                :default-expanded-keys="[projectId, editParentId]"
-                auto-expand-parent
-                :highlight-current="true"
-                :current-node-key="editParentId"
-                :expand-on-click-node="false"
-                @current-change="editGroupNodeOnChange"
-              ></el-tree>
-            </div>
-            <span v-else>{{editParentName}}</span>
+            <template  v-if="!isModify">
+              <div class="room-edit__group">
+                <el-tree
+                  :key="'editTree'"
+                  :data="groupTree"
+                  node-key="value"
+                  :default-expanded-keys="[projectId]"
+                  auto-expand-parent
+                  :highlight-current="true"
+                  :expand-on-click-node="false"
+                  @current-change="editGroupNodeOnChange"
+                ></el-tree>
+              </div>
+              <i class="iconfont icon-content_icon_required"></i>
+            </template>
+            <eg-input v-else :value="editParentName" disabled></eg-input>
           </div>
           <div class="room-edit__row">
             <label>绑定仪表</label>
@@ -121,7 +126,7 @@
                 @current-change="updateFormData({ item: 'editGatewayDeviceId', value: $event.value })"
               ></el-tree>
             </div>
-            <span v-else>{{editGatewayDeviceName}}</span>
+            <eg-input v-else :value="editGatewayDeviceName" disabled></eg-input>
           </div>
           <p class="room-edit__footer">
             <eg-button style="margin-right: 2rem" type="minor" @click="showEdit({ isShow: false })">取消</eg-button>
@@ -171,6 +176,9 @@
         'groupTree',
         'currentNodeId'
       ]),
+      paginationData () {
+        return this.roomList.slice(this.pageSize * (this.currentPage - 1), this.pageSize * this.currentPage)
+      },
       searchName: {
         get () { return this.searchData.Name },
         set (val) { this.updateObjectData({ obj: 'searchData', item: 'Name', value: val }) }
@@ -182,14 +190,6 @@
       editName: {
         get () { return this.editData.Name },
         set (val) { this.updateObjectData({ obj: 'editData', item: 'Name', value: val }) }
-      },
-      editGroupTree () {
-        let project = this.$store.getters.project || {}
-        return [{
-          value: project.Id,
-          label: project.Name || '全部区域',
-          children: this.groupTree
-        }]
       }
     },
     methods: {
