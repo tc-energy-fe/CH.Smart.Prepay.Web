@@ -17,7 +17,7 @@
         <eg-button @click="searchClick">查询</eg-button>
       </template>
       <template v-slot:headerRight>
-        <eg-button @click="showEdit({isShow: true})">新建角色</eg-button>
+        <eg-button @click="showEdit()">新建角色</eg-button>
       </template>
       <template v-slot:content>
         <el-table :data="roleList">
@@ -28,7 +28,7 @@
           <el-table-column label="创建人" prop="CreatorName" align="center"/>
           <el-table-column label="操作" align="center">
             <template v-slot="{row}">
-              <eg-button type="text" style="margin-right: 1rem;">编辑</eg-button>
+              <eg-button type="text" style="margin-right: 1rem;" @click="showEdit({row})">编辑</eg-button>
               <eg-button type="text" color="danger">删除</eg-button>
             </template>
           </el-table-column>
@@ -55,7 +55,8 @@
       <template v-slot:content>
         <div class="role-edit__row">
           <label class="role-edit__row-title">角色名称</label>
-          <eg-input width-type="medium"/>
+          <eg-input width-type="medium" v-model="editRoleName"/>
+          <i class="iconfont icon-content_icon_required"/>
         </div>
         <div class="role-edit__row">
           <label class="role-edit__row-title">角色类型</label>
@@ -70,16 +71,26 @@
               :value="item.value"
             />
           </el-select>
+          <i class="iconfont icon-content_icon_required"/>
         </div>
         <div class="role-edit__row">
           <label class="role-edit__row-title align-top">权限菜单</label>
           <div class="role-edit__row-box">
+            <el-tree
+              ref="editTree"
+              :data="editTreeData"
+              node-key="value"
+              show-checkbox
+              default-expand-all
+              @check="handleCheck"
+            />
           </div>
+          <i class="iconfont icon-content_icon_required"/>
         </div>
         <div class="role-edit__row">
           <label class="role-edit__row-title"/>
-          <eg-button type="minor">取消</eg-button>
-          <eg-button>保存</eg-button>
+          <eg-button type="minor" @click="showEdit({isShow: false})">取消</eg-button>
+          <eg-button @click="saveClick">保存</eg-button>
         </div>
       </template>
     </eg-box>
@@ -108,7 +119,8 @@
         'isModify',
         'isShowEdit',
         'editRoleTypeList',
-        'editData'
+        'editData',
+        'editTreeData'
       ]),
       ...mapGetters([
       ]),
@@ -123,6 +135,10 @@
       editRoleType: {
         get () { return this.editData.RoleType },
         set (value) { this.updateObjectData({ obj: 'editData', item: 'RoleType', value }) }
+      },
+      editRoleName: {
+        get () { return this.editData.RoleName },
+        set (value) { this.updateObjectData({ obj: 'editData', item: 'RoleName', value }) }
       }
     },
     methods: {
@@ -130,21 +146,35 @@
         'showEdit',
         'getRoleListData',
         'getRoleType',
+        'getRoleMenus',
+        'addRoleData',
         'currentPageOnChange',
         'pageSizeOnChange',
         'updateStateData',
         'updateObjectData'
       ]),
       searchClick () {
-        this.getRoleType(true)
-        this.getRoleType(false)
         this.getRoleListData()
+      },
+      saveClick () {
+        if (this.isModify) {
+        } else {
+          this.addRoleData()
+        }
+      },
+      handleCheck (node, { checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys }) {
+        let totalNodes = [...checkedNodes, ...halfCheckedNodes]
+        // let Menus = totalNodes.map(menu => ({ Id: menu.value }))
+        this.updateObjectData({ obj: 'editData', item: 'Menus', value: totalNodes })
       }
     },
     watch: {
     },
     created () {
+      this.getRoleType(true)
       this.searchClick()
+      this.getRoleType(false)
+      this.getRoleMenus()
     }
   }
 </script>

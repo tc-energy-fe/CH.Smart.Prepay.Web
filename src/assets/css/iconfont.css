@@ -20,6 +20,7 @@
 }
 
 .icon-content_icon_required:before {
+    color: #f56c6c;
     content: "\e603";
 }
 
