@@ -36,6 +36,9 @@
       display: flex;
       align-items: center;
       color: $main-color;
+      > span{
+        line-height: 1;
+      }
       .app-header_user{
         cursor: pointer;
       }

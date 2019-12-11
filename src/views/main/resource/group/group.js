@@ -17,13 +17,22 @@ const state = {
     Id: null,
     Name: ''
   },
+  currentPage: 1,
   isShowEdit: false,
   isLoadingGroupList: false
 }
 
 const getters = {
   mainGroupList: (state, getters, rootState) => rootState.mainGroupList,
-  groupTree: (state, getters, rootState) => rootState.mainGroupTree || [],
+  groupTree: (state, getters, rootState, rootGetters) => {
+    let rootTree = rootState.mainGroupTree || []
+    let project = rootGetters.project || {}
+    return [{
+      value: -1,
+      label: project.Name || '全部区域',
+      children: rootTree
+    }]
+  },
   projectId: (state, getters, rootState, rootGetters) => rootGetters.projectId,
   currentNodeId: state => state.currentNode.value
 }
@@ -53,12 +62,17 @@ const actions = {
 
     commit(types.SET_DATA, { item: 'isShowEdit', value: true })
   },
-  getGroupList ({ state, getters, commit }) {
-    let getGroupListReq = api.group.getGroupList({
+  getGroupList ({ state, getters, commit, dispatch }) {
+    dispatch('currentPageOnChange', 1)
+    let params = {
       ProjectId: getters.projectId,
-      GroupId: getters.currentNodeId,
       Name: state.searchName
-    })
+    }
+    let groupId = getters.currentNodeId
+    if (!isEmpty(groupId) && groupId !== -1) {
+      params.GroupId = getters.currentNodeId
+    }
+    let getGroupListReq = api.group.getGroupList(params)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingGroupList', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'getGroupListReq', value: getGroupListReq.cancel })
     getGroupListReq.request.then(res => {

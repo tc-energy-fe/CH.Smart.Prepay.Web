@@ -29,6 +29,7 @@
       <div class="app-side-bar">
         <p><router-link to="/resource/project">项目管理</router-link></p>
         <p><router-link to="/resource/group">区域管理</router-link></p>
+        <p><router-link to="/resource/room">房间管理</router-link></p>
         <p><router-link to="/system/role">角色管理</router-link></p>
       </div>
       <div class="app-main">
