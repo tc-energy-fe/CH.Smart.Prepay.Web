@@ -24,7 +24,7 @@
         <eg-button @click="showEdit">新建项目</eg-button>
       </template>
       <template v-slot:content>
-        <el-table :data="projectList" v-loading="isLoadingProjectList">
+        <el-table :data="paginationData" v-loading="isLoadingProjectList">
           <el-table-column label="项目名称" prop="Name" align="center"></el-table-column>
           <el-table-column label="项目类型" prop="typeText" align="center"></el-table-column>
           <el-table-column label="项目描述" prop="Desc" align="center"></el-table-column>
@@ -37,7 +37,7 @@
           </el-table-column>
         </el-table>
         <el-pagination
-          @current-change="currentOnChange"
+          @current-change="currentPageOnChange"
           @size-change="pageSizeOnChange"
           :page-sizes="[10, 15, 20, 25]"
           :current-page="currentPage"
@@ -56,6 +56,7 @@
         <p class="project-edit__row">
           <label>项目名称</label>
           <eg-input v-model="editName"></eg-input>
+          <i class="iconfont icon-content_icon_required"></i>
         </p>
         <p class="project-edit__row">
           <label>项目类型</label>
@@ -67,6 +68,7 @@
               :value="item.value">
             </el-option>
           </el-select>
+          <i class="iconfont icon-content_icon_required"></i>
         </p>
         <p class="project-edit__row">
           <label>项目描述</label>
@@ -89,7 +91,6 @@
     name: 'resource-project',
     data () {
       return {
-        currentPage: 1,
         pageSize: 10
       }
     },
@@ -97,6 +98,7 @@
     computed: {
       ...mapState([
         'projectList',
+        'currentPage',
         'typeId',
         'editTypeId',
         'isModify',
@@ -106,6 +108,9 @@
         'isLoadingProjectList'
       ]),
       ...mapGetters([]),
+      paginationData () {
+        return this.projectList.slice(this.pageSize * (this.currentPage - 1), this.pageSize * this.currentPage)
+      },
       searchName: {
         get () { return this.$store.state.resource.project.searchName },
         set (val) {
@@ -134,16 +139,14 @@
         'editProject',
         'updateFormData',
         'deleteProject',
-        'showEdit'
+        'showEdit',
+        'currentPageOnChange'
       ]),
       typeOnChange (val) {
         this.updateFormData({ item: 'typeId', value: val })
       },
       editTypeOnChange (val) {
         this.updateFormData({ item: 'editTypeId', value: val })
-      },
-      currentOnChange (val) {
-        this.currentPage = val
       },
       pageSizeOnChange (val) {
         this.pageSize = val

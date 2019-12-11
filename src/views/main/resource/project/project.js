@@ -10,6 +10,7 @@ const state = {
   reqCancels: new Map(),
   projectTypeList: [],
   projectList: [],
+  currentPage: 1,
   typeId: null,
   editTypeId: null,
   isModify: false,
@@ -69,7 +70,8 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {})
   },
-  getProjectList ({ state, getters, commit }) {
+  getProjectList ({ state, getters, commit, dispatch }) {
+    dispatch('currentPageOnChange', 1)
     let params = {
       name: state.searchName
     }

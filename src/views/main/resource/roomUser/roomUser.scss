@@ -1,10 +1,12 @@
-.resource-group{
+.resource-roomuser{
   .main-search{
-    padding: 1rem;
+    padding: $normal-padding;
   }
-  .main-content {
+  .main-content{
     background-color: #FFF;
-
+    .eg-box{
+      height: 100%;
+    }
     .eg-box__header--left {
       display: flex;
       align-items: center;
@@ -14,25 +16,19 @@
       }
     }
 
-    .project-table_container {
-      padding: $normal-padding;
-    }
-
-    .project-edit__title {
+    .room-edit__title {
       font-size: 1.1rem;
       font-weight: bold;
+      line-height: 1.1;
     }
-
-    .project-edit__back {
-      color: $main-color;
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
+    .room-edit__name{
+      margin-top: 1rem;
+      > label{
+        display: inline-block;
+        width: 6rem;
       }
     }
-
-    .project-edit__row {
+    .room-edit__row {
       display: flex;
       align-items: center;
       margin-top: 1rem;
@@ -42,24 +38,12 @@
       }
       > label {
         display: block;
-        width: 5rem;
+        width: 6rem;
+        align-self: flex-start;
         height: $normal-input-height;
         line-height: $normal-input-height;
         align-self: flex-start;
       }
-
-      .el-textarea {
-        width: 28rem;
-
-        textarea {
-          resize: none;
-          height: 5rem;
-        }
-      }
-    }
-
-    .project-edit__footer {
-      padding: 2rem 0 0 5rem;
     }
   }
 }

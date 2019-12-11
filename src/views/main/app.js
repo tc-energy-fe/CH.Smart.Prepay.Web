@@ -14,6 +14,7 @@ const state = {
   },
   mainGroupList: [],
   mainGroupTree: [],
+  mainGroupTreeHasRoot: [],
   isLoadingMainGroupList: false
 }
 
@@ -71,13 +72,24 @@ const actions = {
     }
     let getUserManageAuthReq = api.group.getGroupList(postData)
     commit(types.ADD_REQUEST_CANCEL, { item: 'getUserManageAuthReq', value: getUserManageAuthReq.cancel })
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingMainGroupList', value: true })
     getUserManageAuthReq.request.then(res => {
       let groups = res.Data
+      let project = getters.project || {}
+      let mainGroupTree = initTree(groups, { rootLevel: 1 }) || []
+      let mainGroupTreeHasRoot = [{
+        value: project.Id,
+        label: project.Name,
+        children: mainGroupTree
+      }]
       commit(types.SET_DATA, { item: 'mainGroupList', value: groups })
-      commit(types.SET_DATA, { item: 'mainGroupTree', value: initTree(groups, { rootLevel: 1 }) })
+      commit(types.SET_DATA, { item: 'mainGroupTree', value: mainGroupTree })
+      commit(types.SET_DATA, { item: 'mainGroupTreeHasRoot', value: mainGroupTreeHasRoot })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
-    }).finally()
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingMainGroupList', value: false })
+    })
   }
 }
 

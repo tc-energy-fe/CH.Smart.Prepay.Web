@@ -24,15 +24,7 @@ const state = {
 
 const getters = {
   mainGroupList: (state, getters, rootState) => rootState.mainGroupList,
-  groupTree: (state, getters, rootState, rootGetters) => {
-    let rootTree = rootState.mainGroupTree || []
-    let project = rootGetters.project || {}
-    return [{
-      value: -1,
-      label: project.Name || '全部区域',
-      children: rootTree
-    }]
-  },
+  groupTree: (state, getters, rootState) => rootState.mainGroupTreeHasRoot,
   projectId: (state, getters, rootState, rootGetters) => rootGetters.projectId,
   currentNodeId: state => state.currentNode.value
 }
@@ -69,7 +61,7 @@ const actions = {
       Name: state.searchName
     }
     let groupId = getters.currentNodeId
-    if (!isEmpty(groupId) && groupId !== -1) {
+    if (!isEmpty(groupId) && groupId !== getters.projectId) {
       params.GroupId = getters.currentNodeId
     }
     let getGroupListReq = api.group.getGroupList(params)
@@ -91,7 +83,7 @@ const actions = {
       Name: editData.Name
     }
     if (!postData.Name || postData.Name === '') {
-      alert('区域名称不能为空！')
+      ElAlert('区域名称不能为空！', '提示').then()
       return
     }
     if (state.isModify) {

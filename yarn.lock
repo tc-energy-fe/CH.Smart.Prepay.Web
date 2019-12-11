@@ -615,8 +615,8 @@
 
 "@babel/polyfill@^7.7.0":
   version "7.7.0"
-  resolved "https://registry.npmjs.org/@babel/polyfill/-/polyfill-7.7.0.tgz#e1066e251e17606ec7908b05617f9b7f8180d8f3"
-  integrity sha512-/TS23MVvo34dFmf8mwCisCbWGrfhbiWZSwBo6HkADTBhUa2Q/jWltyY/tpofz/b6/RIhqaqQcquptCirqIhOaQ==
+  resolved "https://registry.npm.taobao.org/@babel/polyfill/download/@babel/polyfill-7.7.0.tgz#e1066e251e17606ec7908b05617f9b7f8180d8f3"
+  integrity sha1-4QZuJR4XYG7HkIsFYX+bf4GA2PM=
   dependencies:
     core-js "^2.6.5"
     regenerator-runtime "^0.13.2"
@@ -2458,10 +2458,15 @@ core-js-compat@^3.1.1, core-js-compat@^3.4.3:
     browserslist "^4.7.3"
     semver "^6.3.0"
 
-core-js@^2.4.0, core-js@^2.6.5:
+core-js@^2.4.0:
   version "2.6.10"
   resolved "https://registry.npm.taobao.org/core-js/download/core-js-2.6.10.tgz?cache=0&sync_timestamp=1575309581584&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcore-js%2Fdownload%2Fcore-js-2.6.10.tgz#8a5b8391f8cc7013da703411ce5b585706300d7f"
   integrity sha1-iluDkfjMcBPacDQRzltYVwYwDX8=
+
+core-js@^2.6.5:
+  version "2.6.11"
+  resolved "https://registry.npm.taobao.org/core-js/download/core-js-2.6.11.tgz?cache=0&sync_timestamp=1575901188518&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcore-js%2Fdownload%2Fcore-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
+  integrity sha1-OIMUafmSK97Y7iHJ3EaYXgOZMIw=
 
 core-js@^3.4.3:
   version "3.4.5"
@@ -7122,8 +7127,8 @@ regenerator-runtime@^0.11.0:
 
 regenerator-runtime@^0.13.2:
   version "0.13.3"
-  resolved "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.13.3.tgz#7cf6a77d8f5c6f60eb73c5fc1955b2ceb01e6bf5"
-  integrity sha512-naKIZz2GQ8JWh///G7L3X6LaQUAMp2lvb1rvwwsURe/VXwD6VMfr+/1NuNw3ag8v2kY1aQ/go5SNn79O9JU7yw==
+  resolved "https://registry.npm.taobao.org/regenerator-runtime/download/regenerator-runtime-0.13.3.tgz#7cf6a77d8f5c6f60eb73c5fc1955b2ceb01e6bf5"
+  integrity sha1-fPanfY9cb2Drc8X8GVWyzrAea/U=
 
 regenerator-transform@^0.14.0:
   version "0.14.1"
@@ -8142,9 +8147,9 @@ tar@^4:
     yallist "^3.0.3"
 
 tc-ui-lib@^0.2.4:
-  version "0.2.5"
-  resolved "https://registry.npmjs.org/tc-ui-lib/-/tc-ui-lib-0.2.5.tgz#9b452588002efc29c12b336827a9d0ae31f81621"
-  integrity sha512-+WjMuQC4yuGnyYZfe4RwUCqEW1c0yplpQgjWBhX57Q7+dmVhHkvsxiH+7JD7E0SwrR6S2IuHDeqZcJ9u0jVfAw==
+  version "0.2.8"
+  resolved "https://registry.npm.taobao.org/tc-ui-lib/download/tc-ui-lib-0.2.8.tgz#01f2905eb70785a7cab7fdfcd3030e48bed6049d"
+  integrity sha1-AfKQXrcHhafKt/380wMOSL7WBJ0=
   dependencies:
     "@babel/polyfill" "^7.7.0"
 

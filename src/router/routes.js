@@ -37,6 +37,13 @@ const routes = [
           Store.registerModule(['resource', 'room'], require('@/views/main/resource/room/room').default)
           return import('@/views/main/resource/room/index')
         }
+      },
+      {
+        path: 'roomUser',
+        component: (resolve) => {
+          Store.registerModule(['resource', 'roomUser'], require('@/views/main/resource/roomUser/roomUser').default)
+          return import('@/views/main/resource/roomUser/index')
+        }
       }
     ]
   },
