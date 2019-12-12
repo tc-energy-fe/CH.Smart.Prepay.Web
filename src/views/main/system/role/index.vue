@@ -25,7 +25,9 @@
           <el-table-column label="角色类型" prop="RoleTypeText" align="center"/>
           <el-table-column label="权限范围" align="center">
             <template v-slot="{row}">
-              <eg-button type="text">查看权限</eg-button>
+              <el-popover>
+                <eg-button slot="reference" type="text">查看权限</eg-button>
+              </el-popover>
             </template>
           </el-table-column>
           <el-table-column label="用户数" prop="UserCount" align="center"/>
