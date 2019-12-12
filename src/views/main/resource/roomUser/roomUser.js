@@ -19,6 +19,9 @@ const state = {
   pageSize: 10,
   roomList: [],
   editData: {
+    Id: null,
+    HostName: '',
+    HostPhone: '',
     FullName: ''
   },
   searchData: {
@@ -27,7 +30,8 @@ const state = {
   },
   totalCount: 0,
   isShowEdit: false,
-  isAddAccount: false
+  isAddAccount: false,
+  isLoadingRoomAccountList: false
 }
 
 const getters = {
@@ -47,6 +51,7 @@ const actions = {
     commit(types.SET_DATA, {
       item: 'editData',
       value: {
+        Id: null,
         FullName: '',
         HostName: '',
         HostPhone: '',
@@ -89,7 +94,42 @@ const actions = {
       commit(types.SET_LOADING_STATUS, { item: 'isLoadingRoomAccountList', value: false })
     })
   },
-  editAccountState () {}
+  editAccount ({ state, getters, commit, dispatch }) {
+    let isAddAccount = state.isAddAccount
+    let editData = state.editData
+    let postData = {
+      Id: editData.Id
+    }
+    if (isAddAccount) {
+      postData.HostName = editData.HostName
+      postData.HostPhone = editData.HostPhone
+      if (isEmpty(editData.HostName) || editData.HostName.trim() === '') {
+        ElAlert('请填写开户人名称！', '提示').then()
+        return
+      }
+      if (isEmpty(editData.HostPhone)) {
+        ElAlert('请填写开户人手机号！', '提示').then()
+        return
+      } else if (!(/^1[345789]\d{9}$/gi.test(editData.HostPhone))) {
+        ElAlert('开户人手机号不正确！', '提示').then()
+        return
+      }
+    }
+    console.log(postData)
+
+    let editAccountReq = isAddAccount ? api.group.addRoomAccount(postData) : api.group.deleteRoomAccount(postData)
+    commit(types.SET_LOADING_STATUS, { item: 'isEditingAccount', value: true })
+    commit(types.ADD_REQUEST_CANCEL, { item: 'editAccountReq', value: editAccountReq.cancel })
+    editAccountReq.request.then(res => {
+      commit(types.CHECKOUT_SUCCEED, res.State)
+      dispatch('showEdit', { isShow: false })
+      dispatch('getRoomAccountList')
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isEditingAccount', value: false })
+    })
+  }
 }
 
 const mutations = {

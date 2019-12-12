@@ -35,7 +35,7 @@
           <eg-button @click="getRoomAccountList">查询</eg-button>
         </template>
         <template v-slot:content>
-          <el-table :data="roomList">
+          <el-table :data="roomList" v-loading="isLoadingRoomAccountList">
             <el-table-column prop="GroupNo" label="房间编号" align="center" min-width="130"></el-table-column>
             <el-table-column prop="FullName" label="房间信息" align="center" min-width="180"></el-table-column>
             <el-table-column prop="StateText" label="开户状态" align="center" min-width="80"></el-table-column>
@@ -78,12 +78,12 @@
             </p>
             <p class="room-edit__row">
               <label>开户人姓名</label>
-              <eg-input :value="editData.HostName"></eg-input>
+              <eg-input v-model="editHostName"></eg-input>
               <i class="iconfont icon-content_icon_required"></i>
             </p>
             <p class="room-edit__row">
               <label>开户人手机</label>
-              <eg-input :value="editData.HostPhone"></eg-input>
+              <eg-input v-model="editHostPhone" :is-integer="true"></eg-input>
               <i class="iconfont icon-content_icon_required"></i>
             </p>
           </template>
@@ -105,6 +105,10 @@
               <span>{{editData.ShareNum}}</span>
             </p>
           </template>
+          <p class="room-edit__footer">
+            <eg-button style="margin-right: 2rem" type="minor" @click="showEdit({ isShow: false })">取消</eg-button>
+            <eg-button @click="editAccount">{{isAddAccount ? '开户' : '销户'}}</eg-button>
+          </p>
         </template>
       </eg-box>
     </div>
@@ -132,13 +136,22 @@
         'roomList',
         'isShowEdit',
         'isAddAccount',
-        'editData'
+        'editData',
+        'isLoadingRoomAccountList'
       ]),
       ...mapGetters([
         'projectId',
         'groupTree',
         'currentNodeId'
-      ])
+      ]),
+      editHostName: {
+        get () { return this.editData.HostName },
+        set (val) { this.updateObjectData({ obj: 'editData', item: 'HostName', value: val }) }
+      },
+      editHostPhone: {
+        get () { return this.editData.HostPhone },
+        set (val) { this.updateObjectData({ obj: 'editData', item: 'HostPhone', value: val }) }
+      }
     },
     methods: {
       ...mapActions([
@@ -146,7 +159,9 @@
         'currentPageOnChange',
         'pageSizeOnChange',
         'getRoomAccountList',
-        'showEdit'
+        'showEdit',
+        'updateObjectData',
+        'editAccount'
       ]),
       nodeOnChange (val) {
         this.updateFormData({ item: 'currentNode', value: val })

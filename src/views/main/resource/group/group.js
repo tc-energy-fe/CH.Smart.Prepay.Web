@@ -71,7 +71,7 @@ const actions = {
       let data = res.Data || []
       commit(types.SET_DATA, { item: 'groupList', value: data })
     }).catch(err => {
-      console.error(err)
+      commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
       commit(types.SET_LOADING_STATUS, { item: 'isLoadingGroupList', value: false })
     })
