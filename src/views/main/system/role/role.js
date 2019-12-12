@@ -46,7 +46,6 @@ const actions = {
           Menus: []
         }
       })
-      commit(types.SET_DATA, { item: 'editTreeData', value: [] })
     } else {
       if (row) {
         // 编辑模式
