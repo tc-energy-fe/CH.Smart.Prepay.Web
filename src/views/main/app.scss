@@ -1,98 +1,105 @@
 #app {
-  position: relative;
-  height: 100%;
-  width: 100%;
-  $header-height: 3rem;
-  .app-header{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: $header-height;
-    @include clearFix;
-    .app-header--left{
-      height: 100%;
-      float: left;
-      display: flex;
-      align-items: center;
-      .app-title{
-        width: $nav-width;
-        height: 100%;
-        padding-left: 2rem;
-        padding-right: 1rem;
-        margin-right: 2rem;
-        color: $main-color;
-        background-color: #f2f6fc;
-        line-height: $header-height;
-        font-size: 1.1rem;
-        font-family: PingFang-SC-Bold;
-        font-weight: bold;
-      }
-    }
-    .app-header--right{
-      height: 100%;
-      float: right;
-      padding-right: 2rem;
-      display: flex;
-      align-items: center;
-      color: $main-color;
-      > span{
-        line-height: 1;
-      }
-      .app-header_user{
-        cursor: pointer;
-      }
-      .app-header_split{
-        display: block;
-        width: 0;
-        height: 1.5rem;
-        border-left: 2px solid #e3f0ff;
-        margin: 1rem;
-      }
-      .app-logout{
-        height: $header-height;
-        line-height: $header-height;
-        cursor: pointer;
-      }
-    }
-  }
-  .app-content{
-    display: flex;
-    padding-top: $header-height;
+    position: relative;
     height: 100%;
-    min-height: 600px;
-    overflow: auto;
-    .app-side-bar{
-      width: $nav-width;
-    }
-    .app-main{
-      width: 0;
-      flex: 1;
-      height: 100%;
-      padding: $normal-padding;
-      background-color: #f2f5fa;
-
-      .main-container{
+    width: 100%;
+    $header-height: 3rem;
+    .app-header{
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
-        height: 100%;
-        overflow: auto;
-        &.has-search{
-          display: flex;
+        height: $header-height;
+        @include clearFix;
+        .app-header--left{
+            height: 100%;
+            float: left;
+            display: flex;
+            align-items: center;
+            .app-title{
+                width: $nav-width;
+                height: 100%;
+                padding-left: 2rem;
+                padding-right: 1rem;
+                margin-right: 2rem;
+                color: $main-color;
+                background-color: #f2f6fc;
+                line-height: $header-height;
+                font-size: 1.1rem;
+                font-family: PingFang-SC-Bold;
+                font-weight: bold;
+            }
         }
-        // 页面侧边搜索区域
-        .main-search{
-          width: 16rem;
-          height: 100%;
-          margin-right: 1rem;
-          background-color: #FFF;
-          flex-shrink: 0;
+        .app-header--right{
+            height: 100%;
+            float: right;
+            padding-right: 2rem;
+            display: flex;
+            align-items: center;
+            color: $main-color;
+            > span{
+                line-height: 1;
+            }
+            .app-header_user{
+                cursor: pointer;
+            }
+            .app-header_split{
+                display: block;
+                width: 0;
+                height: 1.5rem;
+                border-left: 2px solid #e3f0ff;
+                margin: 1rem;
+            }
+            .app-logout{
+                height: $header-height;
+                line-height: $header-height;
+                cursor: pointer;
+            }
         }
-        .main-content{
-          width: 0;
-          flex: 1;
-          height: 100%;
-        }
-      }
     }
-  }
+    .app-content{
+        display: flex;
+        padding-top: $header-height;
+        height: 100%;
+        min-height: 600px;
+        overflow: auto;
+        .app-side-bar{
+            width: $nav-width;
+        }
+        .app-main{
+            width: 0;
+            flex: 1;
+            height: 100%;
+            padding: $normal-padding;
+            background-color: #f2f5fa;
+
+            .main-container{
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                &.has-search{
+                    display: flex;
+                }
+                // 页面侧边搜索区域
+                .main-search{
+                    width: 16rem;
+                    height: 100%;
+                    margin-right: 1rem;
+                    background-color: #FFF;
+                    flex-shrink: 0;
+                }
+                .main-content{
+                    width: 0;
+                    flex: 1;
+                    height: 100%;
+                }
+            }
+        }
+    }
+}
+
+.row-popper {
+    .row-popper__content {
+        max-height: 50vh;
+        overflow: auto;
+    }
 }

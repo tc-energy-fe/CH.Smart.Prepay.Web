@@ -1,6 +1,6 @@
 <template>
   <div class="system-role main-container">
-    <eg-box v-show="!isShowEdit" class="role-box">
+    <eg-box v-if="!isShowEdit" class="role-box">
       <template v-slot:headerLeft>
         <eg-input placeholder="角色名称搜索" v-model="searchNameValue"/>
         <el-select
@@ -14,19 +14,22 @@
             :value="item.value"
           />
         </el-select>
-        <eg-button @click="searchClick">查询</eg-button>
+        <eg-button @click="getRoleListData">查询</eg-button>
       </template>
       <template v-slot:headerRight>
         <eg-button @click="showEdit()">新建角色</eg-button>
       </template>
       <template v-slot:content>
-        <el-table :data="roleList">
+        <el-table :data="roleList" v-loading="isLoadingRoleList">
           <el-table-column label="角色名称" prop="RoleName" align="center"/>
           <el-table-column label="角色类型" prop="RoleTypeText" align="center"/>
           <el-table-column label="权限范围" align="center">
             <template v-slot="{row}">
-              <el-popover>
-                <eg-button slot="reference" type="text">查看权限</eg-button>
+              <el-popover title="角色权限详情" popper-class="row-popper" :popper-options="{boundariesElement: 'viewport', gpuAcceleration: true}">
+                <div class="row-popper__content">
+                  <el-tree :data="singleRoleMenusTreeData"/>
+                </div>
+                <eg-button slot="reference" type="text" @click="getSingleRoleData({id: row.RoleId, isEdit: false})">查看权限</eg-button>
               </el-popover>
             </template>
           </el-table-column>
@@ -51,7 +54,7 @@
         />
       </template>
     </eg-box>
-    <eg-box v-show="isShowEdit" class="role-edit">
+    <eg-box v-if="isShowEdit" class="role-edit">
       <template v-slot:headerLeft>
         <div class="role-edit__header">
           <h4 class="role-edit__header-title">{{isModify ? '编辑角色' : '添加角色'}}</h4>
@@ -127,7 +130,9 @@
         'isShowEdit',
         'editRoleTypeList',
         'editData',
-        'editTreeData'
+        'editTreeData',
+        'singleRoleMenusTreeData',
+        'isLoadingRoleList'
       ]),
       ...mapGetters([
       ]),
@@ -157,6 +162,7 @@
         'getRoleListData',
         'getRoleType',
         'getRoleMenus',
+        'getSingleRoleData',
         'addRoleData',
         'saveRoleData',
         'currentPageOnChange',
@@ -164,9 +170,6 @@
         'updateStateData',
         'updateObjectData'
       ]),
-      searchClick () {
-        this.getRoleListData()
-      },
       saveClick () {
         if (this.isModify) {
           this.saveRoleData()
@@ -180,15 +183,27 @@
       }
     },
     watch: {
+      editTreeData (newValue) {
+        if (this.menusCheckedIds.length) {
+          this.$nextTick(function () {
+            this.menusCheckedIds.forEach(id => {
+              this.$refs.editTree.setChecked(id, true, false)
+            })
+          })
+        }
+      },
       menusCheckedIds (newValue) {
-        newValue.forEach(id => {
-          this.$refs.editTree.setChecked(id, true, false)
-        })
+        if (this.editTreeData.length) {
+          this.$nextTick(function () {
+            newValue.forEach(id => {
+              this.$refs.editTree.setChecked(id, true, false)
+            })
+          })
+        }
       }
     },
     created () {
       this.getRoleType(true)
-      this.searchClick()
       this.getRoleType(false)
       this.getRoleMenus()
     },

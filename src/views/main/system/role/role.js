@@ -26,7 +26,9 @@ const state = {
     Menus: []
   },
   editRoleTypeList: [],
-  editTreeData: []
+  editTreeData: [],
+  singleRoleMenusTreeData: [],
+  isLoadingRoleList: false
 }
 
 const getters = {
@@ -51,7 +53,7 @@ const actions = {
         // 编辑模式
         commit(types.SET_DATA, { item: 'isModify', value: true })
         dispatch('getRoleMenus', row.CreatorId)
-        dispatch('getSingleRoleData', row.RoleId)
+        dispatch('getSingleRoleData', { id: row.RoleId, isEdit: true })
       } else {
         // 添加模式
         commit(types.SET_DATA, { item: 'isModify', value: false })
@@ -73,6 +75,7 @@ const actions = {
         let searchRoleTypeList = state.searchRoleTypeList.concat(roleTypeList)
         commit(types.SET_DATA, { item: 'searchRoleTypeList', value: searchRoleTypeList })
         commit(types.SET_DATA, { item: 'searchTypeId', value: searchRoleTypeList[0].value })
+        dispatch('getRoleListData')
       } else {
         // 创建角色的角色列表
         let editRoleTypeList = Object.entries(data).map(([key, value]) => ({
@@ -97,6 +100,7 @@ const actions = {
       delete params.type
     }
     let getRoleListReq = api.role.getRoleList(params)
+    commit(types.SET_DATA, { item: 'isLoadingRoleList', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'getRoleListReq', value: getRoleListReq.cancel })
     getRoleListReq.request.then(res => {
       let data = res.Data || []
@@ -111,12 +115,13 @@ const actions = {
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
+      commit(types.SET_DATA, { item: 'isLoadingRoleList', value: false })
     })
   },
   getRoleMenus ({ commit, state, getters, dispatch }, uid) {
-    let getRoleMenus = api.role.getRoleUserMenu(uid)
-    commit(types.ADD_REQUEST_CANCEL, { item: 'getRoleMenus', value: getRoleMenus.cancel })
-    getRoleMenus.request.then(res => {
+    let getRoleMenusReq = api.role.getRoleUserMenu(uid)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getRoleMenusReq', value: getRoleMenusReq.cancel })
+    getRoleMenusReq.request.then(res => {
       let data = res.Data || []
       let treeData = initTree(data)
       commit(types.SET_DATA, { item: 'editTreeData', value: treeData })
@@ -124,12 +129,17 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     })
   },
-  getSingleRoleData ({ commit, state, getters, dispatch }, id) {
-    let getSingleRoleData = api.role.getSingleRole(id)
-    commit(types.ADD_REQUEST_CANCEL, { item: 'getSingleRoleData', value: getSingleRoleData.cancel })
-    getSingleRoleData.request.then(res => {
+  getSingleRoleData ({ commit, state, getters, dispatch }, { id, isEdit }) {
+    let getSingleRoleDataReq = api.role.getSingleRole(id)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getSingleRoleDataReq', value: getSingleRoleDataReq.cancel })
+    getSingleRoleDataReq.request.then(res => {
       let data = res.Data || {}
-      commit(types.SET_DATA, { item: 'editData', value: Object.assign({}, state.editData, data) })
+      if (isEdit) {
+        commit(types.SET_DATA, { item: 'editData', value: Object.assign({}, state.editData, data) })
+      } else {
+        let singleRoleMenusTreeData = initTree(data.Menus || [])
+        commit(types.SET_DATA, { item: 'singleRoleMenusTreeData', value: singleRoleMenusTreeData })
+      }
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
@@ -149,10 +159,12 @@ const actions = {
       RoleType: editData.RoleType,
       Menus: editData.Menus.map(menu => ({ Id: menu.value }))
     }
-    let addRoleData = api.role.postRoleData(postData)
-    commit(types.ADD_REQUEST_CANCEL, { item: 'addRoleData', value: addRoleData.cancel })
-    addRoleData.request.then(res => {
+    let addRoleDataReq = api.role.postRoleData(postData)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'addRoleDataReq', value: addRoleDataReq.cancel })
+    addRoleDataReq.request.then(res => {
       commit(types.CHECKOUT_SUCCEED, res.State)
+      dispatch('getRoleListData')
+      dispatch('showEdit', { isShow: false })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
@@ -169,10 +181,12 @@ const actions = {
       RoleType: editData.RoleType,
       Menus: editData.Menus.map(menu => ({ Id: menu.Id }))
     }
-    let saveRoleData = api.role.putRoleData(postData)
-    commit(types.ADD_REQUEST_CANCEL, { item: 'saveRoleData', value: saveRoleData.cancel })
-    saveRoleData.request.then(res => {
+    let saveRoleDataReq = api.role.putRoleData(postData)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'saveRoleDataReq', value: saveRoleDataReq.cancel })
+    saveRoleDataReq.request.then(res => {
       commit(types.CHECKOUT_SUCCEED, res.State)
+      dispatch('getRoleListData')
+      dispatch('showEdit', { isShow: false })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
