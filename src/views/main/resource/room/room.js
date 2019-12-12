@@ -181,6 +181,14 @@ const actions = {
       }).finally(() => {})
     }).catch(() => {
     })
+  },
+  importRoom ({ state, getters, commit, dispatch }) {
+    let el = document.createElement('input')
+    el.type = 'file'
+    el.style.display = 'none'
+    document.body.appendChild(el)
+    el.click()
+    document.body.removeChild(el)
   }
 }
 

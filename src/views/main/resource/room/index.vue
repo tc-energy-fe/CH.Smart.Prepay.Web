@@ -29,7 +29,7 @@
           <eg-button @click="getRoomList">查询</eg-button>
         </template>
         <template v-slot:headerRight>
-          <eg-button style="margin-right: 1rem;">导入房间</eg-button>
+          <eg-button style="margin-right: 1rem;" @click="importRoom">导入房间</eg-button>
           <eg-button @click="showEdit">新建房间</eg-button>
         </template>
         <template v-slot:content>
@@ -200,6 +200,7 @@
         'showEdit',
         'editRoom',
         'deleteRoom',
+        'importRoom',
         'getGatewayList',
         'updateFormData',
         'updateObjectData'
