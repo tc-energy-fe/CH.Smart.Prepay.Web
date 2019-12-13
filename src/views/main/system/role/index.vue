@@ -1,5 +1,5 @@
 <template>
-  <div class="system-role main-container">
+  <div class="main-container system-role">
     <eg-box v-if="!isShowEdit" class="role-box">
       <template v-slot:headerLeft>
         <eg-input placeholder="角色名称搜索" v-model="searchNameValue"/>
@@ -25,7 +25,7 @@
           <el-table-column label="角色类型" prop="RoleTypeText" align="center"/>
           <el-table-column label="权限范围" align="center">
             <template v-slot="{row}">
-              <el-popover title="角色权限详情" popper-class="row-popper" :popper-options="{boundariesElement: 'viewport', gpuAcceleration: true}">
+              <el-popover title="角色权限详情" popper-class="row-popper">
                 <div class="row-popper__content">
                   <el-tree :data="singleRoleMenusTreeData"/>
                 </div>
@@ -136,13 +136,13 @@
       ]),
       ...mapGetters([
       ]),
-      searchTypeIdValue: {
-        get () { return this.searchTypeId },
-        set (value) { this.updateStateData({ item: 'searchTypeId', value }) }
-      },
       searchNameValue: {
         get () { return this.searchName },
         set (value) { this.updateStateData({ item: 'searchName', value }) }
+      },
+      searchTypeIdValue: {
+        get () { return this.searchTypeId },
+        set (value) { this.updateStateData({ item: 'searchTypeId', value }) }
       },
       editRoleType: {
         get () { return this.editData.RoleType },
