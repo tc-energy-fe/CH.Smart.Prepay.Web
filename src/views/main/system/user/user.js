@@ -24,7 +24,20 @@ const state = {
   currentPage: 1,
   pageSize: 10,
   totalCount: 0,
-  isLoadingUserList: false
+  isLoadingUserList: false,
+  isShowEdit: false,
+  isModify: false,
+  editData: {
+    Id: null,
+    AccountName: '',
+    Password: '',
+    UserName: '',
+    RoleId: null,
+    PhoneNo: '',
+    Status: STATUS_ENABLED_VALUE,
+    ProjectGroups: []
+  },
+  editRoleList: []
 }
 
 const getters = {
@@ -32,6 +45,54 @@ const getters = {
 
 const actions = {
   ...Actions,
+  showEdit ({ commit, state, getters, dispatch }, { isShow = true, row } = { isShow: true }) {
+    if (!isShow) {
+      // 清空表单
+      commit(types.SET_DATA, {
+        item: 'editData',
+        value: {
+          Id: null,
+          AccountName: '',
+          Password: '',
+          UserName: '',
+          RoleId: null,
+          PhoneNo: '',
+          Status: STATUS_ENABLED_VALUE,
+          ProjectGroups: []
+        }
+      })
+    } else {
+      if (row) {
+        // 编辑模式
+        commit(types.SET_DATA, { item: 'isModify', value: true })
+      } else {
+        // 添加模式
+        commit(types.SET_DATA, { item: 'isModify', value: false })
+      }
+    }
+    commit(types.SET_DATA, { item: 'isShowEdit', value: isShow })
+  },
+  getRoleType ({ commit, state, getters, dispatch }, canEdit = false) {
+    let getRoleTypeReq = api.role.getRoleCreateType(canEdit)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getRoleTypeReq', value: getRoleTypeReq.cancel })
+    getRoleTypeReq.request.then(res => {
+      let data = res.Data || {}
+      if (canEdit) {
+        // 有编辑权限的角色列表
+        let roleTypeList = Object.entries(data).map(([key, value]) => ({
+          label: value,
+          value: parseInt(key)
+        }))
+        let searchRoleTypeList = state.searchRoleTypeList.concat(roleTypeList)
+        commit(types.SET_DATA, { item: 'searchRoleTypeList', value: searchRoleTypeList })
+        commit(types.SET_DATA, { item: 'searchTypeId', value: searchRoleTypeList[0].value })
+        dispatch('getUserListData')
+      } else {
+      }
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    })
+  },
   getUserListData ({ commit, state, getters, dispatch }) {
     let params = {
       q: state.searchName,
@@ -62,30 +123,29 @@ const actions = {
       commit(types.SET_DATA, { item: 'isLoadingUserList', value: false })
     })
   },
-  getRoleType ({ commit, state, getters, dispatch }, canEdit = false) {
-    let getRoleTypeReq = api.role.getRoleCreateType(canEdit)
-    commit(types.ADD_REQUEST_CANCEL, { item: 'getRoleTypeReq', value: getRoleTypeReq.cancel })
-    getRoleTypeReq.request.then(res => {
-      let data = res.Data || {}
-      if (canEdit) {
-        // 有编辑权限的角色列表
-        let roleTypeList = Object.entries(data).map(([key, value]) => ({
-          label: value,
-          value: parseInt(key)
-        }))
-        let searchRoleTypeList = state.searchRoleTypeList.concat(roleTypeList)
-        commit(types.SET_DATA, { item: 'searchRoleTypeList', value: searchRoleTypeList })
-        commit(types.SET_DATA, { item: 'searchTypeId', value: searchRoleTypeList[0].value })
-        dispatch('getUserListData')
-      } else {
-        // 创建角色的角色列表
-        let editRoleTypeList = Object.entries(data).map(([key, value]) => ({
-          label: value,
-          value: parseInt(key)
-        }))
-        commit(types.SET_DATA, { item: 'editRoleTypeList', value: editRoleTypeList })
-        commit(types.UPDATE_OBJ_DATA, { obj: 'editData', item: 'RoleType', value: editRoleTypeList.length ? editRoleTypeList[0].value : null })
-      }
+  getRoleListData ({ commit, state, getters, dispatch }, uid) {
+    let params = {
+      uid: 1109
+    }
+    let getRoleListReq = api.role.getRoleList(params)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getRoleListReq', value: getRoleListReq.cancel })
+    getRoleListReq.request.then(res => {
+      let data = res.Data || []
+      let editRoleList = data.map(item => ({
+        label: item.RoleName,
+        value: item.RoleId
+      }))
+      commit(types.SET_DATA, { item: 'editRoleList', value: editRoleList })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    })
+  },
+  getProjectGroupList ({ commit, state, getters, dispatch }, uid = 1109) {
+    let getProjectGroupReq = api.project.getProjectGroupByUser(uid)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getProjectGroupReq', value: getProjectGroupReq.cancel })
+    getProjectGroupReq.request.then(res => {
+      let data = res.Data || []
+      console.log(data)
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })

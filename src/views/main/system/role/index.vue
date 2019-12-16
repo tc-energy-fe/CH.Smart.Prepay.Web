@@ -70,6 +70,7 @@
         <div class="role-edit__row">
           <label class="role-edit__row-title">角色类型</label>
           <el-select
+            class="width-medium"
             placeholder="角色类型"
             v-model="editRoleType"
             :disabled="isModify"
