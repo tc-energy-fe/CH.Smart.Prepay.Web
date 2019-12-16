@@ -2,10 +2,10 @@ import Actions from '@/store/actions'
 import Mutations from '@/store/mutations'
 import api from '@/api'
 import * as types from '@/store/mutation-types'
+import { upload } from '@/utils/file'
 // import * as types from '@/store/mutation-types'
 // import api from '@/api/analysis'
 // import apiUrl from '@/api/analysis/apiUrl'
-// import download from '@/utils/download'
 // import moment from 'moment'
 
 const state = {
@@ -154,8 +154,15 @@ const actions = {
     if (state.isModify) {
       Object.assign(postData, {
         Id: editData.Id,
-        Address: editData.Address || ''
+        Rate: editData.Rate,
+        Address: editData.Address || '',
+        Manufacturer: editData.Manufacturer || '',
+        Status: editData.Status
       })
+      if (isEmpty(postData.Rate) || postData.Rate === '') {
+        ElAlert('倍率不能为空！', '提示')
+        return null
+      }
     } else {
       let requiredKeys = {
         PDeviceSN: '仪表编号',
@@ -175,7 +182,6 @@ const actions = {
         let value = editData[item[0]]
         if (isEmpty(value) || value === '') {
           ElAlert(`${item[1]}不能为空！`, '提示')
-          console.log(postData)
           return true
         } else {
           postData[item[0]] = value
@@ -184,6 +190,10 @@ const actions = {
       })
       if (isValidate) {
         return null
+      } else {
+        if (!isEmpty(editData.EMeterModel)) postData.EMeterModel = editData.EMeterModel
+        postData.Manufacturer = editData.Manufacturer || ''
+        postData.Address = editData.Address || ''
       }
     }
     return postData
@@ -194,6 +204,50 @@ const actions = {
         return
       }
       console.log(res)
+      let editDeviceReq = state.isModify ? api.device.modifyDevice(res) : api.device.addDevice(res)
+      commit(types.SET_LOADING_STATUS, { item: 'isEditingDevice', value: true })
+      commit(types.ADD_REQUEST_CANCEL, { item: 'editDeviceReq', value: editDeviceReq.cancel })
+      editDeviceReq.request.then(res => {
+        commit(types.CHECKOUT_SUCCEED, res.State)
+        dispatch('getDeviceList')
+        dispatch('showEdit', { isShow: false })
+      }).catch(err => {
+        commit(types.CHECKOUT_FAILURE, err)
+      }).finally(() => {
+        commit(types.SET_LOADING_STATUS, { item: 'isEditingDevice', value: false })
+      })
+    })
+  },
+  uploadFile ({ state, commit, dispatch }) {
+    upload().then(res => {
+      console.log(res)
+      let uploadFileReq = api.file.uploadFile(res)
+      commit(types.SET_LOADING_STATUS, { item: 'isUploadingFile', value: true })
+      commit(types.ADD_REQUEST_CANCEL, { item: 'uploadFileReq', value: uploadFileReq.cancel })
+      uploadFileReq.request.then(res => {
+        dispatch('importDevice', res.Data)
+      }).catch(err => {
+        commit(types.CHECKOUT_FAILURE, err)
+      }).finally(() => {
+        commit(types.SET_LOADING_STATUS, { item: 'isUploadingFile', value: false })
+      })
+    })
+  },
+  importDevice ({ state, getters, commit, dispatch }, fileId) {
+    let importDeviceReq = api.device.importDevice({
+      fileId: fileId,
+      projectId: getters.projectId,
+      category: 1
+    })
+    commit(types.SET_LOADING_STATUS, { item: 'isImportDevice', value: true })
+    commit(types.ADD_REQUEST_CANCEL, { item: 'importDeviceReq', value: importDeviceReq.cancel })
+    importDeviceReq.request.then(res => {
+      commit(types.CHECKOUT_SUCCEED, res.State)
+      dispatch('getDeviceList')
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isImportDevice', value: false })
     })
   }
 }

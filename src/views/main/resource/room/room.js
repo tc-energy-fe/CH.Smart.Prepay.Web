@@ -32,7 +32,8 @@ const state = {
   editGatewayDeviceName: '',
   editParentName: '',
   isLoadingGatewayDeviceList: false,
-  editDeviceName: ''
+  editDeviceName: '',
+  isShowEditDevice: false
 }
 
 const getters = {
@@ -51,6 +52,7 @@ const actions = {
   showEdit ({ state, commit, dispatch }, { data, isShow = true }) {
     if (!isShow) {
       commit(types.SET_DATA, { item: 'isShowEdit', value: false })
+      commit(types.SET_DATA, { item: 'isShowEditDevice', value: false })
       commit(types.SET_DATA, { item: 'editData', value: { Id: null, Name: '', GroupNo: '' } })
       commit(types.SET_DATA, { item: 'editParentId', value: -1 })
       commit(types.SET_DATA, { item: 'editGatewayId', value: null })
@@ -147,6 +149,11 @@ const actions = {
     }
     if (state.isModify) {
       postData.Id = editData.Id
+      if (state.isShowEditDevice) {
+        if (!isEmpty(state.editGatewayDeviceId) && state.editGatewayDeviceId !== -1) {
+          postData.EMeterId = state.editGatewayDeviceId
+        }
+      }
     } else {
       let parentId = state.editParentId
       if (isEmpty(parentId) || parentId === -1) {
