@@ -89,7 +89,7 @@ const actions = {
       commit(types.SET_DATA, { item: 'roomList', value: data })
       commit(types.SET_DATA, { item: 'totalCount', value: res.Count })
     }).catch(err => {
-      console.error(err)
+      commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
       commit(types.SET_LOADING_STATUS, { item: 'isLoadingRoomAccountList', value: false })
     })

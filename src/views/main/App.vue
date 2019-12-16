@@ -18,7 +18,7 @@
       </div>
       <div class="app-header--right">
         <span>欢迎您，</span>
-        <span class="app-header_user">{{account.Name || ''}}</span>
+        <span class="app-header_user">{{account.Name || 'master'}}</span>
         <i class="app-header_split"></i>
         <div class="app-logout">
           <span class="app-logout_text" @click="logout">退出</span>
@@ -31,6 +31,7 @@
         <p><router-link to="/resource/group">区域管理</router-link></p>
         <p><router-link to="/resource/room">房间管理</router-link></p>
         <p><router-link to="/resource/roomUser">开户销户管理</router-link></p>
+        <p><router-link to="/resource/meter">表计管理</router-link></p>
         <p><router-link to="/system/role">角色管理</router-link></p>
       </div>
       <div class="app-main">

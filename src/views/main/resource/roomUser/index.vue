@@ -32,7 +32,7 @@
               :key="item.value"
             ></el-option>
           </el-select>
-          <eg-button @click="getRoomAccountList">查询</eg-button>
+          <eg-button @click="search">查询</eg-button>
         </template>
         <template v-slot:content>
           <el-table :data="roomList" v-loading="isLoadingRoomAccountList">
@@ -164,7 +164,12 @@
         'editAccount'
       ]),
       nodeOnChange (val) {
+        this.currentPageOnChange(1)
         this.updateFormData({ item: 'currentNode', value: val })
+        this.getRoomAccountList()
+      },
+      search () {
+        this.currentPageOnChange(1)
         this.getRoomAccountList()
       }
     },

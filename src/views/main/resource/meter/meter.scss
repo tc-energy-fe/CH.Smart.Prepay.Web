@@ -1,0 +1,40 @@
+
+.resource-meter{
+  .eg-box{
+    height: 100%;
+    .eg-box__header--left{
+      display: flex;
+      align-items: center;
+      > *{
+        margin-right: 1rem;
+      }
+    }
+  }
+  .meter-edit__title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    line-height: 1.1;
+  }
+  .meter-edit__row{
+    margin-top: 1rem;
+    @include clearFix;
+    .meter-edit__item{
+      float: left;
+      display: flex;
+      align-items: center;
+      min-width: 25rem;
+      height: $normal-input-height;
+      @include setEqualInterval;
+      > .iconfont{
+        font-size: .9rem;
+      }
+      > label{
+        width: 5rem;
+      }
+    }
+  }
+
+  .meter-edit__footer {
+    padding: 2rem 0 0 5rem;
+  }
+}
