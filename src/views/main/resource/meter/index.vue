@@ -2,7 +2,11 @@
   <div class="main-container resource-meter">
     <eg-box v-show="!isShowEdit">
       <template v-slot:headerLeft>
-        <eg-input placeholder="表号搜索"></eg-input>
+        <eg-input
+          placeholder="表号搜索"
+          :value="searchName"
+          @input="updateFormData({item:'searchName', value:$event})"
+        ></eg-input>
         <el-select
           :value="searchBranchTypeId"
           placeholder="分支类型"
@@ -314,11 +318,13 @@
     name: 'resource-meter',
     data () {
       return {
+        detailDeviceData: {}
       }
     },
     components: {},
     computed: {
       ...mapState([
+        'searchName',
         'branchTypeList',
         'settleTypeList',
         'searchBranchTypeId',

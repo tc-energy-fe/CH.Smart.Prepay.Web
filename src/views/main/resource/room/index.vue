@@ -92,41 +92,52 @@
           </div>
           <div class="room-edit__row">
             <label>绑定仪表</label>
-            <div
-              v-if="!isModify"
-              class="room-edit__device"
-              v-loading="isLoadingGatewayList || isLoadingGatewayDeviceList">
-              <div class="room-edit__device--top">
-                <el-select
-                  placeholder="选择网关"
-                  :value="editGatewayId"
-                >
-                  <el-option
-                    v-for="item in gatewayList"
-                    :key="item.GatewayId"
-                    :label="item.Name"
-                    :value="item.GatewayId">
-                  </el-option>
-                </el-select>
-                <eg-input
-                  placeholder="名称搜索"
-                  v-model="editDeviceName"
-                >
-                  <i class="iconfont icon-content_icon_search" slot="suffix"></i>
-                </eg-input>
+            <div>
+              <div class="" v-if="isModify">
+                <eg-input style="margin-right: 1rem;" :value="editGatewayDeviceName" disabled></eg-input>
+                <eg-button type="text" @click="updateFormData({item:'isShowEditDevice', value:true})">更改绑定设备</eg-button>
               </div>
-              <el-tree
-                v-if="!isLoadingGatewayList && !isLoadingGatewayDeviceList"
-                :key="'deviceTree'"
-                :data="gatewayDeviceList"
-                node-key="value"
-                auto-expand-parent
-                :highlight-current="true"
-                :current-node-key="editGatewayDeviceId"
-                @current-change="updateFormData({ item: 'editGatewayDeviceId', value: $event.value })"
-              ></el-tree>
+              <div
+                v-show="!isModify || isShowEditDevice"
+                class="room-edit__device"
+                v-loading="isLoadingGatewayList || isLoadingGatewayDeviceList">
+                <div class="room-edit__device--top">
+                  <el-select
+                    placeholder="选择网关"
+                    :value="editGatewayId"
+                  >
+                    <el-option
+                      v-for="item in gatewayList"
+                      :key="item.GatewayId"
+                      :label="item.Name"
+                      :value="item.GatewayId">
+                    </el-option>
+                  </el-select>
+                  <eg-input
+                    placeholder="名称搜索"
+                    v-model="editDeviceName"
+                  >
+                    <i class="iconfont icon-content_icon_search" slot="suffix"></i>
+                  </eg-input>
+                </div>
+                <el-tree
+                  v-if="!isLoadingGatewayList && !isLoadingGatewayDeviceList"
+                  :key="'deviceTree'"
+                  :data="gatewayDeviceList"
+                  node-key="value"
+                  auto-expand-parent
+                  :highlight-current="true"
+                  :current-node-key="editGatewayDeviceId"
+                  @current-change="updateFormData({ item: 'editGatewayDeviceId', value: $event.value })"
+                ></el-tree>
+              </div>
+              <eg-button
+                v-show="isModify && isShowEditDevice"
+                type="text"
+                style="margin-top: 1rem;"
+                @click="updateFormData({item:'isShowEditDevice', value:false})"
+              >取消更改</eg-button>
             </div>
-            <eg-input v-else :value="editGatewayDeviceName" disabled></eg-input>
           </div>
           <p class="room-edit__footer">
             <eg-button style="margin-right: 2rem" type="minor" @click="showEdit({ isShow: false })">取消</eg-button>
@@ -168,7 +179,8 @@
         'isLoadingGatewayDeviceList',
         'editDeviceName',
         'editParentName',
-        'editGatewayDeviceName'
+        'editGatewayDeviceName',
+        'isShowEditDevice'
       ]),
       ...mapGetters([
         'mainGroupList',

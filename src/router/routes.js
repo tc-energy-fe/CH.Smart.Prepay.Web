@@ -51,6 +51,13 @@ const routes = [
           Store.registerModule(['resource', 'meter'], require('@/views/main/resource/meter/meter').default)
           return import('@/views/main/resource/meter/index')
         }
+      },
+      {
+        path: 'gateway',
+        component: (resolve) => {
+          Store.registerModule(['resource', 'gateway'], require('@/views/main/resource/gateway/gateway').default)
+          return import('@/views/main/resource/gateway/index')
+        }
       }
     ]
   },
