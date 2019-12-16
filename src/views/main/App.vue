@@ -33,6 +33,7 @@
         <p><router-link to="/resource/roomUser">开户销户管理</router-link></p>
         <p><router-link to="/resource/meter">表计管理</router-link></p>
         <p><router-link to="/system/role">角色管理</router-link></p>
+        <p><router-link to="/system/user">用户管理</router-link></p>
       </div>
       <div class="app-main">
         <router-view></router-view>
