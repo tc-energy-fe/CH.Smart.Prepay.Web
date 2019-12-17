@@ -2,6 +2,7 @@ import Actions from '@/store/actions'
 import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
+import initTree from '@/utils/tree'
 
 const TOTAL_OPTION_VALUE = 'total'
 const STATUS_ENABLED_VALUE = 0
@@ -37,7 +38,8 @@ const state = {
     Status: STATUS_ENABLED_VALUE,
     ProjectGroups: []
   },
-  editRoleList: []
+  editRoleList: [],
+  editGroupTreeData: []
 }
 
 const getters = {
@@ -65,6 +67,9 @@ const actions = {
       if (row) {
         // 编辑模式
         commit(types.SET_DATA, { item: 'isModify', value: true })
+        dispatch('getProjectGroupList', row.CreatorId)
+        dispatch('getRoleListData', row.CreatorId)
+        dispatch('getSingleUserData', row.Id)
       } else {
         // 添加模式
         commit(types.SET_DATA, { item: 'isModify', value: false })
@@ -112,7 +117,7 @@ const actions = {
       let userList = data.map(item => {
         return Object.assign({}, item, {
           RoleTypeText: searchRoleTypeList.find(type => (type.value === item.RoleType)).label,
-          StatusText: searchStatusList.find(status => (status.value === item.RoleType)).label
+          StatusText: searchStatusList.find(status => (status.value === item.Status)).label
         })
       })
       commit(types.SET_DATA, { item: 'userList', value: userList })
@@ -145,7 +150,45 @@ const actions = {
     commit(types.ADD_REQUEST_CANCEL, { item: 'getProjectGroupReq', value: getProjectGroupReq.cancel })
     getProjectGroupReq.request.then(res => {
       let data = res.Data || []
-      console.log(data)
+      let groupTempList = []
+      data.forEach(item => {
+        groupTempList.push({
+          Id: item.Id,
+          Name: item.Name,
+          Path: '/',
+          Level: 0
+        })
+        if (item.Groups) {
+          groupTempList.push(...item.Groups)
+        }
+      })
+      let editGroupTreeData = initTree(groupTempList)
+      commit(types.SET_DATA, { item: 'editGroupTreeData', value: editGroupTreeData })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    })
+  },
+  getSingleUserData ({ commit, state, getters, dispatch }, id) {
+    let getSingleUserReq = api.user.getUserManageDetail(id)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getSingleUserReq', value: getSingleUserReq.cancel })
+    getSingleUserReq.request.then(res => {
+      let data = res.Data || {}
+      commit(types.SET_DATA, { item: 'editData', value: Object.assign({}, state.editData, data) })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    })
+  },
+  addUserData ({ commit, state, getters, dispatch }) {
+    let editData = state.editData
+    let postData = Object.assign({}, editData, {
+      ProjectGroups: editData.ProjectGroups.map(item => ({ Id: item.value }))
+    })
+    let addUserDataReq = api.user.postUserManage(postData)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'addUserDataReq', value: addUserDataReq.cancel })
+    addUserDataReq.request.then(res => {
+      commit(types.CHECKOUT_SUCCEED, res.State)
+      dispatch('getUserListData')
+      dispatch('showEdit', { isShow: false })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
