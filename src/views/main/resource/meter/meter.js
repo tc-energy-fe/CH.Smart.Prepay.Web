@@ -56,7 +56,7 @@ const actions = {
         Id: null,
         PDeviceSN: '',
         PCategory: 1,
-        LDeviceType: null,
+        LDeviceType: null, // 控费方式
         GatewayId: null,
         EMeterModel: null, // 电表模块
         IsSum: null, // 分支类型
@@ -134,9 +134,8 @@ const actions = {
       let data = res.Data || []
       data.forEach(d => {
         let IsSumText = state.branchTypeList.find(b => b.value === d.IsSum)
-        let IsSettleText = state.settleTypeList.find(b => b.value === d.IsSettle)
         d.IsSumText = isEmpty(IsSumText) ? '' : IsSumText.label
-        d.IsSettleText = isEmpty(IsSettleText) ? '' : IsSettleText.label
+        d.IsSettleText = isEmpty(d.IsSettle) ? '-' : (d.IsSettle ? '是' : '否')
       })
       commit(types.SET_DATA, { item: 'deviceList', value: data })
       commit(types.SET_DATA, { item: 'totalCount', value: res.Count })

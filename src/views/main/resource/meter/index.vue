@@ -41,7 +41,7 @@
         <el-table :data="deviceList" v-loading="isLoadingDeviceList">
           <el-table-column label="表号" prop="PDeviceSN" align="center">
             <template slot-scope="{ row }">
-              <eg-button type="text">{{row.PDeviceSN}}</eg-button>
+              <eg-button type="text" @click="showDetail(true, row)">{{row.PDeviceSN}}</eg-button>
             </template>
           </el-table-column>
           <el-table-column label="所属网关" prop="GatewaySN" align="center"></el-table-column>
@@ -307,6 +307,69 @@
         </p>
       </template>
     </eg-box>
+    <el-dialog
+      width="25rem"
+      title="设备详情"
+      :visible.sync="isShowDetail"
+    >
+      <template>
+        <div class="meter-detail__row">
+          <label>设备编码</label>
+          <span>{{detailDeviceData.PDeviceSN}}</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>电表模块</label>
+          <span>{{detailDeviceData.EMeterModel || '-'}}</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>分支类型</label>
+          <span>{{detailDeviceData.IsSumText}}</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>费控方式</label>
+          <span>{{detailDeviceData.LDeviceTypeText}}</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>是否结费</label>
+          <span>{{detailDeviceData.IsSettleText}}</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>倍率</label>
+          <span>{{detailDeviceData.Rate | currency}}</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>电表厂商</label>
+          <span>{{detailDeviceData.Manufacturer || '-'}}</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>安装位置</label>
+          <span>{{detailDeviceData.Address || '-'}}</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>初始总读数</label>
+          <span>{{detailDeviceData.StartTotal | currency}} kWh</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>初始尖读数</label>
+          <span>{{detailDeviceData.StartPointed | currency}} kWh</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>初始峰读数</label>
+          <span>{{detailDeviceData.StartPeak | currency}} kWh</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>初始平读数</label>
+          <span>{{detailDeviceData.StartFlat | currency}} kWh</span>
+        </div>
+        <div class="meter-detail__row">
+          <label>初始谷读数</label>
+          <span>{{detailDeviceData.StartValley | currency}} kWh</span>
+        </div>
+      </template>
+      <div class="meter-detail__footer" slot="footer">
+        <eg-button type="minor" @click="showDetail(false)">关闭</eg-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -318,7 +381,8 @@
     name: 'resource-meter',
     data () {
       return {
-        detailDeviceData: {}
+        detailDeviceData: {},
+        isShowDetail: false
       }
     },
     components: {},
@@ -361,6 +425,16 @@
       },
       editDataChange (key, value) {
         this.updateObjectData({ obj: 'editData', item: key, value })
+      },
+      showDetail (isShow, row) {
+        if (isShow) {
+          this.detailDeviceData = row
+          if (row) {
+            let type = this.editEleTypeList.find(t => t.value === row.LDeviceType)
+            row.LDeviceTypeText = type ? type.label : '-'
+          }
+        }
+        this.isShowDetail = isShow
       }
     },
     watch: {
@@ -375,6 +449,9 @@
         this.getDeviceList()
       }
     },
-    beforeDestroy () {}
+    beforeDestroy () {
+      this.showDetail(false)
+      this.showEdit({ isShow: false })
+    }
   }
 </script>

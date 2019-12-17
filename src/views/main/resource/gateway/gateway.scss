@@ -1,0 +1,34 @@
+.resource-gateway{
+  .eg-box{
+    height: 100%;
+    .eg-box__header--left{
+      display: flex;
+      align-items: center;
+      > *{
+        margin-right: 1rem;
+      }
+    }
+  }
+
+  .gateway-edit__title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    line-height: 1.1;
+  }
+
+  .gateway-edit__row{
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    > label{
+      width: 5rem;
+    }
+    .iconfont{
+      margin-left: 1rem;
+    }
+  }
+
+  .gateway-edit__footer {
+    padding: 2rem 0 0 5rem;
+  }
+}

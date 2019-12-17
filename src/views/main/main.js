@@ -2,8 +2,9 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from '@/router'
 import store from '@/store'
+import { currency } from '@/utils/currency'
 
-import { Tree, Table, TableColumn, Pagination, Select, Option, Input, Popover, Loading, MessageBox, Radio, RadioGroup, Checkbox } from 'element-ui'
+import { Tree, Table, TableColumn, Pagination, Select, Option, Input, Popover, Loading, MessageBox, Radio, RadioGroup, Checkbox, Dialog } from 'element-ui'
 import 'css/element-ui.scss'
 import EgUi from 'tc-ui-lib'
 import 'tc-ui-lib/lib/style.css'
@@ -21,8 +22,11 @@ Vue.use(Loading)
 Vue.use(Radio)
 Vue.use(RadioGroup)
 Vue.use(Checkbox)
+Vue.use(Dialog)
 window.ElAlert = MessageBox.alert
 window.ElConfirm = MessageBox.confirm
+
+Vue.filter('currency', currency)
 
 // 按需引入tc-ui组件
 Vue.use(EgUi)
