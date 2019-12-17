@@ -449,6 +449,9 @@
         this.getDeviceList()
       }
     },
-    beforeDestroy () {}
+    beforeDestroy () {
+      this.showDetail(false)
+      this.showEdit({ isShow: false })
+    }
   }
 </script>
