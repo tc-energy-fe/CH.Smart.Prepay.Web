@@ -27,5 +27,9 @@ export default {
   deleteProject: (id) => http({
     method: 'delete',
     url: `/Project/${id}`
+  }),
+  getProjectGroupByUser: (uid) => http({
+    method: 'POST',
+    url: `/Project/Group/${uid}`
   })
 }
