@@ -9,15 +9,15 @@
  * */
 
 const defaultProps = {
-  Id: 'GroupId',
-  Name: 'GroupName',
+  Id: 'Id',
+  Name: 'Name',
   ParentId: 'ParentId',
   Level: 'Level',
   Path: 'Path'
 }
 
 const initTree = function (data, { rootLevel = 0, rootId = 100, customProps } = { rootLevel: 0, rootId: 100, customProps: {} }, fn) {
-  let props = Object.assign(defaultProps, customProps)
+  let props = Object.assign({}, defaultProps, customProps)
 
   // 判断数据是否为数组并且不为空
   if (!data || !Array.isArray(data)) return null

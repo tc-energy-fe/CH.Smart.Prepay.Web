@@ -31,7 +31,7 @@
         <eg-button @click="showEdit">新建用户</eg-button>
       </template>
       <template v-slot:content>
-        <el-table :data="roleList" v-loading="isLoadingUserList">
+        <el-table :data="userList" v-loading="isLoadingUserList">
           <el-table-column label="用户名称" prop="AccountName" align="center"/>
           <el-table-column label="手机号" prop="PhoneNo" align="center"/>
           <el-table-column label="角色类型" prop="RoleTypeText" align="center"/>
@@ -78,7 +78,7 @@
         </div>
         <div class="user-edit__row">
           <label class="user-edit__row-title">登录名</label>
-          <eg-input width-type="medium" v-model="editAccountName"/>
+          <eg-input :disabled="isModify" width-type="medium" v-model="editAccountName"/>
           <i class="iconfont icon-content_icon_required"/>
         </div>
         <div class="user-edit__row">
@@ -113,13 +113,21 @@
         <div class="user-edit__row">
           <label class="user-edit__row-title align-top">区域权限</label>
           <div class="user-edit__row-box">
+            <el-tree
+              ref="editTree"
+              :data="editGroupTreeData"
+              node-key="value"
+              show-checkbox
+              default-expand-all
+              @check="handleCheck"
+            />
           </div>
           <i class="iconfont icon-content_icon_required"/>
         </div>
         <div class="user-edit__row">
           <label class="user-edit__row-title"/>
-          <eg-button type="minor">取消</eg-button>
-          <eg-button>保存</eg-button>
+          <eg-button type="minor" @click="showEdit({isShow: false})">取消</eg-button>
+          <eg-button @click="saveClick">保存</eg-button>
         </div>
       </template>
     </eg-box>
@@ -143,7 +151,7 @@
         'searchStatusId',
         'searchRoleTypeList',
         'searchStatusList',
-        'roleList',
+        'userList',
         'currentPage',
         'pageSize',
         'totalCount',
@@ -151,7 +159,8 @@
         'isModify',
         'isShowEdit',
         'editData',
-        'editRoleList'
+        'editRoleList',
+        'editGroupTreeData'
       ]),
       ...mapGetters([
       ]),
@@ -190,6 +199,16 @@
       editStatus: {
         get () { return this.editData.Status },
         set (value) { this.updateObjectData({ obj: 'editData', item: 'Status', value }) }
+      },
+      userGroupCheckedIds () {
+        let checkedIds = []
+        this.editData.ProjectGroups.forEach(item => {
+          checkedIds.push(item.Id)
+          if (item.Groups) {
+            item.Groups.forEach(group => { checkedIds.push(group.Id) })
+          }
+        })
+        return checkedIds
       }
     },
     methods: {
@@ -199,13 +218,41 @@
         'getRoleListData',
         'getProjectGroupList',
         'showEdit',
+        'addUserData',
         'currentPageOnChange',
         'pageSizeOnChange',
         'updateStateData',
         'updateObjectData'
-      ])
+      ]),
+      saveClick () {
+        if (this.isModify) {
+        } else {
+          this.addUserData()
+        }
+      },
+      handleCheck (node, { checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys }) {
+        this.updateObjectData({ obj: 'editData', item: 'ProjectGroups', value: [] })
+      }
     },
     watch: {
+      editGroupTreeData (newValue) {
+        if (this.userGroupCheckedIds.length) {
+          this.$nextTick(function () {
+            this.userGroupCheckedIds.forEach(id => {
+              this.$refs.editTree.setChecked(id, true, false)
+            })
+          })
+        }
+      },
+      userGroupCheckedIds (newValue) {
+        if (this.editGroupTreeData.length) {
+          this.$nextTick(function () {
+            newValue.forEach(id => {
+              this.$refs.editTree.setChecked(id, true, false)
+            })
+          })
+        }
+      }
     },
     created () {
       this.getRoleType(true)
@@ -213,6 +260,7 @@
       this.getProjectGroupList()
     },
     beforeDestroy () {
+      this.showEdit({ isShow: false })
     }
   }
 </script>

@@ -187,8 +187,8 @@
       editTreeData (newValue) {
         if (this.menusCheckedIds.length) {
           this.$nextTick(function () {
-            this.menusCheckedIds.forEach(id => {
-              this.$refs.editTree.setChecked(id, true, false)
+              this.menusCheckedIds.forEach(id => {
+                this.$refs.editTree.setChecked(id, true, false)
             })
           })
         }
