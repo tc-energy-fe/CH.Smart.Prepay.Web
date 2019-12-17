@@ -32,7 +32,7 @@
       </template>
       <template v-slot:content>
         <el-table :data="userList" v-loading="isLoadingUserList">
-          <el-table-column label="用户名称" prop="AccountName" align="center"/>
+          <el-table-column label="用户名称" prop="UserName" align="center"/>
           <el-table-column label="手机号" prop="PhoneNo" align="center"/>
           <el-table-column label="角色类型" prop="RoleTypeText" align="center"/>
           <el-table-column label="角色名称" prop="RoleName" align="center"/>
@@ -41,8 +41,8 @@
           <el-table-column label="操作" align="center">
             <template v-slot="{row}">
               <eg-button type="text" style="margin-right: 1rem;" @click="showEdit({row})">编辑</eg-button>
-              <eg-button v-if="row.Status === 3" type="text" color="success">启用</eg-button>
-              <eg-button v-if="row.Status === 0" type="text" color="danger">停用</eg-button>
+              <eg-button v-if="row.Status === STATUS_DISABLED_VALUE" type="text" color="success" @click="changeUserStatus({row, status: STATUS_ENABLED_VALUE})">启用</eg-button>
+              <eg-button v-if="row.Status === STATUS_ENABLED_VALUE" type="text" color="danger" @click="changeUserStatus({row, status: STATUS_DISABLED_VALUE})">停用</eg-button>
             </template>
           </el-table-column>
         </el-table>
@@ -105,8 +105,8 @@
         <div class="user-edit__row">
           <label class="user-edit__row-title">启用状态</label>
           <el-radio-group v-model="editStatus">
-            <el-radio :label="0">启用</el-radio>
-            <el-radio :label="3">停用</el-radio>
+            <el-radio :label="STATUS_ENABLED_VALUE">启用</el-radio>
+            <el-radio :label="STATUS_DISABLED_VALUE">停用</el-radio>
           </el-radio-group>
           <i class="iconfont icon-content_icon_required"/>
         </div>
@@ -141,6 +141,8 @@
     name: 'User',
     data () {
       return {
+        STATUS_ENABLED_VALUE: 0,
+        STATUS_DISABLED_VALUE: 3
       }
     },
     components: {},
@@ -164,6 +166,9 @@
       ]),
       ...mapGetters([
       ]),
+      userId () {
+        return this.$store.state.userId
+      },
       searchNameValue: {
         get () { return this.searchName },
         set (value) { this.updateStateData({ item: 'searchName', value }) }
@@ -219,6 +224,8 @@
         'getProjectGroupList',
         'showEdit',
         'addUserData',
+        'saveUserData',
+        'changeUserStatus',
         'currentPageOnChange',
         'pageSizeOnChange',
         'updateStateData',
@@ -226,15 +233,32 @@
       ]),
       saveClick () {
         if (this.isModify) {
+          this.saveUserData()
         } else {
           this.addUserData()
         }
       },
       handleCheck (node, { checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys }) {
-        this.updateObjectData({ obj: 'editData', item: 'ProjectGroups', value: [] })
+        let projectLevelNodes = checkedNodes.filter(node => (node.Level === 0))
+        let groupLevelNodes = checkedNodes.filter(node => (node.Level !== 0))
+        let ProjectGroups = projectLevelNodes.map(project => {
+          let targetItem = {
+            Id: project.Id,
+            Name: project.Name
+          }
+          groupLevelNodes.length && (targetItem.Groups = groupLevelNodes.filter(group => (group.ProjectId === project.Id)).map(item => ({ Id: item.Id })))
+          return targetItem
+        })
+        this.updateObjectData({ obj: 'editData', item: 'ProjectGroups', value: ProjectGroups })
       }
     },
     watch: {
+      userId (newValue) {
+        if (newValue) {
+          this.getRoleListData(newValue)
+          this.getProjectGroupList(newValue)
+        }
+      },
       editGroupTreeData (newValue) {
         if (this.userGroupCheckedIds.length) {
           this.$nextTick(function () {
@@ -256,8 +280,10 @@
     },
     created () {
       this.getRoleType(true)
-      this.getRoleListData()
-      this.getProjectGroupList()
+      if (this.userId) {
+        this.getRoleListData(this.userId)
+        this.getProjectGroupList(this.userId)
+      }
     },
     beforeDestroy () {
       this.showEdit({ isShow: false })

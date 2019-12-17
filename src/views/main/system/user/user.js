@@ -128,9 +128,9 @@ const actions = {
       commit(types.SET_DATA, { item: 'isLoadingUserList', value: false })
     })
   },
-  getRoleListData ({ commit, state, getters, dispatch }, uid) {
+  getRoleListData ({ commit, state, getters, dispatch }, uid = 1109) {
     let params = {
-      uid: 1109
+      uid: uid
     }
     let getRoleListReq = api.role.getRoleList(params)
     commit(types.ADD_REQUEST_CANCEL, { item: 'getRoleListReq', value: getRoleListReq.cancel })
@@ -178,19 +178,116 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     })
   },
-  addUserData ({ commit, state, getters, dispatch }) {
+  validateData ({ commit, state, getters, dispatch }) {
     let editData = state.editData
-    let postData = Object.assign({}, editData, {
-      ProjectGroups: editData.ProjectGroups.map(item => ({ Id: item.value }))
+    if (editData.UserName.trim() === '') {
+      ElAlert('用户名为空！', '表单错误').then(() => {})
+      return false
+    }
+    if (editData.AccountName.trim() === '') {
+      ElAlert('登录名为空！', '表单错误').then(() => {})
+      return false
+    }
+    if (editData.PhoneNo.trim() === '') {
+      ElAlert('电话号码为空！', '表单错误').then(() => {})
+      return false
+    }
+    if (editData.RoleId === null) {
+      ElAlert('角色名称为空！', '表单错误').then(() => {})
+      return false
+    }
+    if (!state.isModify) {
+      if (editData.Password.trim() === '') {
+        ElAlert('新建用户默认密码为 123456！', '提示').then(() => {})
+      }
+    } else {
+      if (editData.Password.trim() === '') {
+        ElAlert('编辑用户密码不会重置', '提示').then(() => {})
+      }
+    }
+    return true
+  },
+  addUserData ({ commit, state, getters, dispatch }) {
+    dispatch('validateData').then(result => {
+      if (result) {
+        let editData = state.editData
+        let postData = {
+          AccountName: editData.AccountName,
+          Password: editData.Password.trim() === '' ? '123456' : editData.Password,
+          UserName: editData.UserName,
+          RoleId: editData.RoleId,
+          PhoneNo: editData.PhoneNo,
+          Status: editData.Status,
+          ProjectGroups: editData.ProjectGroups.map(project => {
+            let targetItem = {
+              Id: project.Id,
+              Name: project.Name
+            }
+            project.Groups && (targetItem.Groups = project.Groups.map(group => ({ Id: group.Id })))
+            return targetItem
+          })
+        }
+        let addUserDataReq = api.user.postUserManage(postData)
+        commit(types.ADD_REQUEST_CANCEL, { item: 'addUserDataReq', value: addUserDataReq.cancel })
+        addUserDataReq.request.then(res => {
+          commit(types.CHECKOUT_SUCCEED, res.State)
+          dispatch('getUserListData')
+          dispatch('showEdit', { isShow: false })
+        }).catch(err => {
+          commit(types.CHECKOUT_FAILURE, err)
+        })
+      }
     })
-    let addUserDataReq = api.user.postUserManage(postData)
-    commit(types.ADD_REQUEST_CANCEL, { item: 'addUserDataReq', value: addUserDataReq.cancel })
-    addUserDataReq.request.then(res => {
-      commit(types.CHECKOUT_SUCCEED, res.State)
-      dispatch('getUserListData')
-      dispatch('showEdit', { isShow: false })
-    }).catch(err => {
-      commit(types.CHECKOUT_FAILURE, err)
+  },
+  saveUserData ({ commit, state, getters, dispatch }) {
+    dispatch('validateData').then(result => {
+      if (result) {
+        let editData = state.editData
+        let postData = {
+          Id: editData.Id,
+          AccountName: editData.AccountName,
+          UserName: editData.UserName,
+          RoleId: editData.RoleId,
+          PhoneNo: editData.PhoneNo,
+          Status: editData.Status,
+          ProjectGroups: editData.ProjectGroups.map(project => {
+            let targetItem = {
+              Id: project.Id,
+              Name: project.Name
+            }
+            project.Groups && (targetItem.Groups = project.Groups.map(group => ({ Id: group.Id })))
+            return targetItem
+          })
+        }
+        if (editData.Password.trim() !== '') {
+          postData.Password = editData.Password
+        }
+        let saveUserDataReq = api.user.putUserManage(postData)
+        commit(types.ADD_REQUEST_CANCEL, { item: 'saveUserDataReq', value: saveUserDataReq.cancel })
+        saveUserDataReq.request.then(res => {
+          commit(types.CHECKOUT_SUCCEED, res.State)
+          dispatch('getUserListData')
+          dispatch('showEdit', { isShow: false })
+        }).catch(err => {
+          commit(types.CHECKOUT_FAILURE, err)
+        })
+      }
+    })
+  },
+  changeUserStatus ({ commit, state, getters, dispatch }, { row, status = STATUS_ENABLED_VALUE }) {
+    ElConfirm(`确认要${status === STATUS_ENABLED_VALUE ? '启用' : (status === STATUS_DISABLED_VALUE ? '停用' : '停用')}此用户${row.UserName}`, '提示').then(() => {
+      let postData = {
+        Id: row.Id,
+        Status: status
+      }
+      let changeUserStatusReq = api.user.putUserManage(postData)
+      commit(types.ADD_REQUEST_CANCEL, { item: 'changeUserStatusReq', value: changeUserStatusReq.cancel })
+      changeUserStatusReq.request.then(res => {
+        commit(types.CHECKOUT_SUCCEED, res.State)
+        dispatch('getUserListData')
+      }).catch(err => {
+        commit(types.CHECKOUT_FAILURE, err)
+      })
     })
   }
 }

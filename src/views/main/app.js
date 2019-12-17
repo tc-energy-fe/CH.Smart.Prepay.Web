@@ -8,6 +8,7 @@ const state = {
   reqCancels: new Map(),
   userAreas: [],
   userMenus: [],
+  userId: null,
   areaId: null,
   account: {
     Name: '管理员'
@@ -39,6 +40,8 @@ const actions = {
       let data = res.Data || {}
       let areas = data.Areas || []
       let menus = data.Menus || []
+      // 保存用户UserID
+      commit(types.SET_DATA, { item: 'userId', value: data.UserId || null })
       // 保存用户名
       commit(types.SET_DATA, { item: 'account', value: { Name: data.Name, AccountType: data.AccountType } })
       // 保存用户管理的项目
