@@ -32,23 +32,23 @@
     content: "\e605";
 }
 
-.icon-nav_icon_cost_n:before {
+.icon-nav_icon_charge:before {
     content: "\e606";
 }
 
-.icon-nav_icon_alarm_n:before {
+.icon-nav_icon_warn:before {
     content: "\e608";
 }
 
-.icon-nav_icon_report_n:before {
+.icon-nav_icon_resource:before {
     content: "\e60a";
 }
 
-.icon-nav_icon_basicsetting_n:before {
+.icon-nav_icon_config:before {
     content: "\e60b";
 }
 
-.icon-nav_icon_data_n:before {
+.icon-nav_icon_statement:before {
     content: "\e60d";
 }
 
@@ -56,14 +56,14 @@
     content: "\e60e";
 }
 
-.icon-nav_icon_overview_n1:before {
+.icon-nav_icon_home:before {
     content: "\e60f";
 }
 
-.icon-nav_icon_monitor_n:before {
+.icon-nav_icon_status:before {
     content: "\e60c";
 }
 
-.icon-nav_icon_setting_n:before {
+.icon-nav_icon_system:before {
     content: "\e610";
 }

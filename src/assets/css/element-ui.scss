@@ -15,6 +15,10 @@ $--table-header-font-color: $font-color;
 $--table-header-background-color: $background-color;
 $--table-row-hover-background-color: #e5eeff;
 
+// menu
+$--menu-item-font-size: $font-size;
+$--menu-item-hover-fill: #e5eeff;
+
 /* 改变 icon 字体路径变量，必需 */
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
@@ -86,5 +90,82 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   &.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
     background-color: #e5eeff;
     color: $main-color;
+  }
+}
+
+// menu
+.el-menu{
+  position: relative;
+  border-right: none;
+  // 根menu-item样式
+  .el-menu-item {
+    border-bottom: 1px solid #f2f5fa;
+    &.is-active{
+      color: $main-color;
+      background-color: $hover-color;
+    }
+
+    > .iconfont{
+      width: 1rem;
+      height: 1rem;
+      padding: 0 1rem;
+    }
+  }
+
+  // 子menu的title样式
+  .el-submenu{
+    &.is-active {
+      .el-submenu__title {
+        color: $main-color;
+        > .iconfont{
+          color: $main-color;
+        }
+      }
+    }
+
+    .el-submenu__title{
+      border-bottom: 1px solid #f2f5fa;
+      > .iconfont{
+        width: 1rem;
+        height: 1rem;
+        padding: 0 1rem;
+      }
+    }
+  }
+
+  // 折叠侧边栏样式
+  &.el-menu--collapse{
+    > .el-menu-item{
+      &.is-active {
+        background-color: $hover-color;
+      }
+    }
+    .el-menu-item, .el-submenu>.el-submenu__title{
+      > .iconfont{
+        padding: 0;
+      }
+    }
+  }
+
+  // 侧边栏submenu下的menu样式
+  &.el-menu--inline{
+    > .el-menu-item{
+      position: relative;
+      padding-left: 5rem !important;
+
+      &.is-active{
+        background-color: $hover-color;
+        &:before{
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: .4rem;
+          content: '';
+          background-color: $main-color;
+        }
+      }
+    }
   }
 }
