@@ -1,0 +1,38 @@
+// 基本配置上下两个部分的布局
+
+.config-scheme{
+  padding-bottom: .5rem;
+  padding-top: 2rem;
+  > .scheme-title{
+    top: 0;
+  }
+}
+
+.config-room{
+  padding-top: 2.5rem;
+  > .scheme-title{
+    top: 0.5rem;
+  }
+}
+
+.config-scheme, .config-room{
+  position: relative;
+  height: 50%;
+  > .scheme-title{
+    position: absolute;
+    left: 0;
+    display: block;
+    height: 2rem;
+    width: 100%;
+    padding-left: 1rem;
+    padding-top: 1rem;
+    background-color: #FFF;
+  }
+
+  > .eg-box{
+    height: 100%;
+    .eg-box__header--left {
+      @include setEqualInterval(1rem);
+    }
+  }
+}

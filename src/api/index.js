@@ -6,6 +6,7 @@ import role from './role'
 import gateway from './gateway'
 import device from './device'
 import file from './file'
+import scheme from './scheme'
 
 export default {
   login,
@@ -15,5 +16,6 @@ export default {
   role,
   gateway,
   device,
-  file
+  file,
+  scheme
 }
