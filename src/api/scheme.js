@@ -5,5 +5,10 @@ export default {
     method: 'post',
     url: '/Scheme/List',
     data
+  }),
+  getRoomSchemeList: data => http({
+    method: 'post',
+    url: '/Scheme/Room/List',
+    data
   })
 }
