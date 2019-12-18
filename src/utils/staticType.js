@@ -65,6 +65,11 @@ export const staticValue = {
     3: 'm³',
     4: 'Nm³',
     5: 't'
+  },
+  // new
+  schemeType: {
+    0: '电价方案',
+    1: '余额警告方案'
   }
 }
 

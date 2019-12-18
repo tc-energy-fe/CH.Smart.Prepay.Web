@@ -7,6 +7,7 @@ import gateway from './gateway'
 import device from './device'
 import file from './file'
 import log from './log'
+import scheme from './scheme'
 
 export default {
   login,
@@ -17,5 +18,6 @@ export default {
   gateway,
   device,
   log,
-  file
+  file,
+  scheme
 }

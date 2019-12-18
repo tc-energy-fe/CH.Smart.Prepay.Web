@@ -62,6 +62,23 @@ const routes = [
     ]
   },
   {
+    path: '/config',
+    component: () => {
+      Store.registerModule('config', { namespaced: true })
+      return import('../views/main/config/index')
+    },
+    children: [
+      { path: '', redirect: 'price' },
+      {
+        path: 'price',
+        component: () => {
+          Store.registerModule(['config', 'price'], require('@/views/main/config/price/price').default)
+          return import('../views/main/config/price/index')
+        }
+      }
+    ]
+  },
+  {
     path: '/system',
     component: () => {
       Store.registerModule('system', { namespaced: true })
