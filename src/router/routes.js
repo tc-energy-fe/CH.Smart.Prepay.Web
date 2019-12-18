@@ -82,6 +82,13 @@ const routes = [
           Store.registerModule(['system', 'user'], require('@/views/main/system/user/user').default)
           return import('@/views/main/system/user/index')
         }
+      },
+      {
+        path: 'log',
+        component: () => {
+          Store.registerModule(['system', 'log'], require('@/views/main/system/log/log').default)
+          return import('@/views/main/system/log/index')
+        }
       }
     ]
   },

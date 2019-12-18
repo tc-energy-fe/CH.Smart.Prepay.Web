@@ -118,4 +118,4 @@
   }
 </script>
 
-<style lang="scss" src="@/assets/css/common.scss"></style>
+<style lang="scss" src="@/assets/css/common.scss"/>

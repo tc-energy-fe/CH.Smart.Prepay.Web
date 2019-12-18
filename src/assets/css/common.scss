@@ -25,4 +25,15 @@ a {
   }
 }
 
+.eg-box {
+  .eg-box__header {
+    .eg-box__header--left {
+      //display: flex;
+      //justify-content: flex-start;
+      //align-items: center;
+      @include setEqualInterval(1rem);
+    }
+  }
+}
+
 @import "./iconfont.css";
