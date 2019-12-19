@@ -259,6 +259,12 @@
           this.getProjectGroupList(newValue)
         }
       },
+      currentPage () {
+        this.getUserListData()
+      },
+      pageSize () {
+        this.getUserListData()
+      },
       editGroupTreeData (newValue) {
         if (this.userGroupCheckedIds.length) {
           this.$nextTick(function () {

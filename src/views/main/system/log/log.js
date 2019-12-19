@@ -8,7 +8,7 @@ const TOTAL_OPTION_VALUE = 'total'
 const state = {
   reqCancels: new Map(),
   searchName: '',
-  searchOperateId: TOTAL_OPTION_VALUE,
+  searchOperateId: null,
   searchOperateTypeList: [
     { label: '全部操作类型', value: TOTAL_OPTION_VALUE }
   ],
@@ -36,10 +36,11 @@ const actions = {
           value: parseInt(key)
         }
       })
-      let searchOperateTypeList = state.searchOperateTypeList.concat(operateTypeList)
+      let initType = { label: '全部操作类型', value: TOTAL_OPTION_VALUE }
+      let searchOperateTypeList = [initType, ...operateTypeList]
       commit(types.SET_DATA, { item: 'searchOperateTypeList', value: searchOperateTypeList })
       commit(types.SET_DATA, { item: 'searchOperateId', value: searchOperateTypeList[0].value })
-      dispatch('getLogListData')
+      // dispatch('getLogListData')
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
@@ -54,7 +55,7 @@ const actions = {
       PageSize: state.pageSize,
       PageIndex: state.currentPage
     }
-    if (state.searchOperateId === null || state.searchOperateId === TOTAL_OPTION_VALUE) {
+    if (state.searchOperateId === TOTAL_OPTION_VALUE) {
       delete postData.OperateType
     }
     let getLogListDataReq = api.log.postLogManage(postData)

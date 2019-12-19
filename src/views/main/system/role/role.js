@@ -72,7 +72,8 @@ const actions = {
           label: value,
           value: parseInt(key)
         }))
-        let searchRoleTypeList = state.searchRoleTypeList.concat(roleTypeList)
+        let initType = { label: '全部角色类型', value: TOTAL_OPTION_VALUE }
+        let searchRoleTypeList = [initType, ...roleTypeList]
         commit(types.SET_DATA, { item: 'searchRoleTypeList', value: searchRoleTypeList })
         commit(types.SET_DATA, { item: 'searchTypeId', value: searchRoleTypeList[0].value })
         dispatch('getRoleListData')

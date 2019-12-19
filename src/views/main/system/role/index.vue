@@ -184,6 +184,15 @@
       }
     },
     watch: {
+      searchTypeId () {
+        this.getRoleListData()
+      },
+      currentPage () {
+        this.getRoleListData()
+      },
+      pageSize () {
+        this.getRoleListData()
+      },
       editTreeData (newValue) {
         if (this.menusCheckedIds.length) {
           this.$nextTick(function () {

@@ -93,9 +93,32 @@
       ])
     },
     watch: {
+      projectId (newId) {
+        if (newId) {
+          if (this.searchOperateId) {
+            this.getLogListData()
+          }
+        }
+      },
+      searchOperateId (newId) {
+        if (newId) {
+          if (this.projectId) {
+            this.getLogListData()
+          }
+        }
+      },
+      currentPage () {
+        this.getLogListData()
+      },
+      pageSize () {
+        this.getLogListData()
+      }
     },
     created () {
       this.getLogOperateType()
+      if (this.projectId && this.searchOperateId) {
+        this.getLogListData()
+      }
     },
     beforeDestroy () {
     }
