@@ -7,7 +7,6 @@ const state = {
   reqCancels: new Map(),
   searchPriceName: '',
   searchRoomName: '',
-  searchRoomNo: '',
   searchSchemeType: '',
   priceList: [],
   isLoadingPriceList: false,
@@ -16,7 +15,21 @@ const state = {
   currentRoomPage: 1,
   totalRoomCount: 0,
   isLoadingRoomList: false,
-  roomList: []
+  roomList: [],
+  isShowEdit: false,
+  isModify: false,
+  editData: {
+    Id: null,
+    Name: '',
+    Status: 0
+  },
+  editPriceContent: [{
+    DateStart: '',
+    DateEnd: '',
+    PriceType: 1,
+    StepPrice: false,
+    PricePeriod: [{}, {}, {}]
+  }]
 }
 
 const getters = {
@@ -25,6 +38,30 @@ const getters = {
 
 const actions = {
   ...Actions,
+  showEdit ({ state, getters, commit, dispatch }, { isShow, row }) {
+    if (!isShow) {
+      commit(types.SET_DATA, { item: 'isShowEdit', value: false })
+      return
+    }
+    commit(types.SET_DATA, { item: 'editData',
+      value: {
+        Id: null,
+        Name: '',
+        Status: 0
+      }
+    })
+    if (row) {
+      commit(types.SET_DATA, { item: 'isModify', value: true })
+      Object.keys(state.editData).forEach(k => {
+        commit(types.UPDATE_OBJ_DATA, { obj: 'editData', item: k, value: row[k] })
+      })
+    } else {
+      commit(types.SET_DATA, { item: 'isModify', value: false })
+    }
+
+    commit(types.SET_DATA, { item: 'isShowEdit', value: true })
+  },
+  editPriceContentDataOnChange () {},
   getPriceList ({ state, getters, commit }) {
     let postData = {
       ProjectId: getters.projectId,
@@ -52,8 +89,8 @@ const actions = {
   getRoomList ({ state, getters, commit }) {
     let postData = {
       ProjectId: getters.projectId,
-      Name: state.searchRoomName,
-      RoomNo: state.searchRoomNo,
+      Name: state.searchSchemeType,
+      RoomNo: state.searchRoomName,
       SchemeType: 0, // 电价方案
       PageIndex: state.currentRoomPage,
       PageSize: 5

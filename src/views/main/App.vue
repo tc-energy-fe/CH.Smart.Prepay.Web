@@ -90,7 +90,7 @@
       ...mapGetters([
       ]),
       defaultUrl () {
-        return location.pathname
+        return this.$route.path
       }
     },
     methods: {

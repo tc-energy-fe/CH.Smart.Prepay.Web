@@ -108,6 +108,24 @@
   }
 }
 
+
+// 编辑/添加页面样式
+.edit-wrapper{
+  height: 100%;
+
+  .edit-header{
+    display: flex;
+    justify-content: center;
+    &__title{
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-right: 1rem;
+    }
+  }
+
+  .edit-footer{}
+}
+
 .row-popper {
   .row-popper__content {
     max-height: 50vh;

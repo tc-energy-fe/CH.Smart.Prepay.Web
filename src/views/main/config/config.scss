@@ -31,8 +31,5 @@
 
   > .eg-box{
     height: 100%;
-    .eg-box__header--left {
-      @include setEqualInterval(1rem);
-    }
   }
 }

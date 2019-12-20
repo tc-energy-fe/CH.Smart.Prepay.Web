@@ -75,6 +75,13 @@ const routes = [
           Store.registerModule(['config', 'price'], require('@/views/main/config/price/price').default)
           return import('../views/main/config/price/index')
         }
+      },
+      {
+        path: 'warn',
+        component: () => {
+          Store.registerModule(['config', 'warn'], require('@/views/main/config/warn/warn').default)
+          return import('../views/main/config/warn/index')
+        }
       }
     ]
   },
