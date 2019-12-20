@@ -1,38 +1,162 @@
 <template>
   <div class="main-container config-warn">
-    <template>
+    <template v-if="!isShowEdit">
       <div class="config-scheme">
-        <p class="scheme-title">方案查询</p>
-        <eg-box></eg-box>
+        <p class="scheme-title">余额告警方案查询</p>
+        <eg-box>
+          <template v-slot:headerLeft>
+            <eg-input
+              placeholder="方案名称搜索"
+              :value="searchNameWarn"
+              @input="updateStateData({item: 'searchNameWarn', value: $event})"
+            />
+            <eg-button @click="getWarnSchemeList">查询</eg-button>
+          </template>
+          <template v-slot:headerRight>
+            <eg-button @click="showEdit">新建报警方案</eg-button>
+          </template>
+          <template v-slot:content>
+            <div class="table-wrapper">
+              <el-table height="100%" :data="warnList" v-loading="isLoadingWarnList">
+                <el-table-column prop="Name" label="方案名称" align="center" />
+                <el-table-column prop="WarnValueText" label="报警阈值（元）" align="center" />
+                <el-table-column prop="OffTypeText" label="拉闸方式" align="center" />
+                <el-table-column prop="StatusText" label="启用状态" align="center" />
+                <el-table-column label="操作" align="center">
+                  <template v-slot="{row}">
+                    <eg-button type="text" style="margin-right: 1rem;">编辑</eg-button>
+                    <eg-button v-if="row.Status === 3" type="text" color="success">启用</eg-button>
+                    <eg-button v-else-if="row.Status === 0" type="text" color="danger">停用</eg-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <el-pagination
+                background
+                :current-page="currentPageWarn"
+                :page-size="pageSize"
+                :total="totalCountWarn"
+                layout="total, ->, prev, pager, next"
+                @current-change="updateStateData({item: 'currentPageWarn', value: $event})"
+              />
+            </div>
+          </template>
+        </eg-box>
       </div>
       <div class="config-room">
         <p class="scheme-title">房间方案查询</p>
-        <eg-box></eg-box>
+        <eg-box>
+          <template v-slot:headerLeft>
+            <eg-input
+              placeholder="房间编号/名称搜索"
+              :value="searchNameRoom"
+              @input="updateStateData({item: 'searchNameRoom', value: $event})"
+            />
+            <eg-input
+              placeholder="余额报警方案搜索"
+              :value="searchWarnScheme"
+              @input="updateStateData({item: 'searchWarnScheme', value: $event})"
+            />
+            <eg-button @click="getRoomList">查询</eg-button>
+          </template>
+          <template v-slot:content>
+            <div class="table-wrapper">
+              <el-table height="100%" :data="roomList" v-loading="isLoadingRoomList">
+                <el-table-column prop="RoomNo" label="房间编号" align="center" />
+                <el-table-column prop="FullName" label="房间信息" align="center" />
+                <el-table-column prop="SchemeName" label="余额报警方案" align="center" />
+              </el-table>
+              <el-pagination
+                background
+                :current-page="currentPageRoom"
+                :page-size="pageSize"
+                :total="totalCountRoom"
+                layout="total, ->, prev, pager, next"
+                @current-change="updateStateData({item: 'currentPageRoom', value: $event})"
+              />
+            </div>
+          </template>
+        </eg-box>
       </div>
+    </template>
+    <template v-if="isShowEdit">
+      <eg-box class="edit-wrapper">
+        <template v-slot:headerLeft>
+          <div class="edit-header">
+            <p class="edit-header__title">{{isModify ? '编辑' : '新建'}}余额报警方案</p>
+            <eg-button type="text" @click="showEdit({isShow: false})">返回列表</eg-button>
+          </div>
+        </template>
+      </eg-box>
     </template>
   </div>
 </template>
 
 <script>
-  // import './.scss'
   import { createNamespacedHelpers } from 'vuex'
   const { mapGetters, mapActions, mapState } = createNamespacedHelpers('config/warn')
   export default {
-    name: 'config-warn',
+    name: 'ConfigWarn',
     data () {
       return {
       }
     },
     components: {},
     computed: {
-      ...mapState([]),
-      ...mapGetters([])
+      ...mapState([
+        'searchNameWarn',
+        'searchNameRoom',
+        'searchWarnScheme',
+        'currentPageWarn',
+        'currentPageRoom',
+        'pageSize',
+        'warnList',
+        'roomList',
+        'totalCountWarn',
+        'totalCountRoom',
+        'isLoadingWarnList',
+        'isLoadingRoomList',
+        'isShowEdit',
+        'isModify'
+      ]),
+      ...mapGetters([
+      ]),
+      projectId () {
+        return this.$store.state.areaId
+      }
     },
     methods: {
-      ...mapActions([])
+      ...mapActions([
+        'showEdit',
+        'getWarnSchemeList',
+        'getRoomList',
+        'updateStateData',
+        'updateObjectData'
+      ])
     },
-    watch: {},
-    created () {},
-    beforeDestroy () {}
+    watch: {
+      projectId (newId) {
+        if (newId) {
+          this.getWarnSchemeList()
+          this.getRoomList()
+        }
+      },
+      currentPageWarn () {
+        this.getWarnSchemeList()
+      },
+      currentPageRoom () {
+        this.getRoomList()
+      }
+    },
+    created () {
+      if (this.projectId) {
+        this.getWarnSchemeList()
+        this.getRoomList()
+      }
+    },
+    beforeDestroy () {
+      this.showEdit({ isShow: false })
+    }
   }
 </script>
+
+<style scoped lang="scss" src="./warn.scss"/>
