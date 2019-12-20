@@ -115,7 +115,8 @@
 
   .edit-header{
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: baseline;
     &__title{
       font-size: 1.1rem;
       font-weight: bold;
@@ -126,6 +127,7 @@
   .edit-footer{}
 }
 
+// popper样式
 .row-popper {
   .row-popper__content {
     max-height: 50vh;

@@ -68,7 +68,7 @@ const Mutations = {
       ElAlert('数据错误或数据异常！', '错误').then(() => {})
     } else if (!err.abort) {
       let code = err.code.toString()
-      let errorMsg = err.Msg || ERROR_CODE['default'][code] || `未知错误${code}`
+      let errorMsg = err.msg || ERROR_CODE['default'][code] || `未知错误${code}`
       ElAlert(errorMsg, '错误').then(() => {})
     }
   },
