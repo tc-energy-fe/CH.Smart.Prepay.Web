@@ -58,5 +58,16 @@ export default {
   deleteRoomAccount: (data) => http({
     method: 'delete',
     url: `/Group/Room/Account/${data.Id}`
+  }),
+  /** RoomConfig **/
+  getRoomConfigAddList: (params) => http({
+    method: 'get',
+    url: '/Group/List/Config/Add',
+    params
+  }),
+  getRoomConfigEditList: (params) => http({
+    method: 'get',
+    url: '/Group/List/Config/Edit',
+    params
   })
 }

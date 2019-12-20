@@ -6,6 +6,10 @@ export default {
     url: '/Scheme/List',
     data
   }),
+  getSchemeDetail: id => http({
+    method: 'get',
+    url: `/Scheme/${id}`
+  }),
   getRoomSchemeList: data => http({
     method: 'post',
     url: '/Scheme/Room/List',

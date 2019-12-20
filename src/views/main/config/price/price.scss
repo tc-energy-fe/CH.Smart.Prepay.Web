@@ -1,10 +1,16 @@
 .config-price{
+  .price-edit{
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
   .price-edit__row{
     display: flex;
     align-items: center;
     margin-top: 1rem;
     .price-edit__lable{
       align-self: flex-start;
+      flex-shrink: 0;
       display: inline-block;
       width: 5rem;
       height: $normal-input-height;
@@ -18,15 +24,18 @@
 
     // 电价设置
     .price-edit__price{
-      width: 60rem;
-      min-height: 10rem;
+      flex-shrink: 0;
+      width: 68rem;
+      min-height: 15rem;
       border: 1px solid #a3a7af;
       border-radius: $border-radius;
       padding: .5rem 1rem;
+      overflow: auto;
 
       &-block{
         border-bottom: 1px solid #f2f5fa;
         padding-bottom: .5rem;
+        margin-bottom: .5rem;
         .price-block__title{
           margin-bottom: .5rem;
         }
@@ -34,6 +43,30 @@
           margin-bottom: 1rem;
           @include setEqualInterval(1rem)
         }
+        .price-block__price-row{
+          display: flex;
+          align-items: center;
+          @include setEqualInterval(1rem);
+          margin-bottom: .5rem;
+        }
+      }
+    }
+
+    .price-edit__room{
+      flex-shrink: 0;
+      width: 30rem;
+      height: 20rem;
+      border: 1px solid #a3a7af;
+      border-radius: $border-radius;
+      padding: .5rem 1rem;
+      display: flex;
+      flex-direction: column;
+
+      .el-tree{
+        height: 0;
+        flex: 1;
+        overflow: auto;
+        margin-top: .5rem;
       }
     }
   }

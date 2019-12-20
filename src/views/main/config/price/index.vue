@@ -22,7 +22,7 @@
                 <el-table-column prop="StatusText" label="启用状态" align="center"></el-table-column>
                 <el-table-column label="操作" align="center">
                   <template slot-scope="{ row }">
-                    <eg-button type="text" @click="showEdit({ data: row })" style="margin-right: 1.5rem;">编辑</eg-button>
+                    <eg-button type="text" @click="showEdit({ isShow: true, row })" style="margin-right: 1.5rem;">编辑</eg-button>
                     <eg-button v-if="row.Status" type="text" color="success">停用</eg-button>
                     <eg-button v-else type="text" color="danger">启用</eg-button>
                   </template>
@@ -81,58 +81,195 @@
           <eg-button type="text" @click="showEdit({ isShow: false })">返回列表</eg-button>
         </div>
         <template v-slot:content>
-          <div class="price-edit__row">
-            <label class="price-edit__lable">方案名称</label>
-            <eg-input></eg-input>
-            <i class="iconfont icon-content_icon_required"></i>
-            <label class="price-edit__lable" style="margin-left: 5rem;">启用状态</label>
-            <el-radio-group :value="editData.Status" @input="editDataOnChange('Status', $event)">
-              <el-radio :label="0">启用</el-radio>
-              <el-radio :label="3">停用</el-radio>
-            </el-radio-group>
-          </div>
-          <div class="price-edit__row">
-            <label class="price-edit__lable">电价设置</label>
-            <div class="price-edit__price">
-              <div
-                class="price-edit__price-block"
-                v-for="(pC, index) in editPriceContent"
-                :key="`content-${index}`"
-              >
-                <p class="price-block__title">时段{{index + 1}}</p>
-                <div class="price-block__condition">
-                  <el-date-picker
-                    type="daterange"
-                    :editable="false"
-                  ></el-date-picker>
-                  <el-select
-                    :value="pC.PriceType"
-                    @change="editPriceContentDataOnChange('PriceType', $event)"
-                  >
-                    <el-option :value="0" label="分时电价"></el-option>
-                    <el-option :value="1" label="统一电价"></el-option>
-                  </el-select>
-                  <el-checkbox
-                    :checked="pC.StepPrice"
-                    @change="editPriceContentDataOnChange(index, 'StepPrice', $event)"
-                  >阶梯电价</el-checkbox>
-                </div>
-                <!-- 统一电价 -->
-                <template v-if="pC.PriceType">
+          <div class="price-edit">
+            <div class="price-edit__row">
+              <label class="price-edit__lable">方案名称</label>
+              <eg-input
+                :value="editData.Name"
+                @input="editDataOnChange('Name', $event)"
+              ></eg-input>
+              <i class="iconfont icon-content_icon_required"></i>
+              <label class="price-edit__lable" style="margin-left: 5rem;">启用状态</label>
+              <el-radio-group :value="editData.Status" @input="editDataOnChange('Status', $event)">
+                <el-radio :label="0">启用</el-radio>
+                <el-radio :label="3">停用</el-radio>
+              </el-radio-group>
+            </div>
+            <div class="price-edit__row">
+              <label class="price-edit__lable">电价设置</label>
+              <div class="price-edit__price">
+                <div
+                  class="price-edit__price-block"
+                  v-for="(pC, pCIndex) in editPriceContent"
+                  :key="`content-${pCIndex}`"
+                >
+                  <p class="price-block__title">
+                    <span style="margin-right: 1rem">时段{{pCIndex + 1}}</span>
+                    <eg-button v-if="pCIndex !== 0" type="text" @click="removeEditPriceContentItem(pCIndex)">删除时段</eg-button>
+                  </p>
+                  <div class="price-block__condition">
+                    <el-date-picker
+                      :value="[pC.DateStart, pC.DateEnd]"
+                      type="daterange"
+                      :editable="false"
+                      :clearable="false"
+                      range-separator="至"
+                      @input="editPriceDateOnChange(pCIndex, $event)"
+                    ></el-date-picker>
+                    <el-select
+                      :value="pC.PriceType"
+                      @change="editPriceContentDataOnChange({ index: pCIndex, key: 'PriceType', value: $event })"
+                    >
+                      <el-option :value="0" label="分时电价"></el-option>
+                      <el-option :value="1" label="统一电价"></el-option>
+                    </el-select>
+                    <el-checkbox
+                      :checked="pC.StepPrice"
+                      @change="editPriceContentDataOnChange({ index: pCIndex, key: 'StepPrice', value: $event })"
+                    >阶梯电价</el-checkbox>
+                    <template v-if="pC.StepPrice">
+                      <label>每月结算日</label>
+                      <eg-input
+                        :value="pC.SettlDay"
+                        is-number
+                        is-integer
+                        @input="editPriceContentDataOnChange({ index: pCIndex, key: 'SettlDay', value: $event })"
+                      ></eg-input>
+                    </template>
+                  </div>
+                  <!-- 阶梯电价 -->
                   <template v-if="pC.StepPrice">
-                    <eg-input
-                      v-for="(p, index) in pC.PricePeriod"
-                      :key="`period-${index}`"
-                      suffixText="kWh">
-                    </eg-input>
+                    <div
+                      class="price-block__price-row"
+                      v-for="(p, pIndex) in pC.PricePeriod"
+                      :key="`period-${pIndex}`"
+                    >
+                      <label>第{{pIndex + 1}}阶梯</label>
+                      <!-- 统一电价 -->
+                      <eg-input
+                        v-if="pC.PriceType"
+                        placeholder="总电价"
+                        :value="pC.PricePeriod[pIndex].AvgPrice"
+                        suffixText="kWh"
+                        is-number
+                        @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex, key: 'AvgPrice', value: $event })">
+                      </eg-input>
+                      <!-- 分时电价 -->
+                      <template v-else>
+                        <eg-input
+                          placeholder="电量上限"
+                          :value="pC.PricePeriod[pIndex].EleUpLine"
+                          suffixText="kWh"
+                          is-number
+                          @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex, key: 'EleUpLine', value: $event })">
+                        </eg-input>
+                        <eg-input
+                          placeholder="尖电价"
+                          :value="pC.PricePeriod[pIndex].Point"
+                          suffixText="kWh"
+                          is-number
+                          @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex, key: 'Point', value: $event })">
+                        </eg-input>
+                        <eg-input
+                          placeholder="峰电价"
+                          :value="pC.PricePeriod[pIndex].Peak"
+                          suffixText="kWh"
+                          is-number
+                          @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex, key: 'Peak', value: $event })">
+                        </eg-input>
+                        <eg-input
+                          placeholder="平电价"
+                          :value="pC.PricePeriod[pIndex].Flat"
+                          suffixText="kWh"
+                          is-number
+                          @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex, key: 'Flat', value: $event })">
+                        </eg-input>
+                        <eg-input
+                          placeholder="谷电价"
+                          :value="pC.PricePeriod[pIndex].Valley"
+                          suffixText="kWh"
+                          is-number
+                          @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex, key: 'Valley', value: $event })">
+                        </eg-input>
+                      </template>
+                    </div>
                   </template>
-                  <template v-else>
+                  <!-- 非阶梯电价 -->
+                  <div class="price-block__price-row" v-else>
+                    <!-- 统一电价 -->
                     <eg-input
-                      suffixText="kWh">
+                      v-if="pC.PriceType"
+                      placeholder="总电价"
+                      :value="pC.PricePeriod[0].AvgPrice"
+                      suffixText="kWh"
+                      is-number
+                      @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'AvgPrice', value: $event })">
                     </eg-input>
-                  </template>
-                </template>
+                    <!-- 分时电价 -->
+                    <template v-else>
+                      <eg-input
+                        placeholder="电量上限"
+                        :value="pC.PricePeriod[0].EleUpLine"
+                        suffixText="kWh"
+                        is-number
+                        @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'EleUpLine', value: $event })">
+                      </eg-input>
+                      <eg-input
+                        placeholder="尖电价"
+                        :value="pC.PricePeriod[0].Point"
+                        suffixText="kWh"
+                        is-number
+                        @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Point', value: $event })">
+                      </eg-input>
+                      <eg-input
+                        placeholder="峰电价"
+                        :value="pC.PricePeriod[0].Peak"
+                        suffixText="kWh"
+                        is-number
+                        @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Peak', value: $event })">
+                      </eg-input>
+                      <eg-input
+                        placeholder="平电价"
+                        :value="pC.PricePeriod[0].Flat"
+                        suffixText="kWh"
+                        is-number
+                        @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Flat', value: $event })">
+                      </eg-input>
+                      <eg-input
+                        placeholder="谷电价"
+                        :value="pC.PricePeriod[0].Valley"
+                        suffixText="kWh"
+                        is-number
+                        @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Valley', value: $event })">
+                      </eg-input>
+                    </template>
+                  </div>
+                </div>
+                <eg-button type="text" @click="addEditPriceContentItem">添加时段</eg-button>
               </div>
+              <i class="iconfont icon-content_icon_required"></i>
+            </div>
+            <div class="price-edit__row">
+              <label class="price-edit__lable">执行房间</label>
+              <div class="price-edit__room" v-loading="isLoadingEditRoomList || isLoadingSchemeDetail">
+                <eg-input
+                  placeholder="房间名称搜索"
+                  v-model="editRoomSearchName"
+                >
+                  <i slot="suffix" class="iconfont icon-content_icon_search"></i>
+                </eg-input>
+                <el-tree
+                  v-if="!isLoadingEditRoomList && !isLoadingSchemeDetail"
+                  ref="editRoomTree"
+                  :data="editRoomTree"
+                  default-expand-all
+                  show-checkbox
+                  node-key="value"
+                  :default-checked-keys="editData.GroupIds"
+                  :filter-node-method="roomTreeFilter"
+                ></el-tree>
+              </div>
+              <i class="iconfont icon-content_icon_required"></i>
             </div>
           </div>
         </template>
@@ -149,6 +286,7 @@
     name: 'config-price',
     data () {
       return {
+        editRoomSearchName: ''
       }
     },
     components: {},
@@ -168,7 +306,11 @@
         'isShowEdit',
         'isModify',
         'editData',
-        'editPriceContent'
+        'editPriceContent',
+        'editRoomTree',
+        'schemeDetail',
+        'isLoadingEditRoomList',
+        'isLoadingSchemeDetail'
       ]),
       ...mapGetters([
         'projectId'
@@ -181,7 +323,10 @@
         'showEdit',
         'getRoomList',
         'updateObjectData',
-        'editPriceContentDataOnChange'
+        'editPriceContentDataOnChange',
+        'editPriceContentPeriodDataOnChange',
+        'addEditPriceContentItem',
+        'removeEditPriceContentItem'
       ]),
       currentPageOnChange (item, value) {
         this.updateFormData({ item, value })
@@ -200,6 +345,13 @@
       },
       editDataOnChange (key, value) {
         this.updateObjectData({ obj: 'editData', item: key, value })
+      },
+      editPriceDateOnChange (index, value) {
+        this.editPriceContentDataOnChange({ index, key: 'DateStart', value: value[0] })
+        this.editPriceContentDataOnChange({ index, key: 'DateEnd', value: value[1] })
+      },
+      roomTreeFilter (value, data) {
+        return data.label.indexOf(value) > -1
       }
     },
     watch: {
@@ -208,6 +360,9 @@
           this.getPriceList()
           this.getRoomList()
         }
+      },
+      editRoomSearchName (newValue) {
+        this.$refs.editRoomTree.filter(newValue)
       }
     },
     created () {
