@@ -3,11 +3,6 @@ import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
 
-const OffTypeValue = {
-  0: '立即拉闸',
-  1: '延时拉闸'
-}
-
 const state = {
   reqCancels: new Map(),
   searchNameWarn: '',
@@ -23,10 +18,18 @@ const state = {
   isLoadingWarnList: false,
   isLoadingRoomList: false,
   isShowEdit: false,
-  isModify: false
+  isModify: false,
+  offTypeText: {
+    0: '立即拉闸',
+    1: '延时拉闸'
+  }
 }
 
 const getters = {
+  offTypeList: (state, getters) => (Object.entries(state.offTypeText).map(([id, text]) => ({
+    label: text,
+    key: id
+  })))
 }
 
 const actions = {
@@ -59,7 +62,7 @@ const actions = {
       let data = res.Data || []
       data.forEach(item => {
         item.StatusText = item.Status === 0 ? '启用' : (item.Status === 3 ? '停用' : '其他')
-        item.OffTypeText = item.BalanceContent ? OffTypeValue[item.BalanceContent.OffType] : '--'
+        item.OffTypeText = item.BalanceContent ? state.offTypeText[item.BalanceContent.OffType] : '--'
         item.WarnValueText = item.BalanceContent ? item.BalanceContent.WarnValue : '--'
       })
       commit(types.SET_DATA, { item: 'warnList', value: data })

@@ -79,11 +79,68 @@
       </div>
     </template>
     <template v-if="isShowEdit">
-      <eg-box class="edit-wrapper">
+      <eg-box class="edit-wrapper warn-edit">
         <template v-slot:headerLeft>
           <div class="edit-header">
             <p class="edit-header__title">{{isModify ? '编辑' : '新建'}}余额报警方案</p>
             <eg-button type="text" @click="showEdit({isShow: false})">返回列表</eg-button>
+          </div>
+        </template>
+        <template v-slot:content>
+          <div class="warn-edit__row">
+            <label class="warn-edit__row-title">方案名称</label>
+            <eg-input width-type="medium" />
+            <i class="iconfont icon-content_icon_required"/>
+          </div>
+          <div class="warn-edit__row">
+            <label class="warn-edit__row-title">报警阈值</label>
+            <eg-input width-type="medium" suffix-text="元" />
+            <i class="iconfont icon-content_icon_required"/>
+          </div>
+          <div class="warn-edit__row">
+            <label class="warn-edit__row-title">是否发送短信</label>
+            <el-radio-group>
+              <el-radio :label="true">是</el-radio>
+              <el-radio :label="false">否</el-radio>
+            </el-radio-group>
+            <i class="iconfont icon-content_icon_required"/>
+          </div>
+          <div class="warn-edit__row">
+            <label class="warn-edit__row-title">拉闸方式</label>
+            <el-select
+              class="width-medium"
+            >
+              <el-option
+                v-for="(item, index) of offTypeList"
+                :key="index"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+            <i class="iconfont icon-content_icon_required"/>
+          </div>
+          <div class="warn-edit__row">
+            <label class="warn-edit__row-title">启用状态</label>
+            <el-radio-group>
+              <el-radio :label="0">启用</el-radio>
+              <el-radio :label="3">停用</el-radio>
+            </el-radio-group>
+            <i class="iconfont icon-content_icon_required"/>
+          </div>
+          <div class="warn-edit__row">
+            <label class="warn-edit__row-title align-top">执行房间</label>
+            <div class="warn-edit__row-box">
+              <eg-input placeholder="房间名称搜索">
+                <i slot="suffix" class="iconfont icon-content_icon_search"/>
+              </eg-input>
+              <el-tree :data="[]" />
+            </div>
+            <i class="iconfont icon-content_icon_required"/>
+          </div>
+          <div class="warn-edit__row">
+            <label class="warn-edit__row-title"/>
+            <eg-button type="minor">取消</eg-button>
+            <eg-button>保存</eg-button>
           </div>
         </template>
       </eg-box>
@@ -119,6 +176,7 @@
         'isModify'
       ]),
       ...mapGetters([
+        'offTypeList'
       ]),
       projectId () {
         return this.$store.state.areaId
