@@ -27,10 +27,9 @@ const Mutations = {
     state.requests.set(item, value)
   },
   [types.ABORT_REQUEST] (state, { item }) {
-    let req = state.requests.get(item)
-    if (req) {
-      req.__abort = 1
-      req.cancel()
+    let reqCancel = state.reqCancels.get(item)
+    if (reqCancel) {
+      reqCancel()
     }
   },
   [types.ADD_REQUEST_CANCEL] (state, { item, value }) {

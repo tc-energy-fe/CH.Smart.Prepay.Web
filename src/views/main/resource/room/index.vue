@@ -105,7 +105,9 @@
                   <el-select
                     placeholder="选择网关"
                     :value="editGatewayId"
+                    @change="editGatewayOnChange"
                   >
+                    <el-option label="不选择" :value="-1"></el-option>
                     <el-option
                       v-for="item in gatewayList"
                       :key="item.GatewayId"
@@ -215,7 +217,8 @@
         'importRoom',
         'getGatewayList',
         'updateFormData',
-        'updateObjectData'
+        'updateObjectData',
+        'editGatewayOnChange'
       ]),
       pageSizeOnChange (val) {
         this.pageSize = val

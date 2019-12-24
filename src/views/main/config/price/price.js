@@ -49,6 +49,8 @@ const actions = {
   showEdit ({ state, getters, commit, dispatch }, { isShow, row }) {
     if (!isShow) {
       commit(types.SET_DATA, { item: 'isShowEdit', value: false })
+      commit(types.ABORT_REQUEST, { item: 'getSchemeDetailReq' })
+      commit(types.ABORT_REQUEST, { item: 'getEditRoomListReq' })
       return
     }
     commit(types.SET_DATA, { item: 'editData',
@@ -61,8 +63,8 @@ const actions = {
     })
     commit(types.SET_DATA, { item: 'editPriceContent',
       value: [{
-        DateStart: new Date(),
-        DateEnd: new Date(),
+        DateStart: moment().startOf('year').toDate(),
+        DateEnd: moment().endOf('year').toDate(),
         PriceType: 1,
         StepPrice: false,
         SettlDay: null,
@@ -115,7 +117,7 @@ const actions = {
     getPriceListReq.request.then(res => {
       let data = res.Data || []
       data.forEach(item => {
-        item.StatusText = item.Status ? '启用' : '停用'
+        item.StatusText = item.Status === 0 ? '启用' : '停用'
       })
       commit(types.SET_DATA, { item: 'priceList', value: data })
       commit(types.SET_DATA, { item: 'totalPriceCount', value: res.Count })
@@ -161,7 +163,6 @@ const actions = {
         let period = pC.PricePeriod || []
         let PricePeriod = Array.apply(null, Array(3)).map((p, index) => {
           let periodItem = period[index + 1] || {}
-          console.log(periodItem)
           return Object.assign({
             EleUpLine: null,
             AvgPrice: null,
@@ -173,8 +174,8 @@ const actions = {
           }, periodItem)
         })
         return {
-          DateStart: moment().toDate(),
-          DateEnd: moment().toDate(),
+          DateStart: moment(`${new Date().getFullYear()}/${pC.DateStart}`).toDate(),
+          DateEnd: moment(`${new Date().getFullYear()}/${pC.DateEnd}`).toDate(),
           PriceType: pC.PriceType,
           StepPrice: pC.StepPrice,
           SettlDay: pC.SettlDay || null,
@@ -207,6 +208,184 @@ const actions = {
     }).finally(() => {
       commit(types.SET_LOADING_STATUS, { item: 'isLoadingEditRoomList', value: false })
     })
+  },
+  modifySchemeStatus ({ state, getters, commit, dispatch }, { row, status }) {
+    ElConfirm(`是否${status === 0 ? '启用' : '停用'}方案 ${row.Name} ？`).then(res => {
+      let postData = {
+        Id: row.Id,
+        Status: status
+      }
+      let modifySchemeStatusReq = api.scheme.modifySchemeStatus(postData)
+      commit(types.SET_LOADING_STATUS, { item: 'isModingSchemeStatus', value: true })
+      commit(types.ADD_REQUEST_CANCEL, { item: 'modifySchemeStatusReq', value: modifySchemeStatusReq.cancel })
+      modifySchemeStatusReq.request.then(res => {
+        commit(types.CHECKOUT_SUCCEED, res.State)
+        dispatch('getPriceList')
+        dispatch('getRoomList')
+      }).catch(err => {
+        commit(types.CHECKOUT_FAILURE, err)
+      }).finally(() => {
+        commit(types.SET_LOADING_STATUS, { item: 'isModingSchemeStatus', value: false })
+      })
+    })
+  },
+  editScheme ({ state, getters, commit, dispatch }) {
+    dispatch('validateData').then(res => {
+      if (!res) {
+        return
+      }
+      let editSchemeReq = state.isModify ? api.scheme.modifyScheme(res) : api.scheme.addScheme(res)
+      commit(types.SET_LOADING_STATUS, { item: 'isEditingScheme', value: true })
+      commit(types.ADD_REQUEST_CANCEL, { item: 'editSchemeReq', value: editSchemeReq.cancel })
+      editSchemeReq.request.then(res => {
+        commit(types.CHECKOUT_SUCCEED, res.State)
+        dispatch('showEdit', { isShow: false })
+        dispatch('getPriceList')
+        dispatch('getRoomList')
+      }).catch(err => {
+        commit(types.CHECKOUT_FAILURE, err)
+      }).finally(() => {
+        commit(types.SET_LOADING_STATUS, { item: 'isEditingScheme', value: false })
+      })
+    })
+  },
+  validateData ({ state, getters }) {
+    let editData = state.editData
+    let editPriceContent = state.editPriceContent
+    let postData = {
+      ProjectId: getters.projectId,
+      Name: editData.Name,
+      SchemeType: 0,
+      GroupIds: editData.GroupIds,
+      Status: editData.Status
+    }
+    if (state.isModify) postData.Id = editData.Id
+    // 方案名称验证
+    if (isEmpty(postData.Name) || postData.Name.trim() === '') {
+      ElAlert('请填写 方案名称！', '提示')
+      return null
+    }
+    // 电价设置验证
+    let PriceContent = editPriceContent.map((pc, pcIndex) => {
+      let item = {
+        DateStart: moment(pc.DateStart).format('M/D'),
+        DateEnd: moment(pc.DateEnd).format('M/D'),
+        PriceType: pc.PriceType,
+        StepPrice: pc.StepPrice
+      }
+      if (pc.StepPrice) {
+        // 阶梯电价
+        if (isEmpty(pc.SettlDay)) {
+          ElAlert(`请选择 电价设置：时段${pcIndex + 1} - 结算日！`, '提示')
+          return null
+        } else {
+          item.SettlDay = pc.SettlDay
+        }
+        let periods = {}
+        let periodsValid = pc.PricePeriod.some((p, index, arr) => {
+          let period = periods[index + 1] = {}
+          // 判断电价方式
+          if (pc.PriceType) {
+            // 统一电价
+            if (isEmpty(p.AvgPrice)) {
+              ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 总电价！`, '提示')
+              return true
+            } else {
+              period.AvgPrice = p.AvgPrice
+            }
+          } else {
+            // 分时电价
+            if (index === arr.length - 1) {
+              if (isEmpty(p.EleDownLine)) {
+                ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 电量上限！`, '提示')
+                return true
+              }
+              period.EleDownLine = p.EleDownLine
+            } else {
+              if (isEmpty(p.EleUpLine)) {
+                ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 电量下限！`, '提示')
+                return true
+              }
+              period.EleUpLine = p.EleUpLine
+            }
+            if (isEmpty(p.Point)) {
+              ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 尖电价！`, '提示')
+              return true
+            }
+            if (isEmpty(p.Peak)) {
+              ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 峰电价！`, '提示')
+              return true
+            }
+            if (isEmpty(p.Flat)) {
+              ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 平电价！`, '提示')
+              return true
+            }
+            if (isEmpty(p.Valley)) {
+              ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 谷电价！`, '提示')
+              return true
+            }
+            period.Point = p.Point
+            period.Peak = p.Peak
+            period.Flat = p.Flat
+            period.Valley = p.Valley
+          }
+        })
+        if (periodsValid) {
+          return null
+        } else {
+          item.PricePeriod = periods
+        }
+      } else {
+        // 非阶梯电价
+        let period = {}
+        let p = pc.PricePeriod[0]
+        // 判断电价方式
+        if (pc.PriceType) {
+          // 统一电价
+          let avg = p.AvgPrice
+          if (isEmpty(avg)) {
+            ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 总电价！`, '提示')
+            return null
+          } else {
+            period.AvgPrice = avg
+          }
+        } else {
+          // 分时电价
+          if (isEmpty(p.Point)) {
+            ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 尖电价！`, '提示')
+            return null
+          }
+          if (isEmpty(p.Peak)) {
+            ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 峰电价！`, '提示')
+            return null
+          }
+          if (isEmpty(p.Flat)) {
+            ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 平电价！`, '提示')
+            return null
+          }
+          if (isEmpty(p.Valley)) {
+            ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 谷电价！`, '提示')
+            return null
+          }
+          period.Point = p.Point
+          period.Peak = p.Peak
+          period.Flat = p.Flat
+          period.Valley = p.Valley
+        }
+        item.PricePeriod = { 1: period }
+      }
+      return item
+    })
+    if (PriceContent.some(p => isEmpty(p))) {
+      return null
+    }
+    postData.PriceContent = PriceContent
+    // 执行房间验证
+    if (isEmpty(postData.GroupIds) || !postData.GroupIds.length) {
+      ElAlert('请选择 执行房间！', '提示')
+      return null
+    }
+    return postData
   }
 }
 
@@ -220,8 +399,8 @@ const mutations = {
   },
   ADD_PRICE_CONTENT (state) {
     state.editPriceContent.push({
-      DateStart: new Date(),
-      DateEnd: new Date(),
+      DateStart: moment().startOf('year').toDate(),
+      DateEnd: moment().endOf('year').toDate(),
       PriceType: 1,
       StepPrice: false,
       SettlDay: null,

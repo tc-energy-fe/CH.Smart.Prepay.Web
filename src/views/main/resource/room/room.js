@@ -49,6 +49,15 @@ const actions = {
     commit(types.SET_DATA, { item: 'currentNode', value: val })
     dispatch('getRoomList')
   },
+  editGatewayOnChange ({ state, commit, dispatch }, value) {
+    commit(types.SET_DATA, { item: 'editGatewayId', value })
+    if (value === -1) {
+      commit(types.SET_DATA, { item: 'gatewayDeviceList', value: [] })
+      commit(types.SET_DATA, { item: 'editGatewayDeviceId', value: null })
+    } else {
+      dispatch('getGatewayDeviceList')
+    }
+  },
   showEdit ({ state, commit, dispatch }, { data, isShow = true }) {
     if (!isShow) {
       commit(types.SET_DATA, { item: 'isShowEdit', value: false })

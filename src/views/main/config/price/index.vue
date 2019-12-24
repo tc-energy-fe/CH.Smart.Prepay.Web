@@ -23,8 +23,14 @@
                 <el-table-column label="操作" align="center">
                   <template slot-scope="{ row }">
                     <eg-button type="text" @click="showEdit({ isShow: true, row })" style="margin-right: 1.5rem;">编辑</eg-button>
-                    <eg-button v-if="row.Status" type="text" color="success">停用</eg-button>
-                    <eg-button v-else type="text" color="danger">启用</eg-button>
+                    <eg-button
+                      v-if="row.Status === 0"
+                      type="text" color="success"
+                      @click="modifySchemeStatus({ row, status: 3 })">停用</eg-button>
+                    <eg-button
+                      v-else
+                      type="text" color="danger"
+                      @click="modifySchemeStatus({ row, status: 0 })">启用</eg-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -114,6 +120,11 @@
                       :editable="false"
                       :clearable="false"
                       range-separator="至"
+                      format="M月d日"
+                      unlink-panels
+                      :picker-options="{
+                        disabledDate: priceDateRangeDisabled(pCIndex)
+                      }"
                       @input="editPriceDateOnChange(pCIndex, $event)"
                     ></el-date-picker>
                     <el-select
@@ -123,10 +134,10 @@
                       <el-option :value="0" label="分时电价"></el-option>
                       <el-option :value="1" label="统一电价"></el-option>
                     </el-select>
-                    <el-checkbox
-                      :checked="pC.StepPrice"
-                      @change="editPriceContentDataOnChange({ index: pCIndex, key: 'StepPrice', value: $event })"
-                    >阶梯电价</el-checkbox>
+<!--                    <el-checkbox-->
+<!--                      :checked="pC.StepPrice"-->
+<!--                      @change="editPriceContentDataOnChange({ index: pCIndex, key: 'StepPrice', value: $event })"-->
+<!--                    >阶梯电价</el-checkbox>-->
                     <template v-if="pC.StepPrice">
                       <label>每月结算日</label>
                       <eg-input
@@ -157,11 +168,12 @@
                       <!-- 分时电价 -->
                       <template v-else>
                         <eg-input
-                          placeholder="电量上限"
-                          :value="pC.PricePeriod[pIndex].EleUpLine"
+                          :placeholder="pIndex === pC.PricePeriod.length - 1 ? '电量上限' : '电量下限'"
+                          :value="pIndex === pC.PricePeriod.length - 1 ? pC.PricePeriod[pIndex].EleDownLine : pC.PricePeriod[pIndex].EleUpLine"
                           suffixText="kWh"
                           is-number
-                          @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex, key: 'EleUpLine', value: $event })">
+                          :disabled="pIndex === pC.PricePeriod.length - 1"
+                          @input="editPriceLineOnChange(pC, { pCIndex, pIndex, key: 'EleUpLine', value: $event })">
                         </eg-input>
                         <eg-input
                           placeholder="尖电价"
@@ -207,13 +219,6 @@
                     </eg-input>
                     <!-- 分时电价 -->
                     <template v-else>
-                      <eg-input
-                        placeholder="电量上限"
-                        :value="pC.PricePeriod[0].EleUpLine"
-                        suffixText="kWh"
-                        is-number
-                        @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'EleUpLine', value: $event })">
-                      </eg-input>
                       <eg-input
                         placeholder="尖电价"
                         :value="pC.PricePeriod[0].Point"
@@ -271,6 +276,10 @@
               </div>
               <i class="iconfont icon-content_icon_required"></i>
             </div>
+            <div class="price-edit__footer">
+              <eg-button style="margin-right: 2rem" type="minor" @click="showEdit(false)">取消</eg-button>
+              <eg-button @click="saveEdit">保存</eg-button>
+            </div>
           </div>
         </template>
       </eg-box>
@@ -281,6 +290,7 @@
 <script>
   import './price.scss'
   import { createNamespacedHelpers } from 'vuex'
+  import moment from 'moment'
   const { mapGetters, mapActions, mapState } = createNamespacedHelpers('config/price')
   export default {
     name: 'config-price',
@@ -326,7 +336,9 @@
         'editPriceContentDataOnChange',
         'editPriceContentPeriodDataOnChange',
         'addEditPriceContentItem',
-        'removeEditPriceContentItem'
+        'removeEditPriceContentItem',
+        'editScheme',
+        'modifySchemeStatus'
       ]),
       currentPageOnChange (item, value) {
         this.updateFormData({ item, value })
@@ -352,6 +364,25 @@
       },
       roomTreeFilter (value, data) {
         return data.label.indexOf(value) > -1
+      },
+      priceDateRangeDisabled (pCIndex) {
+        let periods = this.editPriceContent.map(pC => [pC.DateStart, pC.DateEnd])
+        return (date) => {
+          let start = moment().startOf('year').toDate()
+          let end = moment().endOf('year').toDate()
+          return !(date >= start && date <= end) || periods.some((p, index) => ((index !== pCIndex) && (date >= p[0] && date <= p[1])))
+        }
+      },
+      saveEdit () {
+        let ids = this.$refs.editRoomTree.getCheckedKeys(true)
+        this.editDataOnChange('GroupIds', ids)
+        this.editScheme()
+      },
+      editPriceLineOnChange (pC, { pCIndex, pIndex, key, value }) {
+        if (pIndex === pC.PricePeriod.length - 2) {
+          this.editPriceContentPeriodDataOnChange({ pCIndex, pIndex: pIndex + 1, key: 'EleDownLine', value })
+        }
+        this.editPriceContentPeriodDataOnChange({ pCIndex, pIndex, key, value })
       }
     },
     watch: {
@@ -371,6 +402,8 @@
         this.getRoomList()
       }
     },
-    beforeDestroy () {}
+    beforeDestroy () {
+      this.showEdit({ isShow: false })
+    }
   }
 </script>

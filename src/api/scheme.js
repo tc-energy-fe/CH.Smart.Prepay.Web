@@ -6,6 +6,21 @@ export default {
     url: '/Scheme/List',
     data
   }),
+  addScheme: data => http({
+    method: 'post',
+    url: '/Scheme',
+    data
+  }),
+  modifyScheme: data => http({
+    method: 'put',
+    url: '/Scheme',
+    data
+  }),
+  modifySchemeStatus: data => http({
+    method: 'put',
+    url: '/Scheme/Status',
+    data
+  }),
   getSchemeDetail: id => http({
     method: 'get',
     url: `/Scheme/${id}`

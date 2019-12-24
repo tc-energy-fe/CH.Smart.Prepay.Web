@@ -15,7 +15,7 @@ const Actions = {
     commit(types.UPDATE_OBJ_DATA, obj)
   },
   abortAllRequests ({ state, commit }) {
-    [...state.requests.keys()].map(r => commit(types.ABORT_REQUEST, { item: r }))
+    [...state.reqCancels.keys()].map(r => commit(types.ABORT_REQUEST, { item: r }))
   },
   selectOnChange ({ state, commit }, { item = 'selectStates', key, value }) {
     commit(types.SET_SELECT, { item, key, value })
