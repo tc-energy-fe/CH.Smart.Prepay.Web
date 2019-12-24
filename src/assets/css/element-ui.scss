@@ -109,8 +109,8 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     }
   }
 }
-// date-picker date-range
-.el-range-editor.el-date-editor--daterange {
+// date-picker date-range, time-range
+.el-range-editor.el-date-editor--daterange, .el-range-editor.el-date-editor--timerange {
   border: $common-border;
   &:hover {
     border: $common-border;

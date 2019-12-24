@@ -2,6 +2,10 @@ import Actions from '@/store/actions'
 import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
+import initTree from '@/utils/tree'
+
+const OFF_IMMEDIATE = 0
+const OFF_DELAY = 1
 
 const state = {
   reqCancels: new Map(),
@@ -20,16 +24,30 @@ const state = {
   isShowEdit: false,
   isModify: false,
   offTypeText: {
-    0: '立即拉闸',
-    1: '延时拉闸'
-  }
+    [OFF_IMMEDIATE]: '立即拉闸',
+    [OFF_DELAY]: '延时拉闸'
+  },
+  editData: {
+    Name: '',
+    Id: null,
+    Status: 0,
+    GroupIds: [],
+    WarnValue: '',
+    SNS: false,
+    OffType: 0,
+    OffRange: [new Date(), new Date(2020, 1, 11, 18, 0)]
+  },
+  editTreeData: []
 }
 
 const getters = {
   offTypeList: (state, getters) => (Object.entries(state.offTypeText).map(([id, text]) => ({
     label: text,
-    key: id
-  })))
+    value: parseInt(id)
+  }))),
+  offTypeIsDelay: (state, getters) => {
+    return state.editData.OffType === OFF_DELAY
+  }
 }
 
 const actions = {
@@ -93,6 +111,21 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
       commit(types.SET_LOADING_STATUS, { item: 'isLoadingRoomList', value: false })
+    })
+  },
+  getGroupListAdd ({ commit, state, rootState, getters, dispatch }) {
+    let params = {
+      projectId: rootState.areaId,
+      schemeType: 1
+    }
+    let getGroupListAddReq = api.group.getRoomConfigAddList(params)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getGroupListAddReq', value: getGroupListAddReq.cancel })
+    getGroupListAddReq.request.then(res => {
+      let data = res.Data || []
+      let editTreeData = initTree(data, { rootLevel: 1 })
+      commit(types.SET_DATA, { item: 'editTreeData', value: editTreeData })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
     })
   }
 }
