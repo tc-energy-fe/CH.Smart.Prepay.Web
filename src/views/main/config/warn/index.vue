@@ -24,7 +24,7 @@
                 <el-table-column prop="StatusText" label="启用状态" align="center" />
                 <el-table-column label="操作" align="center">
                   <template v-slot="{row}">
-                    <eg-button type="text" style="margin-right: 1rem;">编辑</eg-button>
+                    <eg-button type="text" style="margin-right: 1rem;" @click="showEdit({row})">编辑</eg-button>
                     <eg-button v-if="row.Status === 3" type="text" color="success">启用</eg-button>
                     <eg-button v-else-if="row.Status === 0" type="text" color="danger">停用</eg-button>
                   </template>
@@ -158,7 +158,7 @@
           <div class="warn-edit__row">
             <label class="warn-edit__row-title align-top">执行房间</label>
             <div class="warn-edit__row-box">
-              <eg-input placeholder="房间名称搜索">
+              <eg-input placeholder="房间名称搜索" v-model="editSearchRoomName">
                 <i slot="suffix" class="iconfont icon-content_icon_search"/>
               </eg-input>
               <el-tree
@@ -167,14 +167,16 @@
                 node-key="value"
                 show-checkbox
                 default-expand-all
+                :default-checked-keys="editData.GroupIds"
+                :filter-node-method="editTreeFilter"
               />
             </div>
             <i class="iconfont icon-content_icon_required"/>
           </div>
           <div class="warn-edit__row">
             <label class="warn-edit__row-title"/>
-            <eg-button type="minor">取消</eg-button>
-            <eg-button>保存</eg-button>
+            <eg-button type="minor" @click="showEdit({isShow: false})">取消</eg-button>
+            <eg-button @click="saveClick">保存</eg-button>
           </div>
         </template>
       </eg-box>
@@ -189,6 +191,7 @@
     name: 'ConfigWarn',
     data () {
       return {
+        editSearchRoomName: ''
       }
     },
     components: {},
@@ -225,6 +228,7 @@
         'getWarnSchemeList',
         'getRoomList',
         'getGroupListAdd',
+        'editSchemeData',
         'updateStateData',
         'updateObjectData',
         'updateItemData'
@@ -236,6 +240,14 @@
       currentPageRoomChange (page) {
         this.updateStateData({ item: 'currentPageRoom', value: page })
         this.getRoomList()
+      },
+      saveClick () {
+        let checkedKeys = this.$refs.editTree.getCheckedKeys(true)
+        this.updateObjectData({ obj: 'editData', item: 'GroupIds', value: checkedKeys })
+        this.editSchemeData()
+      },
+      editTreeFilter (value, data) {
+        return data.label.includes(value)
       }
     },
     watch: {
@@ -243,15 +255,16 @@
         if (newId) {
           this.currentPageWarnChange(1)
           this.currentPageRoomChange(1)
-          this.getGroupListAdd()
         }
+      },
+      editSearchRoomName (newValue) {
+        this.$refs.editTree.filter(newValue.trim())
       }
     },
     created () {
       if (this.projectId) {
         this.currentPageWarnChange(1)
         this.currentPageRoomChange(1)
-        this.getGroupListAdd()
       }
     },
     beforeDestroy () {

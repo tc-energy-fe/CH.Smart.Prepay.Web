@@ -3,6 +3,7 @@ import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
 import initTree from '@/utils/tree'
+import moment from 'moment'
 
 const OFF_IMMEDIATE = 0
 const OFF_DELAY = 1
@@ -35,7 +36,7 @@ const state = {
     WarnValue: '',
     SNS: false,
     OffType: 0,
-    OffRange: [new Date(), new Date(2020, 1, 11, 18, 0)]
+    OffRange: [new Date(), new Date()]
   },
   editTreeData: []
 }
@@ -54,13 +55,25 @@ const actions = {
   ...Actions,
   showEdit ({ commit, state, getters, dispatch }, { isShow = true, row } = { isShow: true }) {
     if (!isShow) {
+      commit(types.SET_DATA, {
+        Name: '',
+        Id: null,
+        Status: 0,
+        GroupIds: [],
+        WarnValue: '',
+        SNS: false,
+        OffType: 0,
+        OffRange: [new Date(), new Date()]
+      })
     } else {
       if (row) {
         // 编辑模式
         commit(types.SET_DATA, { item: 'isModify', value: true })
+        dispatch('getGroupListEdit', row.Id)
       } else {
         // 添加模式
         commit(types.SET_DATA, { item: 'isModify', value: false })
+        dispatch('getGroupListEdit')
       }
     }
     commit(types.SET_DATA, { item: 'isShowEdit', value: isShow })
@@ -113,17 +126,54 @@ const actions = {
       commit(types.SET_LOADING_STATUS, { item: 'isLoadingRoomList', value: false })
     })
   },
-  getGroupListAdd ({ commit, state, rootState, getters, dispatch }) {
+  getGroupListEdit ({ commit, state, rootState, getters, dispatch }, configId = null) {
     let params = {
       projectId: rootState.areaId,
       schemeType: 1
     }
-    let getGroupListAddReq = api.group.getRoomConfigAddList(params)
-    commit(types.ADD_REQUEST_CANCEL, { item: 'getGroupListAddReq', value: getGroupListAddReq.cancel })
-    getGroupListAddReq.request.then(res => {
+    if (!isEmpty(configId)) {
+      params.configId = configId
+    }
+    let getGroupListEditReq = !isEmpty(configId) ? api.group.getRoomConfigEditList(params) : api.group.getRoomConfigAddList(params)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getGroupListEditReq', value: getGroupListEditReq.cancel })
+    getGroupListEditReq.request.then(res => {
       let data = res.Data || []
       let editTreeData = initTree(data, { rootLevel: 1 })
       commit(types.SET_DATA, { item: 'editTreeData', value: editTreeData })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    })
+  },
+  editSchemeData ({ commit, state, rootState, getters, dispatch }) {
+    let editData = state.editData
+    let postData = {
+      ProjectId: rootState.areaId,
+      Name: editData.Name,
+      SchemeType: 1,
+      GroupIds: editData.GroupIds,
+      Status: editData.Status,
+      BalanceContent: {
+        WarnValue: editData.WarnValue,
+        SNS: editData.SNS,
+        OffType: editData.OffType
+      }
+    }
+    if (editData.OffType === OFF_DELAY) {
+      postData.BalanceContent = Object.assign({}, postData.BalanceContent, {
+        OffRangeStart: moment(editData.OffRange[0]).format('HH:mm'),
+        OffRangeEnd: moment(editData.OffRange[1]).format('HH:mm')
+      })
+    }
+    if (state.isModify) {
+      postData.Id = editData.Id
+    }
+    let editSchemeDataReq = state.isModify ? api.scheme.modifyScheme(postData) : api.scheme.addScheme(postData)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'editSchemeDataReq', value: editSchemeDataReq.cancel })
+    editSchemeDataReq.request.then(res => {
+      commit(types.CHECKOUT_SUCCEED, res.State)
+      dispatch('getWarnSchemeList')
+      dispatch('getRoomList')
+      dispatch('showEdit', { isShow: false })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
