@@ -14,6 +14,9 @@ const Actions = {
   updateObjectData ({ commit }, obj) {
     commit(types.UPDATE_OBJ_DATA, obj)
   },
+  updateItemData ({ commit }, obj) {
+    commit(types.UPDATE_ITEM_DATA, obj)
+  },
   abortAllRequests ({ state, commit }) {
     [...state.reqCancels.keys()].map(r => commit(types.ABORT_REQUEST, { item: r }))
   },

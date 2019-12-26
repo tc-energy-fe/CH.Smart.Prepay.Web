@@ -23,6 +23,15 @@ const Mutations = {
       }
     }
   },
+  [types.UPDATE_ITEM_DATA] (state, { obj, item, value }) {
+    if (state.hasOwnProperty(obj)) {
+      if (state[obj].hasOwnProperty(item)) {
+        if (value instanceof Object) {
+          state[obj][item] = Object.assign({}, state[obj][item], value)
+        }
+      }
+    }
+  },
   [types.ADD_REQUEST] (state, { item, value }) {
     state.requests.set(item, value)
   },
