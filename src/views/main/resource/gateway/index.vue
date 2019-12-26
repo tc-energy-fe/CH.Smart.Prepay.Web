@@ -134,7 +134,6 @@
         'updateFormData',
         'getGatewayType',
         'getGatewayList',
-        'currentPageOnChange',
         'pageSizeOnChange',
         'uploadFile',
         'showAddEdit',
@@ -142,7 +141,11 @@
         'addGateway'
       ]),
       search () {
-        this.currentPageOnChange(1)
+        this.updateFormData({ item: 'currentPage', value: 1 })
+        this.getGatewayList()
+      },
+      currentPageOnChange (value) {
+        this.updateFormData({ item: 'currentPage', value })
         this.getGatewayList()
       },
       editDataOnChange (key, value) {
@@ -152,14 +155,14 @@
     watch: {
       projectId (newValue) {
         if (!isEmpty(newValue)) {
-          this.getGatewayList()
+          this.search()
         }
       }
     },
     created () {
       this.getGatewayType()
       if (!isEmpty(this.projectId)) {
-        this.getGatewayList()
+        this.search()
       }
     },
     beforeDestroy () {

@@ -3,10 +3,6 @@ import Mutations from '@/store/mutations'
 import api from '@/api'
 import * as types from '@/store/mutation-types'
 import { upload } from '@/utils/file'
-// import * as types from '@/store/mutation-types'
-// import api from '@/api/analysis'
-// import apiUrl from '@/api/analysis/apiUrl'
-// import moment from 'moment'
 
 const state = {
   reqCancels: new Map(),
@@ -208,6 +204,7 @@ const actions = {
       commit(types.ADD_REQUEST_CANCEL, { item: 'editDeviceReq', value: editDeviceReq.cancel })
       editDeviceReq.request.then(res => {
         commit(types.CHECKOUT_SUCCEED, res.State)
+        commit(types.SET_DATA, { item: 'currentPage', value: 1 })
         dispatch('getDeviceList')
         dispatch('showEdit', { isShow: false })
       }).catch(err => {
@@ -219,7 +216,6 @@ const actions = {
   },
   uploadFile ({ state, commit, dispatch }) {
     upload().then(res => {
-      console.log(res)
       let uploadFileReq = api.file.uploadFile(res)
       commit(types.SET_LOADING_STATUS, { item: 'isUploadingFile', value: true })
       commit(types.ADD_REQUEST_CANCEL, { item: 'uploadFileReq', value: uploadFileReq.cancel })
@@ -242,6 +238,7 @@ const actions = {
     commit(types.ADD_REQUEST_CANCEL, { item: 'importDeviceReq', value: importDeviceReq.cancel })
     importDeviceReq.request.then(res => {
       commit(types.CHECKOUT_SUCCEED, res.State)
+      commit(types.SET_DATA, { item: 'currentPage', value: 1 })
       dispatch('getDeviceList')
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)

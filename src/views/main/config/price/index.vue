@@ -35,7 +35,7 @@
                 </el-table-column>
               </el-table>
               <el-pagination
-                @current-change="currentPageOnChange('currentPricePage', $event)"
+                @current-change="currentPricePageOnChange"
                 :current-page="currentPricePage"
                 :page-size="5"
                 layout="total, ->, prev, pager, next, jumper"
@@ -69,7 +69,7 @@
                 <el-table-column prop="SchemeName" label="电价方案" align="center"></el-table-column>
               </el-table>
               <el-pagination
-                @current-change="currentPageOnChange('currentPricePage', $event)"
+                @current-change="currentRoomPageOnChange"
                 :current-page="currentPricePage"
                 :page-size="5"
                 layout="total, ->, prev, pager, next, jumper"
@@ -340,18 +340,21 @@
         'editScheme',
         'modifySchemeStatus'
       ]),
-      currentPageOnChange (item, value) {
-        this.updateFormData({ item, value })
+      currentPricePageOnChange (value) {
+        this.updateFormData({ item: 'currentPricePage', value })
+        this.getPriceList()
+      },
+      currentRoomPageOnChange (value) {
+        this.updateFormData({ item: 'currentRoomPage', value })
+        this.getRoomList()
       },
       search (type) {
         switch (type) {
           case 'price':
-            this.currentPageOnChange('currentPricePage', 1)
-            this.getPriceList()
+            this.currentPricePageOnChange(1)
             break
           case 'room':
-            this.currentPageOnChange('currentRoomPage', 1)
-            this.getRoomList()
+            this.currentRoomPageOnChange(1)
             break
         }
       },
@@ -388,8 +391,8 @@
     watch: {
       projectId (newValue) {
         if (!isEmpty(newValue)) {
-          this.getPriceList()
-          this.getRoomList()
+          this.currentPricePageOnChange(1)
+          this.currentRoomPageOnChange(1)
         }
       },
       editRoomSearchName (newValue) {

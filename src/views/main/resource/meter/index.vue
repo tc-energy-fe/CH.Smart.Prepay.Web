@@ -440,13 +440,16 @@
     watch: {
       projectId (newValue) {
         if (!isEmpty(newValue)) {
-          this.getDeviceList()
+          this.search()
         }
+      },
+      pageSize () {
+        this.search()
       }
     },
     created () {
       if (!isEmpty(this.projectId)) {
-        this.getDeviceList()
+        this.search()
       }
     },
     beforeDestroy () {

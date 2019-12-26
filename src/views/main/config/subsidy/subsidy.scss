@@ -1,0 +1,28 @@
+.config-subsidy {
+
+  .subsidy-edit__row{
+    display: flex;
+    margin-top: 1rem;
+
+    label{
+      display: inline-block;
+      width: 5rem;
+      height: $normal-input-height;
+      line-height: $normal-input-height;
+    }
+
+    &-item{
+      margin-right: 5rem;
+      flex-shrink: 0;
+
+      > .term-label{
+        margin-left: 1rem;
+      }
+    }
+
+    .iconfont{
+      font-size: .5rem;
+      margin-left: .5rem;
+    }
+  }
+}

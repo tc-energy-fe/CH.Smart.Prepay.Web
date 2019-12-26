@@ -236,6 +236,9 @@
           this.updateFormData({ item: 'currentNode', value: newValue[0] || {} })
           this.getRoomList()
         }
+      },
+      pageSize () {
+        this.getRoomList()
       }
     },
     created () {

@@ -8,6 +8,7 @@ import device from './device'
 import file from './file'
 import log from './log'
 import scheme from './scheme'
+import task from './task'
 
 export default {
   login,
@@ -19,5 +20,6 @@ export default {
   device,
   log,
   file,
-  scheme
+  scheme,
+  task
 }

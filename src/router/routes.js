@@ -82,6 +82,13 @@ const routes = [
           Store.registerModule(['config', 'warn'], require('@/views/main/config/warn/warn').default)
           return import('../views/main/config/warn/index')
         }
+      },
+      {
+        path: 'subsidy',
+        component: () => {
+          Store.registerModule(['config', 'subsidy'], require('@/views/main/config/subsidy/subsidy').default)
+          return import('../views/main/config/subsidy/index')
+        }
       }
     ]
   },

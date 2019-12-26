@@ -220,8 +220,10 @@ const actions = {
       commit(types.ADD_REQUEST_CANCEL, { item: 'modifySchemeStatusReq', value: modifySchemeStatusReq.cancel })
       modifySchemeStatusReq.request.then(res => {
         commit(types.CHECKOUT_SUCCEED, res.State)
-        dispatch('getPriceList')
-        dispatch('getRoomList')
+        commit(types.SET_DATA, { item: 'currentPricePage', value: 1 })
+        commit(types.SET_DATA, { item: 'currentRoomPage', value: 1 })
+        this.getPriceList()
+        this.getRoomList()
       }).catch(err => {
         commit(types.CHECKOUT_FAILURE, err)
       }).finally(() => {
@@ -240,8 +242,10 @@ const actions = {
       editSchemeReq.request.then(res => {
         commit(types.CHECKOUT_SUCCEED, res.State)
         dispatch('showEdit', { isShow: false })
-        dispatch('getPriceList')
-        dispatch('getRoomList')
+        commit(types.SET_DATA, { item: 'currentPricePage', value: 1 })
+        commit(types.SET_DATA, { item: 'currentRoomPage', value: 1 })
+        this.getPriceList()
+        this.getRoomList()
       }).catch(err => {
         commit(types.CHECKOUT_FAILURE, err)
       }).finally(() => {

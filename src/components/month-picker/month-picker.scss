@@ -1,0 +1,89 @@
+$cell-height: 2.5rem;
+.month-range-editor{
+  display: inline-flex;
+  align-items: center;
+  height: $normal-input-height;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  transition: border-color .3s;
+  cursor: pointer;
+  padding: 0 .5rem;
+
+  &:focus{
+    border-color: $main-color;
+  }
+
+  .month-range-month, .month-range-placeholder{
+    display: inline-block;
+    width: 40%;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .month-range-month{
+    color: $font-color;
+  }
+  .month-range-placeholder{
+    font-size: .9rem;
+    color: #a4a4a4;
+  }
+
+  .month-range-separator{
+    display: inline-block;
+    padding: 0 .3rem;
+    text-align: center;
+    line-height: 1;
+    width: 20%;
+  }
+}
+
+.month-range-panel{
+  width: 20rem;
+  border-spacing: 0;
+
+  .cell:hover {
+    color: $main-color;
+  }
+
+  td{
+    text-align: center;
+    vertical-align: middle;
+    padding: .5rem 0;
+    width: 25%;
+
+    > div {
+      padding: .3rem 0;
+      cursor: pointer;
+
+      > .cell{
+        height: $cell-height;
+        line-height: $cell-height;
+        border-radius: $cell-height / 2;
+        margin: 0 .5rem;
+      }
+    }
+
+    &.start-date, &.end-date{
+      .cell {
+        background-color: $main-color;
+        color: #FFF;
+      }
+    }
+
+    &.start-date > div {
+      border-bottom-left-radius: $cell-height;
+      border-top-left-radius: $cell-height;
+    }
+
+    &.end-date > div {
+      border-top-right-radius: $cell-height;
+      border-bottom-right-radius: $cell-height;
+    }
+
+    &.in-range{
+      > div {
+        background-color: #f2f6fc;
+      }
+    }
+  }
+}

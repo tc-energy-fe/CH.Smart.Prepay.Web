@@ -156,7 +156,6 @@
     methods: {
       ...mapActions([
         'updateFormData',
-        'currentPageOnChange',
         'pageSizeOnChange',
         'getRoomAccountList',
         'showEdit',
@@ -164,12 +163,14 @@
         'editAccount'
       ]),
       nodeOnChange (val) {
-        this.currentPageOnChange(1)
         this.updateFormData({ item: 'currentNode', value: val })
-        this.getRoomAccountList()
+        this.currentPageOnChange(1)
       },
       search () {
         this.currentPageOnChange(1)
+      },
+      currentPageOnChange (value) {
+        this.updateFormData({ item: 'currentPage', value })
         this.getRoomAccountList()
       }
     },
@@ -180,17 +181,12 @@
             this.$refs.tree.setCurrentKey(newValue[0].value)
           })
           this.updateFormData({ item: 'currentNode', value: newValue[0] || {} })
-          this.getRoomAccountList()
+          this.currentPageOnChange(1)
         }
       },
       pageSize (newValue) {
         if (!isEmpty(newValue)) {
-          this.getRoomAccountList()
-        }
-      },
-      currentPage (newValue) {
-        if (!isEmpty(newValue)) {
-          this.getRoomAccountList()
+          this.currentPageOnChange(1)
         }
       }
     },
@@ -202,7 +198,7 @@
         if (isEmpty(this.currentNodeId)) {
           this.updateFormData({ item: 'currentNode', value: this.groupTree[0] || {} })
         }
-        this.getRoomAccountList()
+        this.currentPageOnChange(1)
       }
     },
     beforeDestroy () {}
