@@ -56,20 +56,24 @@ const actions = {
   showEdit ({ commit, state, getters, dispatch }, { isShow = true, row } = { isShow: true }) {
     if (!isShow) {
       commit(types.SET_DATA, {
-        Name: '',
-        Id: null,
-        Status: 0,
-        GroupIds: [],
-        WarnValue: '',
-        SNS: false,
-        OffType: 0,
-        OffRange: [new Date(), new Date()]
+        item: 'editData',
+        value: {
+          Name: '',
+          Id: null,
+          Status: 0,
+          GroupIds: [],
+          WarnValue: '',
+          SNS: false,
+          OffType: 0,
+          OffRange: [new Date(), new Date()]
+        }
       })
     } else {
       if (row) {
         // 编辑模式
         commit(types.SET_DATA, { item: 'isModify', value: true })
         dispatch('getGroupListEdit', row.Id)
+        dispatch('getSingleScheme', row.Id)
       } else {
         // 添加模式
         commit(types.SET_DATA, { item: 'isModify', value: false })
@@ -140,6 +144,29 @@ const actions = {
       let data = res.Data || []
       let editTreeData = initTree(data, { rootLevel: 1 })
       commit(types.SET_DATA, { item: 'editTreeData', value: editTreeData })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    })
+  },
+  getSingleScheme ({ commit, state, rootState, getters, dispatch }, id) {
+    let getSingleSchemeReq = api.scheme.getSchemeDetail(id)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getSingleSchemeReq', value: getSingleSchemeReq.cancel })
+    getSingleSchemeReq.request.then(res => {
+      let data = res.Data || {}
+      console.log(data)
+      commit(types.SET_DATA, {
+        item: 'editData',
+        value: {
+          Name: data.Name,
+          Id: data.Id,
+          Status: data.Status,
+          GroupIds: data.GroupIds,
+          WarnValue: data.BalanceContent.WarnValue,
+          SNS: data.BalanceContent.SNS,
+          OffType: data.BalanceContent.OffType,
+          OffRange: [moment(`2019-12-26 ${data.BalanceContent.OffRangeStart}`).toDate(), moment(`2019-12-26 ${data.BalanceContent.OffRangeEnd}`).toDate()]
+        }
+      })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
