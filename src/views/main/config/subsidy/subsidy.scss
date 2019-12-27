@@ -2,27 +2,36 @@
 
   .subsidy-edit__row{
     display: flex;
+    align-items: center;
     margin-top: 1rem;
 
-    label{
+    &-label{
+      align-self: flex-start;
       display: inline-block;
       width: 5rem;
       height: $normal-input-height;
-      line-height: $normal-input-height;
+      line-height: 2.4rem;
     }
 
     &-item{
-      margin-right: 5rem;
+      min-width: 22rem;
       flex-shrink: 0;
 
       > .term-label{
-        margin-left: 1rem;
+        margin: 1rem;
       }
     }
 
     .iconfont{
       font-size: .5rem;
       margin-left: .5rem;
+    }
+
+    .edit-money__block{
+      width: 25rem;
+      padding: 1rem;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
     }
   }
 }

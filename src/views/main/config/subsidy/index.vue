@@ -89,13 +89,22 @@
         <template v-slot:content>
           <div class="subsidy-edit__row">
             <div class="subsidy-edit__row-item">
-              <label>方案名称</label>
+              <label class="subsidy-edit__row-label">方案名称</label>
               <eg-input></eg-input>
               <i class="iconfont icon-content_icon_required"></i>
             </div>
             <div class="subsidy-edit__row-item">
-              <label>补助方式</label>
-              <el-select></el-select>
+              <label class="subsidy-edit__row-label">补助方式</label>
+              <el-select
+                :value="1"
+              >
+                <el-option
+                  v-for="t in subType"
+                  :value="t.value"
+                  :label="t.label"
+                  :key="t.value"
+                ></el-option>
+              </el-select>
               <i class="iconfont icon-content_icon_required"></i>
               <template>
                 <label class="term-label">春季学期</label>
@@ -111,6 +120,33 @@
                   @input="editTermMonthsOnChange(2, $event)"
                 ></month-range-picker>
               </template>
+            </div>
+          </div>
+          <div class="subsidy-edit__row">
+            <div class="subsidy-edit__row-item">
+              <label class="subsidy-edit__row-label">补助清零</label>
+              <el-radio-group>
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+              </el-radio-group>
+            </div>
+            <div class="subsidy-edit__row-item">
+              <label class="subsidy-edit__row-label">启用状态</label>
+              <el-radio-group>
+                <el-radio :label="0">启用</el-radio>
+                <el-radio :label="3">停用</el-radio>
+              </el-radio-group>
+            </div>
+          </div>
+          <div class="subsidy-edit__row">
+            <label class="subsidy-edit__row-label">补助金额</label>
+            <div class="edit-money__block">
+              <div class="edit-money__btn-bar">
+                <template>
+                  <eg-button type="minor">春季学期</eg-button>
+                  <eg-button>秋季学期</eg-button>
+                </template>
+              </div>
             </div>
           </div>
         </template>
@@ -148,7 +184,8 @@
         'isLoadingRoomList',
         'totalCountRoom',
         'springTerm',
-        'autumnTerm'
+        'autumnTerm',
+        'subType'
       ]),
       ...mapGetters([
       ]),

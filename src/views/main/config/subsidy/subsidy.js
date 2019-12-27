@@ -28,7 +28,12 @@ const state = {
     Type: 2,
     StartMonth: null,
     EndMonth: null
-  }
+  },
+  subType: [
+    { value: 1, label: '按月' },
+    { value: 2, label: '按季度' },
+    { value: 3, label: '按学期' }
+  ]
 }
 
 const getters = {
@@ -62,7 +67,7 @@ const actions = {
     getTaskListReq.request.then(res => {
       let data = res.Data || []
       data.forEach(d => {
-        d.SubTypeText = d.SubType === 1 ? '按月' : (d.SubType === 2 ? '按季度' : '按学期')
+        d.SubTypeText = state.subType.find(t => t.value === d.SubType).label
         d.StatusText = d.Status === 0 ? '启用' : '停用'
         d.IsClearText = d.IsClear ? '是' : '否'
       })
