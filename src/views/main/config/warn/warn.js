@@ -164,45 +164,64 @@ const actions = {
           WarnValue: data.BalanceContent.WarnValue,
           SNS: data.BalanceContent.SNS,
           OffType: data.BalanceContent.OffType,
-          OffRange: [moment(`2019-12-26 ${data.BalanceContent.OffRangeStart}`).toDate(), moment(`2019-12-26 ${data.BalanceContent.OffRangeEnd}`).toDate()]
+          OffRange: [
+            moment(`2019-12-26 ${data.BalanceContent.OffRangeStart}`).toDate(),
+            moment(`2019-12-26 ${data.BalanceContent.OffRangeEnd}`).toDate()
+          ]
         }
       })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
   },
-  editSchemeData ({ commit, state, rootState, getters, dispatch }) {
+  validateForm ({ commit, state, rootState, getters, dispatch }) {
     let editData = state.editData
-    let postData = {
-      ProjectId: rootState.areaId,
-      Name: editData.Name,
-      SchemeType: 1,
-      GroupIds: editData.GroupIds,
-      Status: editData.Status,
-      BalanceContent: {
-        WarnValue: editData.WarnValue,
-        SNS: editData.SNS,
-        OffType: editData.OffType
+    if (editData.Name.trim() === '') {
+      ElAlert('方案名称为空！', '提示').then(() => {})
+      return false
+    }
+    if (editData.WarnValue === '') {
+      ElAlert('报警阈值为空！', '提示').then(() => {})
+      return false
+    }
+    return true
+  },
+  editSchemeData ({ commit, state, rootState, getters, dispatch }) {
+    dispatch('validateForm').then(result => {
+      if (result) {
+        let editData = state.editData
+        let postData = {
+          ProjectId: rootState.areaId,
+          Name: editData.Name,
+          SchemeType: 1,
+          GroupIds: editData.GroupIds,
+          Status: editData.Status,
+          BalanceContent: {
+            WarnValue: editData.WarnValue,
+            SNS: editData.SNS,
+            OffType: editData.OffType
+          }
+        }
+        if (editData.OffType === OFF_DELAY) {
+          postData.BalanceContent = Object.assign({}, postData.BalanceContent, {
+            OffRangeStart: moment(editData.OffRange[0]).format('HH:mm'),
+            OffRangeEnd: moment(editData.OffRange[1]).format('HH:mm')
+          })
+        }
+        if (state.isModify) {
+          postData.Id = editData.Id
+        }
+        let editSchemeDataReq = state.isModify ? api.scheme.modifyScheme(postData) : api.scheme.addScheme(postData)
+        commit(types.ADD_REQUEST_CANCEL, { item: 'editSchemeDataReq', value: editSchemeDataReq.cancel })
+        editSchemeDataReq.request.then(res => {
+          commit(types.CHECKOUT_SUCCEED, res.State)
+          dispatch('getWarnSchemeList')
+          dispatch('getRoomList')
+          dispatch('showEdit', { isShow: false })
+        }).catch(err => {
+          commit(types.CHECKOUT_FAILURE, err)
+        })
       }
-    }
-    if (editData.OffType === OFF_DELAY) {
-      postData.BalanceContent = Object.assign({}, postData.BalanceContent, {
-        OffRangeStart: moment(editData.OffRange[0]).format('HH:mm'),
-        OffRangeEnd: moment(editData.OffRange[1]).format('HH:mm')
-      })
-    }
-    if (state.isModify) {
-      postData.Id = editData.Id
-    }
-    let editSchemeDataReq = state.isModify ? api.scheme.modifyScheme(postData) : api.scheme.addScheme(postData)
-    commit(types.ADD_REQUEST_CANCEL, { item: 'editSchemeDataReq', value: editSchemeDataReq.cancel })
-    editSchemeDataReq.request.then(res => {
-      commit(types.CHECKOUT_SUCCEED, res.State)
-      dispatch('getWarnSchemeList')
-      dispatch('getRoomList')
-      dispatch('showEdit', { isShow: false })
-    }).catch(err => {
-      commit(types.CHECKOUT_FAILURE, err)
     })
   }
 }

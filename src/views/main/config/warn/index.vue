@@ -137,7 +137,7 @@
               is-range
               start-placeholder="拉闸开始时间"
               end-placeholder="拉闸结束时间"
-              format="HH:mm:00"
+              format="HH:mm"
               range-separator="至"
               :value="editData.OffRange"
               @input="updateObjectData({obj: 'editData', item: 'OffRange', value: $event})"
