@@ -4,7 +4,7 @@ import router from '@/router'
 import store from '@/store'
 import { currency } from '@/utils/currency'
 
-import { Tree, Table, TableColumn, Pagination, Select, Option, Input, Popover, Loading, MessageBox, Radio, RadioGroup, Checkbox, Dialog, Menu, Submenu, MenuItem, DatePicker, TimePicker } from 'element-ui'
+import { Tree, Table, TableColumn, Pagination, Select, Option, Input, Popover, Loading, MessageBox, Radio, RadioGroup, Checkbox, Dialog, Menu, Submenu, MenuItem, DatePicker, TimePicker, CheckboxButton, CheckboxGroup } from 'element-ui'
 import 'css/element-ui.scss'
 import EgUi from 'tc-ui-lib'
 import 'tc-ui-lib/lib/style.css'
@@ -28,6 +28,8 @@ Vue.use(Submenu)
 Vue.use(MenuItem)
 Vue.use(DatePicker)
 Vue.use(TimePicker)
+Vue.use(CheckboxButton)
+Vue.use(CheckboxGroup)
 window.ElAlert = MessageBox.alert
 window.ElConfirm = MessageBox.confirm
 

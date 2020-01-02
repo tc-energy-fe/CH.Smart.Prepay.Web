@@ -1,4 +1,7 @@
 
+/*导入iconfont*/
+@import "//at.alicdn.com/t/font_444910_cu2fn2xam2f.css";
+
 .icon {
     width: 1em; height: 1em;
     vertical-align: -0.15em;
@@ -6,9 +9,7 @@
     overflow: hidden;
 }
 
-/*导入iconfont*/
-@import "//at.alicdn.com/t/font_444910_cu2fn2xam2f.css";
-
 .icon-content_icon_required:before {
     color: #f56c6c;
+    /*font-size: 12px;*/
 }

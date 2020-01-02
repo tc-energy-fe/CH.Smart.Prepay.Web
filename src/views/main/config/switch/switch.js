@@ -10,17 +10,17 @@ const OFF_DELAY = 1
 
 const state = {
   reqCancels: new Map(),
-  searchNameWarn: '',
+  searchNameSwitch: '',
   searchNameRoom: '',
-  searchNameScheme: '',
-  currentPageWarn: 1,
+  searchNameTask: '',
+  currentPageSwitch: 1,
   currentPageRoom: 1,
   pageSize: 5,
-  warnList: [],
+  switchList: [],
   roomList: [],
-  totalCountWarn: 1,
+  totalCountSwitch: 1,
   totalCountRoom: 1,
-  isLoadingWarnList: false,
+  isLoadingSwitchList: false,
   isLoadingRoomList: false,
   isShowEdit: false,
   isModify: false,
@@ -75,7 +75,7 @@ const actions = {
         // 编辑模式
         commit(types.SET_DATA, { item: 'isModify', value: true })
         dispatch('getGroupListEdit', row.Id)
-        dispatch('getSingleScheme', row.Id)
+        dispatch('getSingleTask', row.Id)
       } else {
         // 添加模式
         commit(types.SET_DATA, { item: 'isModify', value: false })
@@ -84,42 +84,41 @@ const actions = {
     }
     commit(types.SET_DATA, { item: 'isShowEdit', value: isShow })
   },
-  getWarnSchemeList ({ commit, state, rootState, getters, dispatch }) {
+  getSwitchTaskList ({ commit, state, rootState, getters, dispatch }) {
     let postData = {
       ProjectId: rootState.areaId,
-      Name: state.searchNameWarn,
-      SchemeType: 1,
-      PageIndex: state.currentPageWarn,
+      TaskType: 0,
+      Name: state.searchNameSwitch,
+      PageIndex: state.currentPageSwitch,
       PageSize: state.pageSize
     }
-    let getWarnSchemeListReq = api.scheme.getSchemeList(postData)
-    commit(types.SET_LOADING_STATUS, { item: 'isLoadingWarnList', value: true })
-    commit(types.ADD_REQUEST_CANCEL, { item: 'getWarnSchemeListReq', value: getWarnSchemeListReq.cancel })
-    getWarnSchemeListReq.request.then(res => {
+    let getSwitchTaskListReq = api.task.getTaskList(postData)
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingSwitchList', value: true })
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getSwitchTaskListReq', value: getSwitchTaskListReq.cancel })
+    getSwitchTaskListReq.request.then(res => {
       let data = res.Data || []
       data.forEach(item => {
         item.StatusText = item.Status === 0 ? '启用' : (item.Status === 3 ? '停用' : '其他')
-        item.OffTypeText = item.BalanceContent ? state.offTypeText[item.BalanceContent.OffType] : '--'
-        item.WarnValueText = item.BalanceContent ? item.BalanceContent.WarnValue : '--'
+        item.ContentText = ''
       })
-      commit(types.SET_DATA, { item: 'warnList', value: data })
-      commit(types.SET_DATA, { item: 'totalCountWarn', value: res.Count })
+      commit(types.SET_DATA, { item: 'switchList', value: data })
+      commit(types.SET_DATA, { item: 'totalCountSwitch', value: res.Count })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
-      commit(types.SET_LOADING_STATUS, { item: 'isLoadingWarnList', value: false })
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingSwitchList', value: false })
     })
   },
   getRoomList ({ commit, state, rootState, getters, dispatch }) {
     let postData = {
       ProjectId: rootState.areaId,
       RoomNo: state.searchNameRoom,
-      Name: state.searchNameScheme,
-      SchemeType: 1,
+      Name: state.searchNameTask,
+      TaskType: 0,
       PageIndex: state.currentPageRoom,
       PageSize: state.pageSize
     }
-    let getRoomSchemeListReq = api.scheme.getRoomSchemeList(postData)
+    let getRoomSchemeListReq = api.task.getRoomTaskList(postData)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingRoomList', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'getRoomSchemeListReq', value: getRoomSchemeListReq.cancel })
     getRoomSchemeListReq.request.then(res => {
@@ -135,7 +134,7 @@ const actions = {
   getGroupListEdit ({ commit, state, rootState, getters, dispatch }, configId = null) {
     let params = {
       projectId: rootState.areaId,
-      schemeType: 1
+      taskType: 0
     }
     if (!isEmpty(configId)) {
       params.configId = configId
@@ -150,10 +149,10 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     })
   },
-  getSingleScheme ({ commit, state, rootState, getters, dispatch }, id) {
-    let getSingleSchemeReq = api.scheme.getSchemeDetail(id)
-    commit(types.ADD_REQUEST_CANCEL, { item: 'getSingleSchemeReq', value: getSingleSchemeReq.cancel })
-    getSingleSchemeReq.request.then(res => {
+  getSingleTask ({ commit, state, rootState, getters, dispatch }, id) {
+    let getSingleTaskReq = api.task.getTaskDetail(id)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getSingleTaskReq', value: getSingleTaskReq.cancel })
+    getSingleTaskReq.request.then(res => {
       let data = res.Data || {}
       commit(types.SET_DATA, {
         item: 'editData',
@@ -161,14 +160,7 @@ const actions = {
           Name: data.Name,
           Id: data.Id,
           Status: data.Status,
-          GroupIds: data.GroupIds,
-          WarnValue: data.BalanceContent.WarnValue,
-          SNS: data.BalanceContent.SNS,
-          OffType: data.BalanceContent.OffType,
-          OffRange: [
-            moment(`2019-12-26 ${data.BalanceContent.OffRangeStart}`).toDate(),
-            moment(`2019-12-26 ${data.BalanceContent.OffRangeEnd}`).toDate()
-          ]
+          GroupIds: data.GroupIds
         }
       })
     }).catch(err => {
@@ -179,10 +171,6 @@ const actions = {
     let editData = state.editData
     if (editData.Name.trim() === '') {
       ElAlert('方案名称为空！', '提示').then(() => {})
-      return false
-    }
-    if (editData.WarnValue === '') {
-      ElAlert('报警阈值为空！', '提示').then(() => {})
       return false
     }
     return true
@@ -212,11 +200,11 @@ const actions = {
         if (state.isModify) {
           postData.Id = editData.Id
         }
-        let editSchemeDataReq = state.isModify ? api.scheme.modifyScheme(postData) : api.scheme.addScheme(postData)
+        let editSchemeDataReq = state.isModify ? api.task.modifyTask(postData) : api.task.addTask(postData)
         commit(types.ADD_REQUEST_CANCEL, { item: 'editSchemeDataReq', value: editSchemeDataReq.cancel })
         editSchemeDataReq.request.then(res => {
           commit(types.CHECKOUT_SUCCEED, res.State)
-          dispatch('getWarnSchemeList')
+          dispatch('getSwitchTaskList')
           dispatch('getRoomList')
           dispatch('showEdit', { isShow: false })
         }).catch(err => {

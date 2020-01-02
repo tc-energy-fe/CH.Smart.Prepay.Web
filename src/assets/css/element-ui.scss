@@ -98,7 +98,8 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 }
 
 // date-picker 单个picker
-.el-date-editor.el-date-editor--date {
+.el-date-editor.el-date-editor--date,
+.el-date-editor.el-date-editor--time {
   .el-input__inner {
     height: $normal-input-height;
     line-height: $normal-input-height;
@@ -110,7 +111,8 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   }
 }
 // date-picker date-range, time-range
-.el-range-editor.el-date-editor--daterange, .el-range-editor.el-date-editor--timerange {
+.el-range-editor.el-date-editor--daterange,
+.el-range-editor.el-date-editor--timerange {
   border: $common-border;
   &:hover {
     border: $common-border;

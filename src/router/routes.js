@@ -89,6 +89,13 @@ const routes = [
           Store.registerModule(['config', 'subsidy'], require('@/views/main/config/subsidy/subsidy').default)
           return import('../views/main/config/subsidy/index')
         }
+      },
+      {
+        path: 'switch',
+        component: () => {
+          Store.registerModule(['config', 'switch'], require('@/views/main/config/switch/switch').default)
+          return import('../views/main/config/switch/index')
+        }
       }
     ]
   },
