@@ -108,39 +108,49 @@
           </div>
           <div class="switch-edit__row">
             <label class="switch-edit__row-title align-top">任务内容</label>
-            <div class="switch-edit__row-box long-width">
-              <div class="switch-edit__row-period">
+            <div class="switch-edit__row-box long-width" v-loading="isLoadingTaskPeriod">
+              <div
+                class="switch-edit__row-period"
+                v-for="(item, index) of editPeriodList"
+                :key="index"
+              >
                 <div>
-                  <label style="font-weight: bold; margin-right: 1rem;">时段</label>
-                  <eg-button type="text" color="danger">删除时段</eg-button>
+                  <label class="switch-edit__row-period__title">时段{{index + 1}}</label>
+                  <eg-button type="text" color="danger" @click="handleDeletePeriod(index)">删除时段</eg-button>
                 </div>
                 <div>
-                  <el-checkbox-group :value="[]">
-                    <el-checkbox-button>周一</el-checkbox-button>
-                    <el-checkbox-button>周二</el-checkbox-button>
-                    <el-checkbox-button>周三</el-checkbox-button>
-                    <el-checkbox-button>周四</el-checkbox-button>
-                    <el-checkbox-button>周五</el-checkbox-button>
-                    <el-checkbox-button>周六</el-checkbox-button>
-                    <el-checkbox-button>周日</el-checkbox-button>
+                  <el-checkbox-group :value="item.Days" @input="handleInputPeriod($event, index, 'Days')">
+                    <el-checkbox-button
+                      v-for="(day, dayIndex) of editTaskDays"
+                      :key="dayIndex"
+                      :label="day.label"
+                    >
+                      {{day.text}}
+                    </el-checkbox-button>
                   </el-checkbox-group>
                 </div>
                 <div>
-                  <el-time-picker style="margin-right: 1rem;"/>
+                  <el-time-picker
+                    format="HH:mm"
+                    :value="item.Time"
+                    @input="handleInputPeriod($event, index, 'Time')"
+                    :clearable="false"
+                    style="margin-right: 1rem;"
+                  />
                   <label style="margin-right: 1rem;">开合闸</label>
-                  <el-radio-group>
-                    <el-radio>开闸</el-radio>
-                    <el-radio>合闸</el-radio>
+                  <el-radio-group :value="item.SwitchParam" @input="handleInputPeriod($event, index, 'SwitchParam')">
+                    <el-radio :label="true">开闸</el-radio>
+                    <el-radio :label="false">合闸</el-radio>
                   </el-radio-group>
                 </div>
               </div>
-              <eg-button type="text" style="margin-top: 1rem;">添加时段</eg-button>
+              <eg-button type="text" style="margin: 1rem 0;" @click="handleAddPeriod">添加时段</eg-button>
             </div>
             <i class="iconfont icon-content_icon_required"/>
           </div>
           <div class="switch-edit__row">
             <label class="switch-edit__row-title align-top">执行房间</label>
-            <div class="switch-edit__row-box">
+            <div class="switch-edit__row-box" v-loading="isLoadingEditTree">
               <eg-input
                 placeholder="房间名称搜索"
                 :value="editSearchRoomName"
@@ -198,11 +208,13 @@
         'isModify',
         'editData',
         'editTreeData',
-        'editSearchRoomName'
+        'editPeriodList',
+        'editTaskDays',
+        'editSearchRoomName',
+        'isLoadingEditTree',
+        'isLoadingTaskPeriod'
       ]),
       ...mapGetters([
-        'offTypeList',
-        'offTypeIsDelay'
       ]),
       projectId () {
         return this.$store.state.areaId
@@ -213,7 +225,7 @@
         'showEdit',
         'getSwitchTaskList',
         'getRoomList',
-        'getGroupListAdd',
+        'getTaskPeriodList',
         'editSchemeData',
         'updateStateData',
         'updateObjectData',
@@ -234,6 +246,29 @@
       },
       editTreeFilter (value, data) {
         return data.label.includes(value)
+      },
+      handleInputPeriod (data, dayIndex, prop) {
+        let editPeriodList = JSON.parse(JSON.stringify(this.editPeriodList))
+        editPeriodList.forEach((item, index) => {
+          if (dayIndex === index) {
+            item[prop] = data
+          }
+        })
+        this.updateStateData({ item: 'editPeriodList', value: editPeriodList })
+      },
+      handleAddPeriod () {
+        let editPeriodList = JSON.parse(JSON.stringify(this.editPeriodList))
+        editPeriodList.push({
+          SwitchParam: 1,
+          Time: new Date(),
+          Days: [1, 3, 7]
+        })
+        this.updateStateData({ item: 'editPeriodList', value: editPeriodList })
+      },
+      handleDeletePeriod (index) {
+        let editPeriodList = JSON.parse(JSON.stringify(this.editPeriodList))
+        editPeriodList.splice(index, 1)
+        this.updateStateData({ item: 'editPeriodList', value: editPeriodList })
       }
     },
     watch: {
@@ -252,6 +287,7 @@
         this.currentPageSwitchChange(1)
         this.currentPageRoomChange(1)
       }
+      this.getTaskPeriodList()
     },
     beforeDestroy () {
       this.showEdit({ isShow: false })
