@@ -28,7 +28,7 @@
       width: 68rem;
       min-height: 15rem;
       border: 1px solid #a3a7af;
-      border-radius: $border-radius;
+      border-radius: $common-border-radius;
       padding: .5rem 1rem;
       overflow: auto;
 
@@ -57,7 +57,7 @@
       width: 30rem;
       height: 20rem;
       border: 1px solid #a3a7af;
-      border-radius: $border-radius;
+      border-radius: $common-border-radius;
       padding: .5rem 1rem;
       display: flex;
       flex-direction: column;

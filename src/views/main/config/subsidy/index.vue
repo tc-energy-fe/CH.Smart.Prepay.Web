@@ -16,7 +16,7 @@
             <eg-button @click="showEdit({ isShow: true })">新建补助方案</eg-button>
           </template>
           <div class="table-wrapper" slot="content">
-            <el-table v-loading="isLoadingTaskList" :data="taskList">
+            <el-table v-loading="isLoadingTaskList" :data="taskList" height="100%">
               <el-table-column prop="Name" label="方案名称" align="center"></el-table-column>
               <el-table-column prop="SubTypeText" label="补助方式" align="center"></el-table-column>
               <el-table-column prop="IsClearText" label="补助清零" align="center"></el-table-column>
@@ -62,7 +62,7 @@
             <eg-button @click="searchRoom">查询</eg-button>
           </template>
           <div class="table-wrapper" slot="content">
-            <el-table v-loading="isLoadingRoomList" :data="roomList">
+            <el-table v-loading="isLoadingRoomList" :data="roomList" height="100%">
               <el-table-column prop="RoomNo" label="房间编号" align="center"></el-table-column>
               <el-table-column prop="FullName" label="房间信息" align="center"></el-table-column>
               <el-table-column prop="TaskName" label="补助方案" align="center"></el-table-column>
@@ -90,13 +90,14 @@
           <div class="subsidy-edit__row">
             <div class="subsidy-edit__row-item">
               <label class="subsidy-edit__row-label">方案名称</label>
-              <eg-input></eg-input>
+              <eg-input :value="editData.Name" @input="editDataOnChange('Name', $event)"></eg-input>
               <i class="iconfont icon-content_icon_required"></i>
             </div>
             <div class="subsidy-edit__row-item">
               <label class="subsidy-edit__row-label">补助方式</label>
               <el-select
-                :value="1"
+                :value="editData.SubType"
+                @change="editDataOnChange('SubType', $event)"
               >
                 <el-option
                   v-for="t in subType"
@@ -106,7 +107,7 @@
                 ></el-option>
               </el-select>
               <i class="iconfont icon-content_icon_required"></i>
-              <template>
+              <template v-if="editData.SubType === 3">
                 <label class="term-label">春季学期</label>
                 <month-range-picker
                   position="bottom"
@@ -125,14 +126,14 @@
           <div class="subsidy-edit__row">
             <div class="subsidy-edit__row-item">
               <label class="subsidy-edit__row-label">补助清零</label>
-              <el-radio-group>
+              <el-radio-group :value="editData.IsClear" @input="editDataOnChange('IsClear', $event)">
                 <el-radio :label="true">是</el-radio>
                 <el-radio :label="false">否</el-radio>
               </el-radio-group>
             </div>
             <div class="subsidy-edit__row-item">
               <label class="subsidy-edit__row-label">启用状态</label>
-              <el-radio-group>
+              <el-radio-group :value="editData.Status" @input="editDataOnChange('Status', $event)">
                 <el-radio :label="0">启用</el-radio>
                 <el-radio :label="3">停用</el-radio>
               </el-radio-group>
@@ -141,13 +142,53 @@
           <div class="subsidy-edit__row">
             <label class="subsidy-edit__row-label">补助金额</label>
             <div class="edit-money__block">
-              <div class="edit-money__btn-bar">
-                <template>
-                  <eg-button type="minor">春季学期</eg-button>
-                  <eg-button>秋季学期</eg-button>
+              <div v-for="(p, index) in pricePeriods" class="edit-money__btn-bar" :key="index">
+                <template v-if="editData.SubType === 1">
+                  <eg-checkbox-group
+                    size="short"
+                    :value="p.Days"
+                    @change="editPricePeriodDataOnChange({ index, key: 'Days', value: $event })">
+                    <eg-checkbox-button
+                      v-for="(m, index) in 12"
+                      :label="index + 1"
+                      :key="index">{{index + 1}}月</eg-checkbox-button>
+                  </eg-checkbox-group>
                 </template>
+                <template v-else-if="editData.SubType === 3">
+                  <eg-checkbox-group :value="p.Days" @change="editPricePeriodDataOnChange({ index, key: 'Days', value: $event })">
+                    <eg-checkbox-button :label="1">春季学期</eg-checkbox-button>
+                    <eg-checkbox-button :label="2">秋季学期</eg-checkbox-button>
+                  </eg-checkbox-group>
+                </template>
+                <p>
+                  <eg-input placeholder="请输入金额" suffix-text="元"></eg-input>
+                </p>
               </div>
+              <eg-button type="text">添加金额设置</eg-button>
             </div>
+            <i class="iconfont icon-content_icon_required"></i>
+          </div>
+          <div class="subsidy-edit__row">
+            <label class="subsidy-edit__row-label">执行房间</label>
+            <div class="edit-room__block">
+              <eg-input
+                placeholder="房间名称搜索"
+                v-model="editRoomSearchName"
+              >
+                <i slot="suffix" class="iconfont icon-content_icon_search"></i>
+              </eg-input>
+              <el-tree
+                v-if="!isLoadingEditRoomList && !isLoadingTaskDetail"
+                ref="editRoomTree"
+                :data="editRoomTree"
+                default-expand-all
+                show-checkbox
+                node-key="value"
+                :default-checked-keys="editData.GroupIds"
+                :filter-node-method="roomTreeFilter"
+              ></el-tree>
+            </div>
+            <i class="iconfont icon-content_icon_required"></i>
           </div>
         </template>
       </eg-box>
@@ -163,7 +204,7 @@
     name: 'config-subsidy',
     data () {
       return {
-        month: [1, 11]
+        editRoomSearchName: ''
       }
     },
     components: { MonthRangePicker },
@@ -185,7 +226,12 @@
         'totalCountRoom',
         'springTerm',
         'autumnTerm',
-        'subType'
+        'subType',
+        'editData',
+        'pricePeriods',
+        'editRoomTree',
+        'isLoadingEditRoomList',
+        'isLoadingTaskDetail'
       ]),
       ...mapGetters([
       ]),
@@ -200,7 +246,8 @@
         'modifyTaskStatus',
         'getTaskList',
         'showEdit',
-        'getRoomList'
+        'getRoomList',
+        'editPricePeriodDataOnChange'
       ]),
       searchTask () {
         this.updateStateData({ item: 'currentPageTask', value: 1 })
@@ -229,6 +276,12 @@
             this.updateObjectData({ obj: 'autumnTerm', item: 'EndMonth', value: value[1] })
             break
         }
+      },
+      editDataOnChange (key, value) {
+        this.updateObjectData({ obj: 'editData', item: key, value })
+      },
+      roomTreeFilter (value, data) {
+        return data.label.indexOf(value) > -1
       }
     },
     watch: {
@@ -237,6 +290,9 @@
           this.searchTask()
           this.searchRoom()
         }
+      },
+      editRoomSearchName (newValue) {
+        this.$refs.editRoomTree.filter(newValue)
       }
     },
     created () {
