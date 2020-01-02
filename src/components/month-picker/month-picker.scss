@@ -4,7 +4,7 @@ $cell-height: 2.5rem;
   align-items: center;
   height: $normal-input-height;
   border: 1px solid $border-color;
-  border-radius: $border-radius;
+  border-radius: $common-border-radius;
   transition: border-color .3s;
   cursor: pointer;
   padding: 0 .5rem;
