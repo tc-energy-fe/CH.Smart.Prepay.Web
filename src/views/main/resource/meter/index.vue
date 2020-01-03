@@ -442,6 +442,7 @@
         if (!isEmpty(newValue)) {
           this.search()
         }
+        this.showEdit({ isShow: false })
       },
       pageSize () {
         this.search()

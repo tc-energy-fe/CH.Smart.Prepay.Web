@@ -47,19 +47,24 @@
       flex-direction: column;
       width: 25rem;
       min-height: 10rem;
-      max-height: 20rem;
       border: 1px solid $border-color;
       border-radius: $common-border-radius;
       padding: 1rem;
 
       .eg-input{
-        margin-bottom: 1rem;
+        margin-bottom: .5rem;
         flex-shrink: 0;
       }
 
       .el-tree{
+        height: 0;
         flex: 1;
+        overflow: auto;
       }
     }
+  }
+
+  .subsidy-edit__footer{
+    padding: 2rem 0 0 5rem;
   }
 }

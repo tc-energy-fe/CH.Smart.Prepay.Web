@@ -394,6 +394,7 @@
           this.currentPricePageOnChange(1)
           this.currentRoomPageOnChange(1)
         }
+        this.showEdit({ isShow: false })
       },
       editRoomSearchName (newValue) {
         this.$refs.editRoomTree.filter(newValue)

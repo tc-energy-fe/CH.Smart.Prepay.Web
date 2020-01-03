@@ -72,14 +72,15 @@
         endMonth: null,
         mouseOverStartMonth: null,
         selecting: false,
-        visible: false
+        visible: false,
+        isReverse: false
       }
     },
     computed: {
       displayValue () {
         return [
           this.value[0] || '',
-          this.value[1] || ''
+          `${this.isReverse ? '次年' : ''}${this.value[1] || ''}`
         ]
       },
       rows () {
@@ -95,9 +96,12 @@
             let endMonth = this.endMonth
             const index = outer * 4 + inner
             const month = index + 1
+            const isReverse = startMonth > endMonth
             cell.start = startMonth && month === startMonth
             cell.end = endMonth && month === endMonth
-            cell.inRange = (startMonth && endMonth) && (month <= endMonth && month >= startMonth)
+            cell.inRange = (startMonth && endMonth) && (isReverse
+                ? (month <= endMonth || month >= startMonth)
+                : (month <= endMonth && month >= startMonth))
             cell.text = index
             this.$set(row, inner, cell)
           }
@@ -129,6 +133,7 @@
         } else {
           this.selecting = false
           this.$emit('input', [this.startMonth, this.endMonth])
+          this.isReverse = this.startMonth > this.endMonth
           this.visible = false
         }
       },
@@ -136,19 +141,21 @@
         if (!this.selecting) return
 
         let month = cell.text + 1
-        let endMonth = this.mouseOverStartMonth
-        if (month >= endMonth) {
-          this.startMonth = endMonth
-          this.endMonth = month
-        } else {
-          this.startMonth = month
-          this.endMonth = endMonth
-        }
+        // let endMonth = this.mouseOverStartMonth
+        // if (month >= endMonth) {
+        //   this.startMonth = endMonth
+        //   this.endMonth = month
+        // } else {
+        //   this.startMonth = month
+        //   this.endMonth = endMonth
+        // }
+        this.endMonth = month
       }
     },
     mounted () {
-      this.startMonth = this.displayValue[0]
-      this.endMonth = this.displayValue[1]
+      this.startMonth = this.value[0]
+      this.endMonth = this.value[1]
+      this.isReverse = this.startMonth > this.endMonth
     }
   }
 </script>

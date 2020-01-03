@@ -228,6 +228,9 @@
       }
     },
     watch: {
+      projectId () {
+        this.showEdit({ isShow: false })
+      },
       groupTree (newValue, oldValue) {
         if (newValue.length && newValue !== oldValue) {
           this.$nextTick(function () {
@@ -236,12 +239,9 @@
           this.updateFormData({ item: 'currentNode', value: newValue[0] || {} })
           this.getRoomList()
         }
-      },
-      pageSize () {
-        this.getRoomList()
       }
     },
-    created () {
+    mounted () {
       if (this.groupTree.length) {
         this.$nextTick(function () {
           this.$refs.tree.setCurrentKey(this.currentNodeId)
@@ -254,6 +254,7 @@
     },
     beforeDestroy () {
       this.showEdit({ isShow: false })
+      this.updateFormData({ item: 'currentNode', value: {} })
     }
   }
 </script>

@@ -156,6 +156,7 @@
     },
     watch: {
       projectId (newValue) {
+        this.showEdit({ isShow: false })
       },
       groupTree (newValue, oldValue) {
         if (newValue.length && newValue !== oldValue) {
@@ -180,6 +181,7 @@
     },
     beforeDestroy () {
       this.showEdit({ isShow: false })
+      this.updateFormData({ item: 'currentNode', value: {} })
     }
   }
 </script>

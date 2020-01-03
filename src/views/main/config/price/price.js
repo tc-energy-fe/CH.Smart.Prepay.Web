@@ -244,8 +244,8 @@ const actions = {
         dispatch('showEdit', { isShow: false })
         commit(types.SET_DATA, { item: 'currentPricePage', value: 1 })
         commit(types.SET_DATA, { item: 'currentRoomPage', value: 1 })
-        this.getPriceList()
-        this.getRoomList()
+        dispatch('getPriceList')
+        dispatch('getRoomList')
       }).catch(err => {
         commit(types.CHECKOUT_FAILURE, err)
       }).finally(() => {
