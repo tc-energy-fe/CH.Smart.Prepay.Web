@@ -96,10 +96,12 @@
     methods: {
       ...mapActions([
         'getUserManage',
-        'updateFormData'
+        'updateFormData',
+        'getGroupList'
       ]),
       projectOnChange (val) {
         this.updateFormData({ item: 'areaId', value: val })
+        this.getGroupList()
       },
       logout () {
         sessionStorage.removeItem('Token')

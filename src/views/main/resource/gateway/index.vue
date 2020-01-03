@@ -157,6 +157,7 @@
         if (!isEmpty(newValue)) {
           this.search()
         }
+        this.showAddEdit(false)
       }
     },
     created () {

@@ -175,6 +175,9 @@
       }
     },
     watch: {
+      projectId () {
+        this.showEdit({ isShow: false })
+      },
       groupTree (newValue, oldValue) {
         if (newValue.length && newValue !== oldValue) {
           this.$nextTick(function () {
@@ -201,6 +204,9 @@
         this.currentPageOnChange(1)
       }
     },
-    beforeDestroy () {}
+    beforeDestroy () {
+      this.showEdit({ isShow: false })
+      this.updateFormData({ item: 'currentNode', value: {} })
+    }
   }
 </script>

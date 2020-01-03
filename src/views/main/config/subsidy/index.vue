@@ -27,11 +27,11 @@
                   <eg-button
                     v-if="row.Status === 0"
                     type="text" color="success"
-                    @click="modifyTaskStatus({ row, status: 3 })">停用</eg-button>
+                    @click="modifySubsidyStatus({ row, status: 3 })">停用</eg-button>
                   <eg-button
                     v-else
                     type="text" color="danger"
-                    @click="modifyTaskStatus({ row, status: 0 })">启用</eg-button>
+                    @click="modifySubsidyStatus({ row, status: 0 })">启用</eg-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -86,7 +86,7 @@
             <eg-button type="text" @click="showEdit({isShow: false})">返回列表</eg-button>
           </div>
         </template>
-        <template v-slot:content>
+        <div class="edit-content" slot="content">
           <div class="subsidy-edit__row">
             <div class="subsidy-edit__row-item">
               <label class="subsidy-edit__row-label">方案名称</label>
@@ -97,7 +97,7 @@
               <label class="subsidy-edit__row-label">补助方式</label>
               <el-select
                 :value="editData.SubType"
-                @change="editDataOnChange('SubType', $event)"
+                @change="editSubTypeOnChange"
               >
                 <el-option
                   v-for="t in subType"
@@ -141,30 +141,35 @@
           </div>
           <div class="subsidy-edit__row">
             <label class="subsidy-edit__row-label">补助金额</label>
-            <div class="edit-money__block">
+            <div class="edit-money__block" v-loading="isLoadingTaskDic">
               <div v-for="(p, index) in pricePeriods" class="edit-money__btn-bar" :key="index">
-                <template v-if="editData.SubType === 1">
-                  <eg-checkbox-group
-                    size="short"
-                    :value="p.Days"
-                    @change="editPricePeriodDataOnChange({ index, key: 'Days', value: $event })">
-                    <eg-checkbox-button
-                      v-for="(m, index) in 12"
-                      :label="index + 1"
-                      :key="index">{{index + 1}}月</eg-checkbox-button>
-                  </eg-checkbox-group>
-                </template>
-                <template v-else-if="editData.SubType === 3">
-                  <eg-checkbox-group :value="p.Days" @change="editPricePeriodDataOnChange({ index, key: 'Days', value: $event })">
-                    <eg-checkbox-button :label="1">春季学期</eg-checkbox-button>
-                    <eg-checkbox-button :label="2">秋季学期</eg-checkbox-button>
-                  </eg-checkbox-group>
-                </template>
                 <p>
-                  <eg-input placeholder="请输入金额" suffix-text="元"></eg-input>
+                  <span style="margin-right: 1rem;">时段{{index + 1}}</span>
+                  <eg-button
+                    v-if="index !== 0"
+                    type="text" color="danger"
+                    @click="deletePricePeriod(index)">删除该时段</eg-button>
+                </p>
+                <eg-checkbox-group
+                  v-if="!isLoadingTaskDic && !isLoadingTaskDetail"
+                  :size="editData.SubType === 1 ? 'short' : ''"
+                  :value="p[`Days_${editData.SubType}`]"
+                  @change="editPricePeriodDataOnChange({ index, key: `Days_${editData.SubType}`, value: $event })">
+                  <eg-checkbox-button
+                    v-for="(d, index) in editDic"
+                    :label="d.value"
+                    :key="index">{{d.name}}</eg-checkbox-button>
+                </eg-checkbox-group>
+                <p>
+                  <eg-input
+                    :value="p.Monney"
+                    placeholder="请输入金额"
+                    suffix-text="元"
+                    is-number
+                    @input="editPricePeriodDataOnChange({ index, key: 'Monney', value: $event })"></eg-input>
                 </p>
               </div>
-              <eg-button type="text">添加金额设置</eg-button>
+              <eg-button type="text" @click="addPricePeriod">添加金额设置</eg-button>
             </div>
             <i class="iconfont icon-content_icon_required"></i>
           </div>
@@ -190,7 +195,11 @@
             </div>
             <i class="iconfont icon-content_icon_required"></i>
           </div>
-        </template>
+          <div class="subsidy-edit__footer">
+            <eg-button style="margin-right: 2rem" type="minor" @click="showEdit(false)">取消</eg-button>
+            <eg-button @click="saveEdit">保存</eg-button>
+          </div>
+        </div>
       </eg-box>
     </template>
   </div>
@@ -231,7 +240,9 @@
         'pricePeriods',
         'editRoomTree',
         'isLoadingEditRoomList',
-        'isLoadingTaskDetail'
+        'isLoadingTaskDetail',
+        'isLoadingTaskDic',
+        'editDic'
       ]),
       ...mapGetters([
       ]),
@@ -247,7 +258,12 @@
         'getTaskList',
         'showEdit',
         'getRoomList',
-        'editPricePeriodDataOnChange'
+        'editPricePeriodDataOnChange',
+        'getTaskDic',
+        'addPricePeriod',
+        'deletePricePeriod',
+        'editSubsidy',
+        'modifySubsidyStatus'
       ]),
       searchTask () {
         this.updateStateData({ item: 'currentPageTask', value: 1 })
@@ -280,8 +296,17 @@
       editDataOnChange (key, value) {
         this.updateObjectData({ obj: 'editData', item: key, value })
       },
+      editSubTypeOnChange ($event) {
+        this.editDataOnChange('SubType', $event)
+        this.getTaskDic()
+      },
       roomTreeFilter (value, data) {
         return data.label.indexOf(value) > -1
+      },
+      saveEdit () {
+        let ids = this.$refs.editRoomTree.getCheckedKeys(true)
+        this.editDataOnChange('GroupIds', ids)
+        this.editSubsidy()
       }
     },
     watch: {
@@ -290,6 +315,7 @@
           this.searchTask()
           this.searchRoom()
         }
+        this.showEdit({ isShow: false })
       },
       editRoomSearchName (newValue) {
         this.$refs.editRoomTree.filter(newValue)
