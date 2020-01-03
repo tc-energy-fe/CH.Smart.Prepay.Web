@@ -25,8 +25,8 @@
                 <el-table-column label="操作" align="center">
                   <template v-slot="{row}">
                     <eg-button type="text" style="margin-right: 1rem;" @click="showEdit({row})">编辑</eg-button>
-                    <eg-button v-if="row.Status === 3" type="text" color="success">启用</eg-button>
-                    <eg-button v-else-if="row.Status === 0" type="text" color="danger">停用</eg-button>
+                    <eg-button v-if="row.Status === 3" @click="editSchemeStatus({ row, status: 0 })" type="text" color="success">启用</eg-button>
+                    <eg-button v-else-if="row.Status === 0" @click="editSchemeStatus({ row, status: 3 })" type="text" color="danger">停用</eg-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -232,6 +232,7 @@
         'getRoomList',
         'getGroupListAdd',
         'editSchemeData',
+        'editSchemeStatus',
         'updateStateData',
         'updateObjectData',
         'updateItemData'
