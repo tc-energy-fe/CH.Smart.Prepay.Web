@@ -5,9 +5,6 @@ import api from '@/api'
 import initTree from '@/utils/tree'
 import moment from 'moment'
 
-const OFF_IMMEDIATE = 0
-const OFF_DELAY = 1
-
 const state = {
   reqCancels: new Map(),
   searchNameSwitch: '',
@@ -24,32 +21,27 @@ const state = {
   isLoadingRoomList: false,
   isShowEdit: false,
   isModify: false,
-  offTypeText: {
-    [OFF_IMMEDIATE]: '立即拉闸',
-    [OFF_DELAY]: '延时拉闸'
-  },
   editData: {
     Name: '',
     Id: null,
     Status: 0,
-    GroupIds: [],
-    WarnValue: '',
-    SNS: false,
-    OffType: 0,
-    OffRange: [new Date(), new Date()]
+    GroupIds: []
   },
+  editPeriodList: [
+    {
+      SwitchParam: 1,
+      Time: new Date(),
+      Days: [1, 3, 7]
+    }
+  ],
   editTreeData: [],
-  editSearchRoomName: ''
+  editTaskDays: [],
+  editSearchRoomName: '',
+  isLoadingTaskPeriod: false,
+  isLoadingEditTree: false
 }
 
 const getters = {
-  offTypeList: (state, getters) => (Object.entries(state.offTypeText).map(([id, text]) => ({
-    label: text,
-    value: parseInt(id)
-  }))),
-  offTypeIsDelay: (state, getters) => {
-    return state.editData.OffType === OFF_DELAY
-  }
 }
 
 const actions = {
@@ -62,12 +54,18 @@ const actions = {
           Name: '',
           Id: null,
           Status: 0,
-          GroupIds: [],
-          WarnValue: '',
-          SNS: false,
-          OffType: 0,
-          OffRange: [new Date(), new Date()]
+          GroupIds: []
         }
+      })
+      commit(types.SET_DATA, {
+        item: 'editPeriodList',
+        value: [
+          {
+            SwitchParam: 1,
+            Time: new Date(),
+            Days: [1, 3, 7]
+          }
+        ]
       })
       commit(types.SET_DATA, { item: 'editSearchRoomName', value: '' })
     } else {
@@ -140,6 +138,7 @@ const actions = {
       params.configId = configId
     }
     let getGroupListEditReq = !isEmpty(configId) ? api.group.getRoomConfigEditList(params) : api.group.getRoomConfigAddList(params)
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingEditTree', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'getGroupListEditReq', value: getGroupListEditReq.cancel })
     getGroupListEditReq.request.then(res => {
       let data = res.Data || []
@@ -147,6 +146,28 @@ const actions = {
       commit(types.SET_DATA, { item: 'editTreeData', value: editTreeData })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingEditTree', value: false })
+    })
+  },
+  getTaskPeriodList ({ commit, state, rootState, getters, dispatch }) {
+    let params = {
+      type: 0
+    }
+    let getTaskPeriodListReq = api.task.getTaskDic(params)
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingTaskPeriod', value: true })
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getTaskPeriodListReq', value: getTaskPeriodListReq.cancel })
+    getTaskPeriodListReq.request.then(res => {
+      let data = res.Data || {}
+      let editTaskDays = Object.entries(data).map(([key, value]) => ({
+        label: parseInt(key),
+        text: value
+      }))
+      commit(types.SET_DATA, { item: 'editTaskDays', value: editTaskDays })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingTaskPeriod', value: false })
     })
   },
   getSingleTask ({ commit, state, rootState, getters, dispatch }, id) {
@@ -163,6 +184,12 @@ const actions = {
           GroupIds: data.GroupIds
         }
       })
+      let periodsList = data.Periods.map(period => (
+        Object.assign({}, period, {
+          Time: moment(`2020-01-01 ${period.Time}`).toDate()
+        })
+      ))
+      commit(types.SET_DATA, { item: 'editPeriodList', value: periodsList })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
@@ -190,12 +217,6 @@ const actions = {
             SNS: editData.SNS,
             OffType: editData.OffType
           }
-        }
-        if (editData.OffType === OFF_DELAY) {
-          postData.BalanceContent = Object.assign({}, postData.BalanceContent, {
-            OffRangeStart: moment(editData.OffRange[0]).format('HH:mm'),
-            OffRangeEnd: moment(editData.OffRange[1]).format('HH:mm')
-          })
         }
         if (state.isModify) {
           postData.Id = editData.Id

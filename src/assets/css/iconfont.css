@@ -9,6 +9,10 @@
     overflow: hidden;
 }
 
+.icon-tab_icon_fold:before {
+    color: #3D7DFF;
+}
+
 .icon-content_icon_required:before {
     color: #f56c6c;
     /*font-size: 12px;*/
