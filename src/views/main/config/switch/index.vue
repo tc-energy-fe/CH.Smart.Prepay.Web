@@ -18,14 +18,20 @@
           <template v-slot:content>
             <div class="table-wrapper">
               <el-table height="100%" :data="switchList" v-loading="isLoadingSwitchList">
-                <el-table-column prop="Name" label="任务名称" align="center" />
-                <el-table-column prop="ContentText" label="任务内容" align="center" />
-                <el-table-column prop="StatusText" label="启用状态" align="center" />
-                <el-table-column label="操作" align="center">
+                <el-table-column prop="Name" label="任务名称" width="200px" align="center" />
+                <el-table-column prop="ContentText" label="任务内容" align="center">
+                  <template v-slot="{row}">
+                    <p v-for="(item, index) of row.Periods" :key="index">
+                      {{`${index + 1}.【${item.Days.map(day => (taskDaysDic[day])).join('、')}】${item.Time} ${item.SwitchParam ? '开闸' : '合闸'}`}}
+                    </p>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="StatusText" label="启用状态" width="200px" align="center" />
+                <el-table-column label="操作" width="200px" align="center">
                   <template v-slot="{row}">
                     <eg-button type="text" style="margin-right: 1rem;" @click="showEdit({row})">编辑</eg-button>
-                    <eg-button v-if="row.Status === 3" type="text" color="success">启用</eg-button>
-                    <eg-button v-else-if="row.Status === 0" type="text" color="danger">停用</eg-button>
+                    <eg-button v-if="row.Status === 3" @click="editTaskStatus({ row, status: 0 })" type="text" color="success">启用</eg-button>
+                    <eg-button v-else-if="row.Status === 0" @click="editTaskStatus({ row, status: 3 })" type="text" color="danger">停用</eg-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -202,6 +208,7 @@
         'roomList',
         'totalCountSwitch',
         'totalCountRoom',
+        'taskDaysDic',
         'isLoadingSwitchList',
         'isLoadingRoomList',
         'isShowEdit',
@@ -226,7 +233,8 @@
         'getSwitchTaskList',
         'getRoomList',
         'getTaskPeriodList',
-        'editSchemeData',
+        'editTaskData',
+        'editTaskStatus',
         'updateStateData',
         'updateObjectData',
         'updateItemData'
@@ -242,7 +250,7 @@
       saveClick () {
         let checkedKeys = this.$refs.editTree.getCheckedKeys(true)
         this.updateObjectData({ obj: 'editData', item: 'GroupIds', value: checkedKeys })
-        this.editSchemeData()
+        this.editTaskData()
       },
       editTreeFilter (value, data) {
         return data.label.includes(value)
@@ -259,7 +267,7 @@
       handleAddPeriod () {
         let editPeriodList = JSON.parse(JSON.stringify(this.editPeriodList))
         editPeriodList.push({
-          SwitchParam: 1,
+          SwitchParam: true,
           Time: new Date(),
           Days: [1, 3, 7]
         })

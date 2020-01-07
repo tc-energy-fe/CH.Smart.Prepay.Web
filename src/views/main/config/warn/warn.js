@@ -5,6 +5,8 @@ import api from '@/api'
 import initTree from '@/utils/tree'
 import moment from 'moment'
 
+const STATUS_ENABLED_VALUE = 0
+const STATUS_DISABLED_VALUE = 3
 const OFF_IMMEDIATE = 0
 const OFF_DELAY = 1
 
@@ -98,7 +100,7 @@ const actions = {
     getWarnSchemeListReq.request.then(res => {
       let data = res.Data || []
       data.forEach(item => {
-        item.StatusText = item.Status === 0 ? '启用' : (item.Status === 3 ? '停用' : '其他')
+        item.StatusText = item.Status === STATUS_ENABLED_VALUE ? '启用' : (item.Status === STATUS_DISABLED_VALUE ? '停用' : '其他')
         item.OffTypeText = item.BalanceContent ? state.offTypeText[item.BalanceContent.OffType] : '--'
         item.WarnValueText = item.BalanceContent ? item.BalanceContent.WarnValue : '--'
       })
@@ -223,6 +225,24 @@ const actions = {
           commit(types.CHECKOUT_FAILURE, err)
         })
       }
+    })
+  },
+  editSchemeStatus ({ commit, state, rootState, getters, dispatch }, { row, status = STATUS_ENABLED_VALUE }) {
+    ElConfirm(`确认要${status === STATUS_ENABLED_VALUE ? '启用' : (status === STATUS_DISABLED_VALUE ? '停用' : '停用')}此方案${row.Name}`, '提示').then(() => {
+      let postData = {
+        Id: row.Id,
+        Status: status
+      }
+      let editSchemeStatusReq = api.scheme.modifySchemeStatus(postData)
+      commit(types.ADD_REQUEST_CANCEL, { item: 'editSchemeStatusReq', value: editSchemeStatusReq.cancel })
+      editSchemeStatusReq.request.then(res => {
+        commit(types.CHECKOUT_SUCCEED, res.State)
+        dispatch('getWarnSchemeList')
+        dispatch('getRoomList')
+      }).catch(err => {
+        commit(types.CHECKOUT_FAILURE, err)
+      })
+    }).catch(() => {
     })
   }
 }

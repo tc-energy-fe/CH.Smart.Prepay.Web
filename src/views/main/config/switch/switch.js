@@ -5,6 +5,9 @@ import api from '@/api'
 import initTree from '@/utils/tree'
 import moment from 'moment'
 
+const STATUS_ENABLED_VALUE = 0
+const STATUS_DISABLED_VALUE = 3
+
 const state = {
   reqCancels: new Map(),
   searchNameSwitch: '',
@@ -17,6 +20,7 @@ const state = {
   roomList: [],
   totalCountSwitch: 1,
   totalCountRoom: 1,
+  taskDaysDic: {},
   isLoadingSwitchList: false,
   isLoadingRoomList: false,
   isShowEdit: false,
@@ -24,12 +28,12 @@ const state = {
   editData: {
     Name: '',
     Id: null,
-    Status: 0,
+    Status: STATUS_ENABLED_VALUE,
     GroupIds: []
   },
   editPeriodList: [
     {
-      SwitchParam: 1,
+      SwitchParam: true,
       Time: new Date(),
       Days: [1, 3, 7]
     }
@@ -53,7 +57,7 @@ const actions = {
         value: {
           Name: '',
           Id: null,
-          Status: 0,
+          Status: STATUS_ENABLED_VALUE,
           GroupIds: []
         }
       })
@@ -61,7 +65,7 @@ const actions = {
         item: 'editPeriodList',
         value: [
           {
-            SwitchParam: 1,
+            SwitchParam: true,
             Time: new Date(),
             Days: [1, 3, 7]
           }
@@ -96,8 +100,7 @@ const actions = {
     getSwitchTaskListReq.request.then(res => {
       let data = res.Data || []
       data.forEach(item => {
-        item.StatusText = item.Status === 0 ? '启用' : (item.Status === 3 ? '停用' : '其他')
-        item.ContentText = ''
+        item.StatusText = item.Status === STATUS_ENABLED_VALUE ? '启用' : (item.Status === STATUS_DISABLED_VALUE ? '停用' : '其他')
       })
       commit(types.SET_DATA, { item: 'switchList', value: data })
       commit(types.SET_DATA, { item: 'totalCountSwitch', value: res.Count })
@@ -159,6 +162,7 @@ const actions = {
     commit(types.ADD_REQUEST_CANCEL, { item: 'getTaskPeriodListReq', value: getTaskPeriodListReq.cancel })
     getTaskPeriodListReq.request.then(res => {
       let data = res.Data || {}
+      commit(types.SET_DATA, { item: 'taskDaysDic', value: data })
       let editTaskDays = Object.entries(data).map(([key, value]) => ({
         label: parseInt(key),
         text: value
@@ -200,30 +204,33 @@ const actions = {
       ElAlert('方案名称为空！', '提示').then(() => {})
       return false
     }
+    if (editData.GroupIds.length === 0) {
+      ElAlert('勾选房间列表为空！', '提示').then(() => {})
+      return false
+    }
     return true
   },
-  editSchemeData ({ commit, state, rootState, getters, dispatch }) {
+  editTaskData ({ commit, state, rootState, getters, dispatch }) {
     dispatch('validateForm').then(result => {
       if (result) {
         let editData = state.editData
         let postData = {
           ProjectId: rootState.areaId,
           Name: editData.Name,
-          SchemeType: 1,
+          Type: 0,
           GroupIds: editData.GroupIds,
           Status: editData.Status,
-          BalanceContent: {
-            WarnValue: editData.WarnValue,
-            SNS: editData.SNS,
-            OffType: editData.OffType
-          }
+          Periods: state.editPeriodList.map(item => {
+            item.Time = moment(item.Time).format('HH:mm:ss')
+            return item
+          })
         }
         if (state.isModify) {
           postData.Id = editData.Id
         }
-        let editSchemeDataReq = state.isModify ? api.task.modifyTask(postData) : api.task.addTask(postData)
-        commit(types.ADD_REQUEST_CANCEL, { item: 'editSchemeDataReq', value: editSchemeDataReq.cancel })
-        editSchemeDataReq.request.then(res => {
+        let editTaskDataReq = state.isModify ? api.task.modifyTask(postData) : api.task.addTask(postData)
+        commit(types.ADD_REQUEST_CANCEL, { item: 'editTaskDataReq', value: editTaskDataReq.cancel })
+        editTaskDataReq.request.then(res => {
           commit(types.CHECKOUT_SUCCEED, res.State)
           dispatch('getSwitchTaskList')
           dispatch('getRoomList')
@@ -232,6 +239,24 @@ const actions = {
           commit(types.CHECKOUT_FAILURE, err)
         })
       }
+    })
+  },
+  editTaskStatus ({ commit, state, rootState, getters, dispatch }, { row, status = STATUS_ENABLED_VALUE }) {
+    ElConfirm(`确认要${status === STATUS_ENABLED_VALUE ? '启用' : (status === STATUS_DISABLED_VALUE ? '停用' : '停用')}此任务${row.Name}`, '提示').then(() => {
+      let postData = {
+        Id: row.Id,
+        Status: status
+      }
+      let editTaskStatusReq = api.task.modifyTaskStatus(postData)
+      commit(types.ADD_REQUEST_CANCEL, { item: 'editTaskStatusReq', value: editTaskStatusReq.cancel })
+      editTaskStatusReq.request.then(res => {
+        commit(types.CHECKOUT_SUCCEED, res.State)
+        dispatch('getSwitchTaskList')
+        dispatch('getRoomList')
+      }).catch(err => {
+        commit(types.CHECKOUT_FAILURE, err)
+      })
+    }).catch(() => {
     })
   }
 }
