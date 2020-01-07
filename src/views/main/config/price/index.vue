@@ -35,6 +35,7 @@
                 </el-table-column>
               </el-table>
               <el-pagination
+                background
                 @current-change="currentPricePageOnChange"
                 :current-page="currentPricePage"
                 :page-size="5"
@@ -69,6 +70,7 @@
                 <el-table-column prop="SchemeName" label="电价方案" align="center"></el-table-column>
               </el-table>
               <el-pagination
+                background
                 @current-change="currentRoomPageOnChange"
                 :current-page="currentPricePage"
                 :page-size="5"

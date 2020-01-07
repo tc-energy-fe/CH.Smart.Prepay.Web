@@ -73,6 +73,17 @@ const http = (data) => {
     cancelToken: new CancelToken(c => {
       cancel = c
     }),
+
+    // 为上传处理进度事件
+    onUploadProgress: function (progressEvent) {
+      // Do whatever you want with the native progress event
+    },
+
+    // 为下载处理进度事件
+    onDownloadProgress: function (progressEvent) {
+      // 对原生进度事件的处理
+    },
+
     // params序列化函数
     paramsSerializer: function (params) {
       let str = ''

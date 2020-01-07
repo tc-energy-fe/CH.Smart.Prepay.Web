@@ -9,6 +9,8 @@ import file from './file'
 import log from './log'
 import scheme from './scheme'
 import task from './task'
+import charge from './charge'
+import frozen from './frozen'
 
 export default {
   login,
@@ -21,5 +23,7 @@ export default {
   log,
   file,
   scheme,
-  task
+  task,
+  charge,
+  frozen
 }

@@ -325,7 +325,7 @@ const actions = {
       }).finally(() => {
         commit(types.SET_LOADING_STATUS, { item: 'isModingSubsidyStatus', value: false })
       })
-    })
+    }).catch(() => {})
   }
 }
 

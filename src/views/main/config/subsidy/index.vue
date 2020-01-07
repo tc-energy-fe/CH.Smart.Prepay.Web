@@ -36,6 +36,7 @@
               </el-table-column>
             </el-table>
             <el-pagination
+              background
               @current-change="currentTaskPageOnChange"
               :current-page="currentPageTask"
               :page-size="pageSize"
@@ -68,6 +69,7 @@
               <el-table-column prop="TaskName" label="补助方案" align="center"></el-table-column>
             </el-table>
             <el-pagination
+              background
               @current-change="currentRoomPageOnChange"
               :current-page="currentPageRoom"
               :page-size="pageSize"

@@ -59,6 +59,10 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   }
 }
 .el-select-dropdown{
+  .selected > span{
+    color: $main-color;
+    font-weight: normal;
+  }
 }
 
 // table
@@ -93,7 +97,10 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   }
   &.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
     background-color: #e5eeff;
-    color: $main-color;
+
+    .el-tree-node__label{
+      color: $main-color;
+    }
   }
 }
 
@@ -151,8 +158,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   .el-submenu{
     &.is-active {
       .el-submenu__title {
-        color: $main-color;
-        > .iconfont{
+        > .iconfont, > span{
           color: $main-color;
         }
       }
