@@ -10,6 +10,30 @@ const routes = [
     }
   },
   {
+    path: '/charge',
+    component: (resolve) => {
+      Store.registerModule('charge', { namespaced: true })
+      return import('../views/main/charge/index')
+    },
+    children: [
+      { path: '', redirect: 'management' },
+      {
+        path: 'management',
+        component: (resolve) => {
+          Store.registerModule(['charge', 'management'], require('@/views/main/charge/management/management').default)
+          return import('../views/main/charge/management/index')
+        }
+      },
+      {
+        path: 'detail',
+        component: (resolve) => {
+          Store.registerModule(['charge', 'detail'], require('@/views/main/charge/detail/detail').default)
+          return import('../views/main/charge/detail/index')
+        }
+      }
+    ]
+  },
+  {
     path: '/resource',
     component: (resolve) => {
       Store.registerModule('resource', { namespaced: true })

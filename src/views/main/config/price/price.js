@@ -229,7 +229,7 @@ const actions = {
       }).finally(() => {
         commit(types.SET_LOADING_STATUS, { item: 'isModingSchemeStatus', value: false })
       })
-    })
+    }).catch(() => {})
   },
   editScheme ({ state, getters, commit, dispatch }) {
     dispatch('validateData').then(res => {

@@ -1,0 +1,48 @@
+.charge-management{
+  .edit-wrapper{
+    height: 18rem;
+    margin-bottom: 1rem;
+
+    .edit-content{
+      display: flex;
+
+      &--left{
+        min-width: 20rem;
+        padding-left: 1rem;
+
+        .edit-content__name{
+          font-weight: bold;
+        }
+        > p{
+          margin-top: 1rem;
+
+          > label{
+            display: inline-block;
+            width: 5rem;
+          }
+        }
+
+        .eg-button{
+          margin-top: 2rem;
+          margin-left: 1rem;
+        }
+      }
+
+      &--right{}
+    }
+  }
+
+  .management-recent{
+    height: initial;
+    margin-bottom: 1rem;
+  }
+
+  .management-trend{
+    height: initial;
+  }
+
+  .management-edit__title{
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+}

@@ -2,6 +2,7 @@
   position: relative;
   height: 100%;
   width: 100%;
+  min-width: 1000px;
   $header-height: 3rem;
   .app-header{
     position: absolute;
@@ -9,6 +10,7 @@
     left: 0;
     width: 100%;
     height: $header-height;
+    box-shadow: 0 5px 5px #e5e5e5;
     @include clearFix;
     .app-header--left{
       height: 100%;
@@ -93,20 +95,30 @@
         height: 100%;
         overflow: auto;
         &.has-search{
-          display: flex;
+          //display: flex;
+          position: relative;
         }
         // 页面侧边搜索区域
         .main-search{
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 16rem;
           height: 100%;
-          margin-right: 1rem;
           background-color: #FFF;
           flex-shrink: 0;
+          padding: $normal-padding;
+
+          &__title{
+            padding-bottom: $normal-padding;
+            font-weight: bold;
+          }
         }
         .main-content{
-          width: 0;
-          flex: 1;
+          width: 100%;
+          //flex: 1;
           height: 100%;
+          padding-left: 17rem;
         }
       }
     }

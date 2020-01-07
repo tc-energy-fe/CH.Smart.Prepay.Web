@@ -1,7 +1,7 @@
 <template>
   <div class="resource-group main-container has-search">
     <div class="main-search" v-show="!isShowEdit">
-      <p>选择区域</p>
+      <p class="main-search__title">选择区域</p>
       <el-tree
         ref="tree"
         :data="groupTree"
