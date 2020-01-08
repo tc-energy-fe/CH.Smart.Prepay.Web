@@ -4,8 +4,16 @@
 
 <script>
   export default {
-    name: 'charge'
+    name: 'charge',
+    data () {
+      return {
+        payDetailGroup: null
+      }
+    },
+    mounted () {
+      this.$on('toDetailPage', (name) => {
+        this.payDetailGroup = name
+      })
+    }
   }
 </script>
-
-<style scoped></style>
