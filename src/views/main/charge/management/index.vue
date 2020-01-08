@@ -49,7 +49,7 @@
             <el-table :data="balanceList" v-loading="isLoadingBalanceList || isLoadingBalanceWarnType">
               <el-table-column label="房间信息" align="center" min-width="150">
                 <template slot-scope="{ row }">
-                  <eg-button type="text">{{row.FullName}}</eg-button>
+                  <eg-button type="text" @click="showEdit({ isShow: true, data: row })">{{row.FullName}}</eg-button>
                 </template>
               </el-table-column>
               <el-table-column label="电表" prop="EMeterSN" align="center" min-width="130"></el-table-column>
@@ -91,7 +91,7 @@
             <p><label>开户人</label><span>{{detailData.host}}</span></p>
             <p><label>手机号</label><span>{{detailData.phone}}</span></p>
             <p><label>房间余额</label><span style="color: #67c23a;">{{detailData.balance}}</span>&nbsp;元</p>
-            <eg-button>查询缴费记录</eg-button>
+            <eg-button @click="toDetailPage">查询缴费记录</eg-button>
           </div>
           <div class="edit-content--right"></div>
         </div>
@@ -171,9 +171,10 @@
       ]),
       nodeOnChange ($event) {
         this.updateStateData({ item: 'currentNode', value: $event })
+        this.search()
       },
       searchDataOnChange (key, value) {
-        this.updateObjectData({ obj: 'searchData', key, value })
+        this.updateObjectData({ obj: 'searchData', item: key, value })
       },
       search () {
         this.updateStateData({ item: 'currentPage', value: 1 })
@@ -186,6 +187,10 @@
       pageSizeOnChange (value) {
         this.updateStateData({ item: 'pageSize', value })
         this.currentPageOnChange(1)
+      },
+      toDetailPage () {
+        this.$parent.$emit('toDetailPage', this.detailData.room)
+        this.$router.push('/charge/detail')
       }
     },
     watch: {
@@ -195,6 +200,7 @@
             this.$refs.tree.setCurrentKey(newValue[0].value)
           })
           this.updateStateData({ item: 'currentNode', value: newValue[0] || {} })
+          this.updateStateData({ item: 'currentPage', value: 1 })
           this.getWarnType()
         }
       }
@@ -207,6 +213,7 @@
         if (isEmpty(this.currentNodeId)) {
           this.updateStateData({ item: 'currentNode', value: this.groupTree[0] || {} })
         }
+        this.updateStateData({ item: 'currentPage', value: 1 })
         this.getWarnType()
       }
     },

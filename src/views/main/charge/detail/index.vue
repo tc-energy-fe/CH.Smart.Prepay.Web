@@ -15,71 +15,65 @@
       ></el-tree>
     </div>
     <div class="main-content">
-        <eg-box>
-          <template v-slot:headerLeft>
-            <el-date-picker
-              type="daterange"
-            ></el-date-picker>
-            <eg-input
-              placeholder="房间信息搜索"
-              :value="searchData.RoomFullName"
-              @input="searchDataOnChange('RoomFullName', $event)"
-            ></eg-input>
-            <el-select :value="searchData.ChargeType" @input="searchDataOnChange('ChargeType', $event)">
-              <el-option :value="-1" label="全部缴费类型"></el-option>
-              <el-option
-                v-for="w in chargeTypeList"
-                :value="w.value"
-                :label="w.label"
-                :key="w.value"
-              >
-              </el-option>
-            </el-select>
-            <el-select :value="searchData.PayType" @input="searchDataOnChange('PayType', $event)">
-              <el-option :value="-1" label="全部缴费方式"></el-option>
-              <el-option
-                v-for="w in payTypeList"
-                :value="w.value"
-                :label="w.label"
-                :key="w.value"
-              >
-              </el-option>
-            </el-select>
-            <eg-button @click="search">查询缴费记录</eg-button>
-          </template>
-          <template v-slot:content>
-            <el-table :data="balanceList" v-loading="isLoadingBalanceList || isLoadingBalanceWarnType">
-              <el-table-column label="房间信息" align="center" min-width="150">
-                <template slot-scope="{ row }">
-                  <eg-button type="text">{{row.FullName}}</eg-button>
-                </template>
-              </el-table-column>
-              <el-table-column label="电表" prop="EMeterSN" align="center" min-width="130"></el-table-column>
-              <el-table-column label="开户人姓名" prop="HostName" align="center"  min-width="110"></el-table-column>
-              <el-table-column label="开户人手机号" prop="HostPhone" align="center" min-width="120"></el-table-column>
-              <el-table-column label="剩余电费(元)" prop="Balance" align="center" min-width="120"></el-table-column>
-              <el-table-column label="结算时间" prop="SettleTimeText" align="center" min-width="130"></el-table-column>
-              <el-table-column label="电表状态" prop="IsOnText" align="center" min-width="90"></el-table-column>
-              <el-table-column label="报警状态" prop="WarnTypeText" align="center" min-width="90"></el-table-column>
-              <el-table-column label="操作" align="center">
-                <template slot-scope="{ row }">
-                  <eg-button type="text" @click="showEdit({ isShow: true, data: row })">缴退费</eg-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <el-pagination
-              background
-              @current-change="currentPageOnChange"
-              @size-change="pageSizeOnChange"
-              :page-sizes="[10, 15, 20, 25]"
-              :current-page="currentPage"
-              :page-size="pageSize"
-              layout="total, ->, prev, pager, next, sizes, jumper"
-              :total="totalCount"
-            ></el-pagination>
-          </template>
-        </eg-box>
-      </div>
+      <eg-box>
+        <template v-slot:headerLeft>
+          <el-date-picker
+            unlink-panels
+            type="daterange"
+            :value="searchPeriod"
+            @input="updateStateData({item: 'searchPeriod', value: $event})"
+          ></el-date-picker>
+          <eg-input
+            placeholder="房间信息搜索"
+            :value="searchData.RoomFullName"
+            @input="searchDataOnChange('RoomFullName', $event)"
+          ></eg-input>
+          <el-select :value="searchData.ChargeType" @input="searchDataOnChange('ChargeType', $event)">
+            <el-option :value="-1" label="全部缴费类型"></el-option>
+            <el-option
+              v-for="w in chargeTypeList"
+              :value="w.value"
+              :label="w.label"
+              :key="w.value"
+            >
+            </el-option>
+          </el-select>
+          <el-select :value="searchData.PayClient" @input="searchDataOnChange('PayClient', $event)">
+            <el-option :value="-1" label="全部缴费方式"></el-option>
+            <el-option
+              v-for="w in payClientList"
+              :value="w.value"
+              :label="w.label"
+              :key="w.value"
+            >
+            </el-option>
+          </el-select>
+          <eg-button @click="search">查询缴费记录</eg-button>
+        </template>
+        <template v-slot:content>
+          <el-table :data="detailList" v-loading="isLoadingDetailList">
+            <el-table-column label="房间信息" prop="RoomFullName" align="center" min-width="140"></el-table-column>
+            <el-table-column label="缴费人姓名" prop="Name" align="center"  min-width="110"></el-table-column>
+            <el-table-column label="缴费人电话" prop="Phone" align="center" min-width="120"></el-table-column>
+            <el-table-column label="缴费方式" prop="PayClientText" align="center" min-width="90"></el-table-column>
+            <el-table-column label="缴费类型" prop="ChargeTypeText" align="center" min-width="90"></el-table-column>
+            <el-table-column label="支付方式" prop="PayTypeText" align="center" min-width="90"></el-table-column>
+            <el-table-column label="缴费金额(元)" prop="Money" align="center" min-width="120"></el-table-column>
+            <el-table-column label="缴费时间" prop="PayTimeText" align="center" min-width="180"></el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            @current-change="currentPageOnChange"
+            @size-change="pageSizeOnChange"
+            :page-sizes="[10, 15, 20, 25]"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            layout="total, ->, prev, pager, next, sizes, jumper"
+            :total="totalCount"
+          ></el-pagination>
+        </template>
+      </eg-box>
+    </div>
   </div>
 </template>
 
@@ -97,48 +91,44 @@
       ...mapState([
         'searchData',
         'chargeTypeList',
-        'payTypeList',
-        'balanceList',
+        'payClientList',
+        'detailList',
         'currentPage',
         'pageSize',
         'totalCount',
-        'isLoadingBalanceList',
-        'isLoadingBalanceWarnType',
-        'isShowEdit',
-        'detailData',
-        'isLoadingRecent',
-        'recentData',
-        'sevenDayData',
-        'isLoadingSevenDayData'
+        'isLoadingDetailList',
+        'searchPeriod'
       ]),
       ...mapGetters([
         'currentNodeId'
       ]),
       groupTree () {
         return this.$store.state.mainGroupTreeHasRoot
+      },
+      defaultRoom () {
+        return this.$parent.payDetailGroup
       }
     },
     methods: {
       ...mapActions([
         'updateStateData',
         'updateObjectData',
-        'getBalanceList',
-        'getWarnType',
-        'showEdit'
+        'getDetailList'
       ]),
       nodeOnChange ($event) {
         this.updateStateData({ item: 'currentNode', value: $event })
+        this.search()
       },
       searchDataOnChange (key, value) {
-        this.updateObjectData({ obj: 'searchData', key, value })
+        this.updateObjectData({ obj: 'searchData', item: key, value })
       },
       search () {
         this.updateStateData({ item: 'currentPage', value: 1 })
-        this.getBalanceList()
+        this.getDetailList()
       },
       currentPageOnChange (value) {
         this.updateStateData({ item: 'currentPage', value })
-        this.getBalanceList()
+        this.getDetailList()
       },
       pageSizeOnChange (value) {
         this.updateStateData({ item: 'pageSize', value })
@@ -152,11 +142,14 @@
             this.$refs.tree.setCurrentKey(newValue[0].value)
           })
           this.updateStateData({ item: 'currentNode', value: newValue[0] || {} })
-          this.getWarnType()
+          this.search()
         }
       }
     },
     created () {
+      if (this.defaultRoom) {
+        this.searchDataOnChange('RoomFullName', this.defaultRoom)
+      }
       if (this.groupTree.length) {
         this.$nextTick(function () {
           this.$refs.tree.setCurrentKey(this.currentNodeId)
@@ -164,11 +157,9 @@
         if (isEmpty(this.currentNodeId)) {
           this.updateStateData({ item: 'currentNode', value: this.groupTree[0] || {} })
         }
-        this.getWarnType()
+        this.search()
       }
     },
-    beforeDestroy () {
-      this.showEdit({ isShow: false })
-    }
+    beforeDestroy () {}
   }
 </script>

@@ -11,6 +11,7 @@ import scheme from './scheme'
 import task from './task'
 import charge from './charge'
 import frozen from './frozen'
+import payHistory from './payHistory'
 
 export default {
   login,
@@ -25,5 +26,6 @@ export default {
   scheme,
   task,
   charge,
-  frozen
+  frozen,
+  payHistory
 }
