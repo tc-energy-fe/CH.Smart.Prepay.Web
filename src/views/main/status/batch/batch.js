@@ -5,12 +5,14 @@ import Mutations from '@/store/mutations'
 
 const state = {
   reqCancels: new Map(),
-  currentPageEle: 1,
-  pageSizeEle: 10,
-  totalCountEle: 0
+  currentNode: {},
+  currentPageKeep: 1,
+  pageSizeKeep: 10,
+  totalCountKeep: 0
 }
 
 const getters = {
+  currentNodeId: (state) => state.currentNode.Id
 }
 
 const actions = {

@@ -1,16 +1,25 @@
 <template>
   <div class="main-container has-search status-batch">
     <div class="main-search">
-      <h4>选择区域</h4>
-      <el-tree
-        :data="[]"
-        default-expand-all
-      />
+      <h4 class="main-search__title">选择区域</h4>
+      <div class="tree-wrapper" v-loading="isLoadingMainGroupList">
+        <el-tree
+          v-if="!isLoadingMainGroupList"
+          class="group-tree"
+          ref="tree"
+          :data="mainGroupTree"
+          node-key="value"
+          :current-node-key="currentNodeId"
+          default-expand-all
+          :highlight-current="true"
+          :expand-on-click-node="false"
+        />
+      </div>
     </div>
     <div class="main-content">
       <div class="status-batch__tab">
         <el-radio-group v-model="tabIndex">
-          <el-radio-button :label="2">超功率设置</el-radio-button>
+          <el-radio-button :label="2" disabled>超功率设置</el-radio-button>
           <el-radio-button :label="0">保电设置</el-radio-button>
           <el-radio-button :label="1">开合闸设置</el-radio-button>
         </el-radio-group>
@@ -57,9 +66,9 @@
               </el-table>
               <el-pagination
                 background
-                :current-page="currentPageEle"
-                :page-size="pageSizeEle"
-                :total="totalCountEle"
+                :current-page="currentPageKeep"
+                :page-size="pageSizeKeep"
+                :total="totalCountKeep"
                 layout="total, ->, prev, pager, next"
               />
             </template>
@@ -73,8 +82,8 @@
 </template>
 
 <script>
-  import { createNamespacedHelpers } from 'vuex'
-  const { mapState, mapGetters, mapActions } = createNamespacedHelpers('status/batch')
+  import Vuex from 'vuex'
+  const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('status/batch')
   export default {
     name: 'Batch',
     data () {
@@ -85,20 +94,42 @@
     components: {},
     computed: {
       ...mapState([
-        'currentPageEle',
-        'pageSizeEle',
-        'totalCountEle'
+        'currentPageKeep',
+        'pageSizeKeep',
+        'totalCountKeep'
       ]),
       ...mapGetters([
+        'currentNodeId'
+      ]),
+      ...Vuex.mapState([
+        'mainGroupTree',
+        'isLoadingMainGroupList'
       ])
     },
     methods: {
       ...mapActions([
+        'updateStateData'
       ])
     },
     watch: {
+      mainGroupTree (newValue, oldValue) {
+        if (newValue.length) {
+          // this.$nextTick(function () {
+          //   this.$refs.tree.setCurrentKey(newValue[0].value)
+          // })
+          this.updateStateData({ item: 'currentNode', value: newValue[0] || {} })
+        }
+      }
     },
     created () {
+      if (this.mainGroupTree.length) {
+        // this.$nextTick(function () {
+        //   this.$refs.tree.setCurrentKey(this.currentNodeId)
+        // })
+        if (isEmpty(this.currentNodeId)) {
+          this.updateStateData({ item: 'currentNode', value: this.mainGroupTree[0] || {} })
+        }
+      }
     },
     beforeDestroy () {
     }
