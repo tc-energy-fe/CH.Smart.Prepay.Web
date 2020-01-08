@@ -154,6 +154,36 @@ const routes = [
       }
     ]
   },
+  {
+    path: '/status',
+    component: () => {
+      Store.registerModule('status', { namespaced: true })
+      return import('../views/main/status/index')
+    },
+    children: [
+      {
+        path: 'batch',
+        component: () => {
+          Store.registerModule(['status', 'batch'], require('@/views/main/status/batch/batch').default)
+          return import('@/views/main/status/batch/index')
+        }
+      }
+      // {
+      //   path: 'emeter',
+      //   component: () => {
+      //     Store.registerModule(['status', 'emeter'], require('@/views/main/status/emeter/emeter').default)
+      //     return import('@/views/main/status/emeter/index')
+      //   }
+      // },
+      // {
+      //   path: 'gateway',
+      //   component: () => {
+      //     Store.registerModule(['status', 'gateway'], require('@/views/main/status/gateway/gateway').default)
+      //     return import('@/views/main/status/gateway/index')
+      //   }
+      // }
+    ]
+  },
   // 404Page
   {
     path: '*',
