@@ -4,6 +4,10 @@ import Mutations from '@/store/mutations'
 // import api from '@/api'
 
 const state = {
+  reqCancels: new Map(),
+  currentPageEle: 1,
+  pageSizeEle: 10,
+  totalCountEle: 0
 }
 
 const getters = {

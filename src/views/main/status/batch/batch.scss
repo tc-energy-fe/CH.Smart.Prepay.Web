@@ -1,0 +1,23 @@
+
+.status-batch {
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+    &__tab {
+        width: 100%;
+        height: 3.75rem;
+        background-color: white;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    &__content {
+        width: 100%;
+        flex: 1;
+        background-color: white;
+        overflow: auto;
+    }
+}
