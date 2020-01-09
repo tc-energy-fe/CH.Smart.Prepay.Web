@@ -3,63 +3,56 @@
     padding: 1rem;
   }
   .main-content {
-    background-color: #FFF;
-
     .eg-box__header--left {
-      display: flex;
-      align-items: center;
-
-      > * {
-        margin-right: 1rem;
-      }
+      @include setEqualInterval(1rem)
     }
 
     .project-table_container {
       padding: $normal-padding;
     }
+  }
 
-    .project-edit__title {
-      font-size: 1.1rem;
-      font-weight: bold;
+  .project-edit__title {
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  .project-edit__back {
+    color: $main-color;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .project-edit__row {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    .iconfont{
+      font-size: .9rem;
+      margin-left: .5rem;
+    }
+    > label {
+      display: block;
+      width: 5rem;
+      height: $normal-input-height;
+      line-height: $normal-input-height;
+      align-self: flex-start;
     }
 
-    .project-edit__back {
-      color: $main-color;
-      cursor: pointer;
+    .el-textarea {
+      width: 28rem;
 
-      &:hover {
-        text-decoration: underline;
+      textarea {
+        resize: none;
+        height: 5rem;
       }
     }
+  }
 
-    .project-edit__row {
-      display: flex;
-      align-items: center;
-      margin-top: 1rem;
-      .iconfont{
-        font-size: .9rem;
-        margin-left: .5rem;
-      }
-      > label {
-        display: block;
-        width: 5rem;
-        height: $normal-input-height;
-        line-height: $normal-input-height;
-        align-self: flex-start;
-      }
-
-      .el-textarea {
-        width: 28rem;
-
-        textarea {
-          resize: none;
-          height: 5rem;
-        }
-      }
-    }
-
-    .project-edit__footer {
-      padding: 2rem 0 0 5rem;
-    }
+  .project-edit__footer {
+    padding: 2rem 0 0 5rem;
   }
 }

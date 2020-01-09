@@ -124,7 +124,7 @@
 <script>
   import './management.scss'
   import { createNamespacedHelpers } from 'vuex'
-  import MyLineChart from '@/components/SingleLineChart'
+  import MyLineChart from '@/components/single-line-chart'
   const { mapGetters, mapActions, mapState } = createNamespacedHelpers('charge/management')
   export default {
     name: 'charge-management',

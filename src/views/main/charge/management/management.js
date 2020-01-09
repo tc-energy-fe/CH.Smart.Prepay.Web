@@ -74,13 +74,20 @@ const actions = {
     })
   },
   getBalanceList ({ state, getters, rootState, commit }) {
-    let postData = Object.assign({
+    let searchData = state.searchData
+    let postData = {
       ProjectId: rootState.areaId,
       PageIndex: state.currentPage,
-      PageSize: state.pageSize
-    }, state.searchData)
+      PageSize: state.pageSize,
+      Name: searchData.Name,
+      HostInfo: searchData.HostInfo
+    }
     let groupId = getters.currentNodeId
+    let IsOn = searchData.IsOn
+    let WarnType = searchData.WarnType
     if (!isEmpty(groupId) && groupId !== rootState.areaId) postData.GroupId = groupId
+    if (!isEmpty(IsOn) && IsOn !== -1) postData.IsOn = IsOn
+    if (!isEmpty(WarnType) && WarnType !== -1) postData.WarnType = WarnType
     let cancel = state.reqCancels.get('getBalanceListReq')
     if (cancel) cancel()
     let getBalanceListReq = api.charge.getBalanceList(postData)

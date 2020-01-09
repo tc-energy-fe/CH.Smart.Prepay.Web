@@ -1,90 +1,92 @@
 <template>
   <div class="resource-group main-container has-search">
-    <div class="main-search" v-show="!isShowEdit">
-      <p class="main-search__title">选择区域</p>
-      <el-tree
-        ref="tree"
-        :data="groupTree"
-        node-key="value"
-        default-expand-all
-        auto-expand-parent
-        :highlight-current="true"
-        :current-node-key="currentNodeId"
-        :expand-on-click-node="false"
-        @current-change="nodeOnChange"
-      ></el-tree>
-    </div>
-    <div class="main-content">
-      <eg-box v-show="!isShowEdit">
-        <template v-slot:headerLeft>
-          <eg-input
-            placeholder="区域名称搜索"
-            v-model="searchName"
-          ></eg-input>
-          <eg-button @click="getGroupList">查询</eg-button>
-        </template>
-        <template v-slot:headerRight>
-          <eg-button @click="showEdit">新建区域</eg-button>
-        </template>
-        <template v-slot:content>
-          <el-table :data="paginationData" v-loading="isLoadingGroupList">
-            <el-table-column label="区域名称" prop="Name" align="center"></el-table-column>
-            <el-table-column label="上级区域" prop="ParentName" align="center"></el-table-column>
-            <el-table-column label="操作" align="center">
-              <template slot-scope="{ row }">
-                <eg-button type="text" @click="showEdit({ data: row })" style="margin-right: 1.5rem;">编辑</eg-button>
-                <eg-button type="text" color="danger" @click="deleteGroup(row)">删除</eg-button>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-pagination
-            @current-change="currentPageOnChange"
-            @size-change="pageSizeOnChange"
-            :page-sizes="[10, 15, 20, 25]"
-            :current-page="currentPage"
-            :page-size="pageSize"
-            layout="total, ->, prev, pager, next, sizes, jumper"
-            :total="groupList.length"
-          ></el-pagination>
-        </template>
-      </eg-box>
-      <eg-box class="project-edit" v-if="isShowEdit">
-        <template v-slot:headerLeft>
-          <span class="project-edit__title">{{isModify ? '编辑' : '添加'}}区域</span>
-          <span class="project-edit__back" @click="showEdit({ isShow: false })">返回列表</span>
-        </template>
-        <template v-slot:content>
-          <p class="project-edit__row">
-            <label>区域名称</label>
-            <eg-input v-model="editName"></eg-input>
-            <i class="iconfont icon-content_icon_required"></i>
-          </p>
-          <p class="project-edit__row">
-            <label>上级区域</label>
-            <el-select
-              :disabled="isModify"
-              :value="editParentId"
-              @change="updateFormData({ item: 'editParentId', value: $event })"
-            >
-              <el-option
-                :label="'不选择'"
-                :value="-1"
-              ></el-option>
-              <el-option
-                v-for="item in mainGroupList"
-                :key="item.value"
-                :label="item.FullName"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </p>
-          <p class="project-edit__footer">
-            <eg-button style="margin-right: 2rem" type="minor" @click="showEdit({ isShow: false })">取消</eg-button>
-            <eg-button @click="editGroup">保存</eg-button>
-          </p>
-        </template>
-      </eg-box>
-    </div>
+    <template  v-if="!isShowEdit">
+      <div class="main-search" v-show="!isShowEdit">
+        <p class="main-search__title">选择区域</p>
+        <el-tree
+          ref="tree"
+          :data="groupTree"
+          node-key="value"
+          default-expand-all
+          auto-expand-parent
+          :highlight-current="true"
+          :current-node-key="currentNodeId"
+          :expand-on-click-node="false"
+          @current-change="nodeOnChange"
+        ></el-tree>
+      </div>
+      <div class="main-content">
+        <eg-box>
+          <template v-slot:headerLeft>
+            <eg-input
+              placeholder="区域名称搜索"
+              v-model="searchName"
+            ></eg-input>
+            <eg-button @click="getGroupList">查询</eg-button>
+          </template>
+          <template v-slot:headerRight>
+            <eg-button @click="showEdit">新建区域</eg-button>
+          </template>
+          <template v-slot:content>
+            <el-table :data="paginationData" v-loading="isLoadingGroupList">
+              <el-table-column label="区域名称" prop="Name" align="center"></el-table-column>
+              <el-table-column label="上级区域" prop="ParentName" align="center"></el-table-column>
+              <el-table-column label="操作" align="center">
+                <template slot-scope="{ row }">
+                  <eg-button type="text" @click="showEdit({ data: row })" style="margin-right: 1.5rem;">编辑</eg-button>
+                  <eg-button type="text" color="danger" @click="deleteGroup(row)">删除</eg-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-pagination
+              @current-change="currentPageOnChange"
+              @size-change="pageSizeOnChange"
+              :page-sizes="[10, 15, 20, 25]"
+              :current-page="currentPage"
+              :page-size="pageSize"
+              layout="total, ->, prev, pager, next, sizes, jumper"
+              :total="groupList.length"
+            ></el-pagination>
+          </template>
+        </eg-box>
+      </div>
+    </template>
+    <eg-box class="project-edit" v-if="isShowEdit">
+      <template v-slot:headerLeft>
+        <span class="project-edit__title">{{isModify ? '编辑' : '添加'}}区域</span>
+        <span class="project-edit__back" @click="showEdit({ isShow: false })">返回列表</span>
+      </template>
+      <template v-slot:content>
+        <p class="project-edit__row">
+          <label>区域名称</label>
+          <eg-input v-model="editName"></eg-input>
+          <i class="iconfont icon-content_icon_required"></i>
+        </p>
+        <p class="project-edit__row">
+          <label>上级区域</label>
+          <el-select
+            :disabled="isModify"
+            :value="editParentId"
+            @change="updateFormData({ item: 'editParentId', value: $event })"
+          >
+            <el-option
+              :label="'不选择'"
+              :value="-1"
+            ></el-option>
+            <el-option
+              v-for="item in mainGroupList"
+              :key="item.value"
+              :label="item.FullName"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </p>
+        <p class="project-edit__footer">
+          <eg-button style="margin-right: 2rem" type="minor" @click="showEdit({ isShow: false })">取消</eg-button>
+          <eg-button @click="editGroup">保存</eg-button>
+        </p>
+      </template>
+    </eg-box>
   </div>
 </template>
 

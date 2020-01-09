@@ -3,90 +3,83 @@
     padding: $normal-padding;
   }
   .main-content{
-    background-color: #FFF;
-
     .eg-box__header--left {
-      display: flex;
-      align-items: center;
-
-      > * {
-        margin-right: 1rem;
-      }
+      @include setEqualInterval(1rem);
     }
 
     .room-table_container {
       padding: $normal-padding;
     }
+  }
 
-    .room-edit__title {
-      font-size: 1.1rem;
-      font-weight: bold;
+  .room-edit__title {
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  .room-edit__back {
+    color: $main-color;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .room-edit__row {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    .iconfont{
+      font-size: .9rem;
+      margin-left: .5rem;
+    }
+    > label {
+      display: block;
+      width: 5rem;
+      align-self: flex-start;
+      height: $normal-input-height;
+      line-height: $normal-input-height;
+      align-self: flex-start;
     }
 
-    .room-edit__back {
-      color: $main-color;
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    .room-edit__row {
-      display: flex;
-      align-items: center;
-      margin-top: 1rem;
-      .iconfont{
-        font-size: .9rem;
-        margin-left: .5rem;
-      }
-      > label {
-        display: block;
-        width: 5rem;
-        align-self: flex-start;
-        height: $normal-input-height;
-        line-height: $normal-input-height;
-        align-self: flex-start;
-      }
-
-      .el-textarea {
-        width: 28rem;
-
-        textarea {
-          resize: none;
-          height: 5rem;
-        }
-      }
-    }
-
-    .room-edit__group, .room-edit__device{
+    .el-textarea {
       width: 28rem;
-      height: 13rem;
-      border: 1px solid $border-color;
-      border-radius: $common-border-radius;
-      padding: 1rem;
-      margin-top: 1rem;
+
+      textarea {
+        resize: none;
+        height: 5rem;
+      }
+    }
+  }
+
+  .room-edit__group, .room-edit__device{
+    width: 28rem;
+    height: 13rem;
+    border: 1px solid $border-color;
+    border-radius: $common-border-radius;
+    padding: 1rem;
+    margin-top: 1rem;
+    overflow: auto;
+  }
+  .room-edit__device{
+    display: flex;
+    flex-direction: column;
+    .room-edit__device--top{
+      flex-shrink: 0;
+      padding-bottom: .5rem;
+      > .el-select{
+        margin-right: 1rem;
+      }
+    }
+    .el-tree{
+      flex: 1;
+      height: 0;
       overflow: auto;
     }
-    .room-edit__device{
-      display: flex;
-      flex-direction: column;
-      .room-edit__device--top{
-        flex-shrink: 0;
-        padding-bottom: .5rem;
-        > .el-select{
-          margin-right: 1rem;
-        }
-      }
-      .el-tree{
-        flex: 1;
-        height: 0;
-        overflow: auto;
-      }
-    }
+  }
 
-    .room-edit__footer {
-      padding: 2rem 0 0 5rem;
-    }
+  .room-edit__footer {
+    padding: 2rem 0 0 5rem;
   }
 }
