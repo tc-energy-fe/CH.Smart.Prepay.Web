@@ -90,10 +90,34 @@
             <p class="edit-content__name">{{detailData.room}}</p>
             <p><label>开户人</label><span>{{detailData.host}}</span></p>
             <p><label>手机号</label><span>{{detailData.phone}}</span></p>
-            <p><label>房间余额</label><span style="color: #67c23a;">{{detailData.balance}}</span>&nbsp;元</p>
+            <p>
+              <label>房间余额</label>
+              <span :style="{color: detailData.balance >= 0 ? '#67c23a' : '#f56c6c'}">
+                {{detailData.balance}}
+              </span>&nbsp;元
+            </p>
             <eg-button @click="toDetailPage">查询缴费记录</eg-button>
           </div>
-          <div class="edit-content--right"></div>
+          <div class="edit-content--right">
+            <p>
+              <label>缴费类型</label>
+              <el-radio-group :value="editChargeType" @input="updateStateData({item: 'editChargeType', value: $event})">
+                <el-radio :label="0">预存</el-radio>
+                <el-radio :label="1">退费</el-radio>
+                <el-radio :label="2">补助</el-radio>
+              </el-radio-group>
+            </p>
+            <p>
+              <label>缴费金额</label>
+              <eg-input
+                is-number
+                placeholder="请输入金额"
+                :value="editMoney"
+                suffix-text="元"
+                @input="updateStateData({item: 'editMoney', value: $event})"></eg-input>
+            </p>
+            <eg-button @click="balancePay">立即缴费</eg-button>
+          </div>
         </div>
       </eg-box>
       <eg-box class="management-recent">
@@ -101,7 +125,19 @@
         <el-table :data="[recentData]" slot="content" v-loading="isLoadingRecent">
           <el-table-column prop="FullName" label="房间名称" align="center" min-width="100"></el-table-column>
           <el-table-column prop="EMeterSN" label="电表" align="center" min-width="140"></el-table-column>
-          <el-table-column prop="StartTotal" label="上次抄读数据(kWh)" align="center" min-width="160"></el-table-column>
+          <el-table-column prop="StartTotal" label="上次抄读数据(kWh)" align="center" min-width="160">
+            <template slot-scope="{ row }">
+              <el-popover trigger="hover" popper-class="recent-table__total">
+                <eg-button type="text" slot="reference">{{row.StartTotal | currency}}</eg-button>
+                <div class="recent-table__pop">
+                  <p><label>尖</label><span>{{row.StartPointed | currency}}</span></p>
+                  <p><label>峰</label><span>{{row.StartPeak | currency}}</span></p>
+                  <p><label>平</label><span>{{row.StartFlat | currency}}</span></p>
+                  <p><label>谷</label><span>{{row.StartValley | currency}}</span></p>
+                </div>
+              </el-popover>
+            </template>
+          </el-table-column>
           <el-table-column prop="EndTotal" label="本次抄读数据(kWh)" align="center" min-width="160"></el-table-column>
           <el-table-column prop="DeltaTotal" label="用电量(kWh)" align="center" min-width="120"></el-table-column>
           <el-table-column prop="DeltaCost" label="电费(元)" align="center"></el-table-column>
@@ -152,7 +188,9 @@
         'isLoadingRecent',
         'recentData',
         'sevenDayData',
-        'isLoadingSevenDayData'
+        'isLoadingSevenDayData',
+        'editChargeType',
+        'editMoney'
       ]),
       ...mapGetters([
         'currentNodeId'
@@ -167,7 +205,8 @@
         'updateObjectData',
         'getBalanceList',
         'getWarnType',
-        'showEdit'
+        'showEdit',
+        'balancePay'
       ]),
       nodeOnChange ($event) {
         this.updateStateData({ item: 'currentNode', value: $event })

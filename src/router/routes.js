@@ -34,6 +34,23 @@ const routes = [
     ]
   },
   {
+    path: '/statement',
+    component: (resolve) => {
+      Store.registerModule('statement', { namespaced: true })
+      return import('../views/main/resource/index')
+    },
+    children: [
+      { path: '', redirect: 'eleCharge' },
+      {
+        path: 'eleCharge',
+        component: (resolve) => {
+          Store.registerModule(['statement', 'eleCharge'], require('@/views/main/statement/eleCharge/eleCharge').default)
+          return import('@/views/main/statement/eleCharge/index')
+        }
+      }
+    ]
+  },
+  {
     path: '/resource',
     component: (resolve) => {
       Store.registerModule('resource', { namespaced: true })

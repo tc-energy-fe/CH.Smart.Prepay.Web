@@ -13,5 +13,10 @@ export default {
   getBalanceWarnType: () => http({
     method: 'GET',
     url: '/Balance/Warn/Type'
+  }),
+  balancePay: data => http({
+    method: 'POST',
+    url: '/Balance/Pay',
+    data
   })
 }

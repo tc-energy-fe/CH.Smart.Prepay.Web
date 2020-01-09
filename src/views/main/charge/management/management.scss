@@ -7,14 +7,16 @@
       display: flex;
 
       &--left{
-        min-width: 20rem;
-        padding-left: 1rem;
+        width: 50%;
+        padding: 1.5rem;
+        margin-right: 1rem;
+        background-color: $background-color;
 
         .edit-content__name{
           font-weight: bold;
         }
         > p{
-          margin-top: 1rem;
+          margin-bottom: 1rem;
 
           > label{
             display: inline-block;
@@ -23,12 +25,29 @@
         }
 
         .eg-button{
-          margin-top: 2rem;
+          margin-top: .5rem;
           margin-left: 1rem;
         }
       }
 
-      &--right{}
+      &--right{
+        width: 50%;
+        padding: 1.5rem;
+        background-color: $background-color;
+
+        > p{
+          margin-bottom: 2rem;
+
+          > label{
+            padding-right: 1rem;
+          }
+        }
+
+        .eg-button{
+          margin-top: 1rem;
+          margin-left: 1rem;
+        }
+      }
     }
   }
 
@@ -44,5 +63,19 @@
   .management-edit__title{
     font-weight: bold;
     font-size: 1.1rem;
+  }
+}
+
+.recent-table__total{
+  min-width: initial;
+  .recent-table__pop{
+
+    > p{
+      padding: .2rem;
+
+      > label {
+        padding-right: 1rem;
+      }
+    }
   }
 }

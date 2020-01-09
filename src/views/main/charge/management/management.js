@@ -30,7 +30,10 @@ const state = {
   recentData: {},
   isLoadingRecent: false,
   sevenDayData: [],
-  isLoadingSevenDayData: false
+  isLoadingSevenDayData: false,
+  editChargeType: 0,
+  editPayType: 1,
+  editMoney: null
 }
 
 const getters = {
@@ -41,6 +44,7 @@ const actions = {
   ...Actions,
   showEdit ({ state, commit, dispatch }, { isShow, data }) {
     if (!isShow) {
+      dispatch('getBalanceList')
       commit(types.SET_DATA, { item: 'detailData', value: {} })
     } else {
       commit(types.SET_DATA, {
@@ -54,6 +58,9 @@ const actions = {
           meter: data.EMeterSN || ''
         }
       })
+      commit(types.SET_DATA, { item: 'editChargeType', value: 0 })
+      commit(types.SET_DATA, { item: 'editMoney', value: null })
+      // commit(types.SET_DATA, { item: 'editPayType', value: 1 })
       dispatch('getRecent')
       dispatch('getSevenDayData')
     }
@@ -140,6 +147,30 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
       commit(types.SET_LOADING_STATUS, { item: 'isLoadingSevenDayData', value: false })
+    })
+  },
+  balancePay ({ state, commit, dispatch }) {
+    let postData = {
+      GroupId: state.detailData.Id,
+      ChargeType: state.editChargeType,
+      Money: state.editMoney,
+      PayClient: 0,
+      PayType: state.editPayType
+    }
+    if (isEmpty(postData.Money) || postData.Money === 0) {
+      ElAlert('请填写金额！', '提示')
+      return
+    }
+    let balancePayReq = api.charge.balancePay(postData)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'balancePayReq', value: balancePayReq.cancel })
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingBalancePay', value: true })
+    balancePayReq.request.then(res => {
+      commit(types.CHECKOUT_SUCCEED, res.State)
+      dispatch('showEdit', { isShow: false })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingBalancePay', value: false })
     })
   }
 }
