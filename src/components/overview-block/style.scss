@@ -1,0 +1,63 @@
+.overview-block{
+  height: 100%;
+  @include clearFix;
+
+  .overview-block--left{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 50%;
+    height: 100%;
+    background-color: #cfe0ff;
+    float: left;
+    .overview-block__icon{
+      width: 3rem;
+    }
+
+    > span{
+      font-size: .9rem;
+    }
+    &--red{
+      background-color: #f9cfcf;
+    }
+
+    &--green{
+      background-color: #bfefbb;
+    }
+  }
+
+  .overview-block--right{
+    position: relative;
+    width: 50%;
+    height: 100%;
+    background-color: #f2f5fa;
+    float: left;
+
+    &--white{
+      background-color: #FFF;
+    }
+
+    .right-center {
+      position: absolute;
+      top: 50%;
+      transform: translate(0, -50%);
+      width: 100%;
+      text-align: center;
+
+      .text {
+        font-family: HiraginoSansGB-W3;
+        font-size: 1.5rem;
+      }
+    }
+
+    .right-bottom{
+      width: 100%;
+      position: absolute;
+      z-index: 10;
+      left: 0;
+      bottom: 1.5rem;
+    }
+  }
+}

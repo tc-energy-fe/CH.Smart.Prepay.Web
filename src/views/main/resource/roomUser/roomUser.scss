@@ -3,51 +3,42 @@
     padding: $normal-padding;
   }
   .main-content{
-    background-color: #FFF;
-    .eg-box{
-      height: 100%;
-    }
     .eg-box__header--left {
-      display: flex;
-      align-items: center;
+      @include setEqualInterval(1rem)
+    }
+  }
 
-      > * {
-        margin-right: 1rem;
-      }
+  .room-edit__title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    line-height: 1.1;
+  }
+  .room-edit__name{
+    margin-top: 1rem;
+    > label{
+      display: inline-block;
+      width: 6rem;
     }
+  }
+  .room-edit__row {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    .iconfont{
+      font-size: .9rem;
+      margin-left: .5rem;
+    }
+    > label {
+      display: block;
+      width: 6rem;
+      align-self: flex-start;
+      height: $normal-input-height;
+      line-height: $normal-input-height;
+      align-self: flex-start;
+    }
+  }
 
-    .room-edit__title {
-      font-size: 1.1rem;
-      font-weight: bold;
-      line-height: 1.1;
-    }
-    .room-edit__name{
-      margin-top: 1rem;
-      > label{
-        display: inline-block;
-        width: 6rem;
-      }
-    }
-    .room-edit__row {
-      display: flex;
-      align-items: center;
-      margin-top: 1rem;
-      .iconfont{
-        font-size: .9rem;
-        margin-left: .5rem;
-      }
-      > label {
-        display: block;
-        width: 6rem;
-        align-self: flex-start;
-        height: $normal-input-height;
-        line-height: $normal-input-height;
-        align-self: flex-start;
-      }
-    }
-
-    .room-edit__footer {
-      padding: 2rem 0 0 5rem;
-    }
+  .room-edit__footer {
+    padding: 2rem 0 0 5rem;
   }
 }
