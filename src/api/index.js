@@ -12,6 +12,7 @@ import task from './task'
 import charge from './charge'
 import frozen from './frozen'
 import payHistory from './payHistory'
+import deviceCtrl from './deviceCtrl'
 
 export default {
   login,
@@ -27,5 +28,6 @@ export default {
   task,
   charge,
   frozen,
+  deviceCtrl,
   payHistory
 }
