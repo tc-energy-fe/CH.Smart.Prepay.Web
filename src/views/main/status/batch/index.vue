@@ -79,7 +79,7 @@
                 <el-table-column prop="KeepStateText" label="保电状态" align="center" />
                 <el-table-column width="150px" label="操作" align="center">
                   <template v-slot="{row}">
-                    <eg-button type="text" >保电设置</eg-button>
+                    <eg-button type="text" @click="keepDialogVisible = true">保电设置</eg-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -97,7 +97,14 @@
           </eg-box>
           <el-dialog
             title="保电设置"
+            :visible.sync="keepDialogVisible"
+            width="30rem"
+            top="30vh"
           >
+            <div slot="footer">
+              <eg-button type="minor">取消</eg-button>
+              <eg-button>下发命令</eg-button>
+            </div>
           </el-dialog>
         </template>
         <template v-if="settingTypeIsSwitch">
@@ -164,6 +171,7 @@
     name: 'Batch',
     data () {
       return {
+        keepDialogVisible: false
       }
     },
     components: {},
