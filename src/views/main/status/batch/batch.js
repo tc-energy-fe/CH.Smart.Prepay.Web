@@ -48,8 +48,14 @@ const state = {
   isLoadingSwitchList: false,
   isLoadingKeepList: false,
   dialogVisibleKeep: false,
+  dialogVisibleSwitch: false,
+  keepControlSingleDeviceId: null,
   keepControlDeviceIds: [],
-  keepControlState: false
+  switchControlSingleDeviceId: null,
+  switchControlDeviceIds: [],
+  switchControlState: false,
+  keepControlState: false,
+  isControlling: false
 }
 
 const getters = {
@@ -63,14 +69,25 @@ const actions = {
   ...Actions,
   showDialogKeep ({ commit, state, getters, dispatch }, { isShow, row }) {
     if (!isShow) {
-      commit(types.SET_DATA, { item: 'keepControlDeviceIds', value: [] })
+      commit(types.SET_DATA, { item: 'keepControlSingleDeviceId', value: null })
       commit(types.SET_DATA, { item: 'keepControlState', value: false })
     } else {
       if (row) {
-        commit(types.SET_DATA, { item: 'keepControlDeviceIds', value: [row.DeviceId] })
+        commit(types.SET_DATA, { item: 'keepControlSingleDeviceId', value: row.DeviceId })
       }
     }
     commit(types.SET_DATA, { item: 'dialogVisibleKeep', value: isShow })
+  },
+  showDialogSwitch ({ commit, state, getters, dispatch }, { isShow, row }) {
+    if (!isShow) {
+      commit(types.SET_DATA, { item: 'switchControlSingleDeviceId', value: null })
+      commit(types.SET_DATA, { item: 'switchControlState', value: false })
+    } else {
+      if (row) {
+        commit(types.SET_DATA, { item: 'switchControlSingleDeviceId', value: row.DeviceId })
+      }
+    }
+    commit(types.SET_DATA, { item: 'dialogVisibleSwitch', value: isShow })
   },
   getDeviceCtrlKeepList ({ commit, state, getters, rootState, rootGetters, dispatch }) {
     let postData = {
@@ -131,7 +148,7 @@ const actions = {
       let data = res.Data || []
       let switchList = data.map(item => {
         return Object.assign({}, item, {
-          SwitchStateText: isEmpty(item.SwitchState) ? '未设置' : state.searchSwitchStateOptions.find(option => option.value === item.SwitchState).label
+          SwitchStateText: isEmpty(item.SwitchState) ? '未知' : state.searchSwitchStateOptions.find(option => option.value === item.SwitchState).label
         })
       })
       commit(types.SET_DATA, { item: 'switchList', value: switchList })
@@ -143,8 +160,9 @@ const actions = {
     })
   },
   controlDeviceKeep ({ commit, state, getters, rootState, rootGetters, dispatch }) {
+    let singleDeviceIdKeep = state.keepControlSingleDeviceId
     let postData = {
-      DeviceIds: state.keepControlDeviceIds,
+      DeviceIds: isEmpty(singleDeviceIdKeep) ? state.keepControlDeviceIds : [singleDeviceIdKeep],
       Param: state.keepControlState,
       Type: SETTING_TYPE_KEEP
     }
@@ -157,6 +175,65 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
       dispatch('showDialogKeep', { isShow: false })
+    })
+  },
+  controlDeviceSwitch ({ commit, state, getters, rootState, rootGetters, dispatch }, { row }) {
+    let singleDeviceIdSwitch = state.switchControlSingleDeviceId
+    let postData = {
+      DeviceIds: isEmpty(singleDeviceIdSwitch) ? (row ? [row.DeviceId] : state.switchControlDeviceIds) : [singleDeviceIdSwitch],
+      Param: isEmpty(singleDeviceIdSwitch) ? (row ? !row.SwitchState : state.switchControlState) : state.switchControlState,
+      Type: SETTING_TYPE_SWITCH
+    }
+    let controlDeviceSwitchReq = api.deviceCtrl.postDeviceCtrlHardware(postData)
+    commit(types.SET_DATA, { item: 'isControlling', value: true })
+    commit(types.ADD_REQUEST_CANCEL, { item: 'controlDeviceSwitchReq', value: controlDeviceSwitchReq.cancel })
+    controlDeviceSwitchReq.request.then(res => {
+      let data = res.Data || {}
+      if (res.State === 0) {
+        if (data.State !== 0) {
+          // 任务执行完成
+          commit(types.SET_DATA, { item: 'isControlling', value: false })
+        } else {
+          // 任务执行中
+          dispatch('getDeviceControlWait', { id: data.Id })
+        }
+      }
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_DATA, { item: 'isControlling', value: false })
+      dispatch('showDialogSwitch', { isShow: false })
+    })
+  },
+  getDeviceControlWait ({ commit, state, getters, rootState, rootGetters, dispatch }, { id, tracking = true }) {
+    let params = {
+      id,
+      tracking
+    }
+    let getDeviceControlWaitReq = api.deviceCtrl.getDeviceCtrlWait(params)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getDeviceControlWaitReq', value: getDeviceControlWaitReq.cancel })
+    getDeviceControlWaitReq.request.then(res => {
+      let data = res.Data || {}
+      if (res.State === 0) {
+        if (data.State !== 0) {
+          // 任务执行结束
+          commit(types.SET_DATA, { item: 'isControlling', value: false })
+        } else {
+          dispatch('getDeviceControlWait', { id: data.Id })
+        }
+      }
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+    })
+  },
+  cancelDeviceControlTask ({ commit, state, getters, rootState, rootGetters, dispatch }, id) {
+    let cancelDeviceControlTaskReq = api.deviceCtrl.deleteDeviceCtrlCancel(id)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'cancelDeviceControlTaskReq', value: cancelDeviceControlTaskReq.cancel })
+    cancelDeviceControlTaskReq.request.then(res => {
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
     })
   }
 }
