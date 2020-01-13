@@ -6,5 +6,15 @@ export default {
   }),
   getRecent: id => http({
     url: `/Frozen/Recent/${id}`
+  }),
+  getEleReportRoom: data => http({
+    method: 'POST',
+    url: '/Frozen/Ele/Report/Room',
+    data
+  }),
+  exportFrozen: data => http({
+    method: 'POST',
+    url: '/Frozen/Export/Frozen',
+    data
   })
 }

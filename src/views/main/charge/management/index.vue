@@ -197,6 +197,9 @@
       ]),
       groupTree () {
         return this.$store.state.mainGroupTreeHasRoot
+      },
+      projectId () {
+        return this.$store.state.areaId
       }
     },
     methods: {
@@ -233,6 +236,9 @@
       }
     },
     watch: {
+      projectId () {
+        this.showEdit({ isShow: false })
+      },
       groupTree (newValue, oldValue) {
         if (newValue.length && newValue !== oldValue) {
           this.$nextTick(function () {

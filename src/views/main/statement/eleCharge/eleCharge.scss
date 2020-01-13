@@ -1,0 +1,55 @@
+.statement-elecharge{
+
+  .elecharge-content__search{
+    display: flow-root;
+    width: 100%;
+    padding: $normal-padding;
+    background-color: #FFF;
+    @include setEqualInterval(1rem);
+
+    > *{
+      float: left;
+    }
+  }
+
+  .eleCharge-statistic{
+    height: 20rem;
+    margin-top: 1rem;
+
+    &__content{
+      display: flex;
+      height: 100%;
+
+      &--left{
+        display: flex;
+        flex-direction: column;
+        width: 35%;
+        height: 100%;
+        @include setEqualInterval(1rem, down);
+      }
+
+      &--right{
+        width: 60%;
+        height: 100%;
+      }
+    }
+  }
+
+  .eleCharge-report{
+    height: initial;
+    margin-top: 1rem;
+  }
+}
+
+.eleCharge-report__popper{
+  min-width: initial;
+  .eleCharge-report__pop{
+    > p{
+      padding: .2rem;
+
+      > label {
+        padding-right: 1rem;
+      }
+    }
+  }
+}

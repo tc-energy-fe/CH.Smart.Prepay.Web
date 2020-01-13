@@ -44,7 +44,6 @@ const actions = {
   ...Actions,
   showEdit ({ state, commit, dispatch }, { isShow, data }) {
     if (!isShow) {
-      dispatch('getBalanceList')
       commit(types.SET_DATA, { item: 'detailData', value: {} })
     } else {
       commit(types.SET_DATA, {

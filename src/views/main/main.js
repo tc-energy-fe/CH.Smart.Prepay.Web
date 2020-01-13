@@ -42,13 +42,15 @@ Vue.use(EgUi)
 // 按需引入echarts
 require('echarts/lib/chart/bar')
 require('echarts/lib/chart/line')
+require('echarts/lib/chart/pie')
 require('echarts/lib/component/tooltip')
+require('echarts/lib/component/legend')
 
 window.isEmpty = function (value) {
   return value === undefined || value === null
 }
 
-window.colorArr = ['#3d7dff', '#68c23b', '#ff7a8b']
+window.colorArr = ['#3d7dff', '#68c23b', '#ff7a8b', '#edac3a']
 
 Vue.config.productionTip = false
 

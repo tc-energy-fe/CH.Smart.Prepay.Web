@@ -19,6 +19,10 @@ $--table-row-hover-background-color: #e5eeff;
 $--menu-item-font-size: $font-size;
 $--menu-item-hover-fill: #e5eeff;
 
+// radio-button
+$--radio-button-checked-background-color: $main-color;
+$--radio-button-checked-border-color: $main-color;
+
 /* 改变 icon 字体路径变量，必需 */
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
@@ -208,6 +212,21 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
         }
       }
     }
+  }
+}
+
+// radio-button
+.el-radio-button{
+  &:first-child .el-radio-button__inner{
+    border-left-color: $main-color;
+  }
+  .el-radio-button__inner{
+    font-size: $font-size;
+    padding: 0 1rem;
+    height: $normal-input-height;
+    line-height: $normal-input-height;
+    color: $main-color;
+    border-color: $main-color;
   }
 }
 
