@@ -22,8 +22,8 @@ const state = {
   searchKeepState: TOTAL_OPTION,
   searchKeepTypeOptions: [
     { label: '全部', value: TOTAL_OPTION },
-    { label: '硬件保电', value: 0 },
-    { label: '软件保电', value: 1 }
+    { label: '硬件保电', value: true },
+    { label: '软件保电', value: false }
   ],
   searchKeepStateOptions: [
     { label: '全部', value: TOTAL_OPTION },
@@ -46,7 +46,10 @@ const state = {
   pageSizeSwitch: 10,
   totalCountSwitch: 0,
   isLoadingSwitchList: false,
-  isLoadingKeepList: false
+  isLoadingKeepList: false,
+  dialogVisibleKeep: false,
+  keepControlDeviceIds: [],
+  keepControlState: false
 }
 
 const getters = {
@@ -58,6 +61,17 @@ const getters = {
 
 const actions = {
   ...Actions,
+  showDialogKeep ({ commit, state, getters, dispatch }, { isShow, row }) {
+    if (!isShow) {
+      commit(types.SET_DATA, { item: 'keepControlDeviceIds', value: [] })
+      commit(types.SET_DATA, { item: 'keepControlState', value: false })
+    } else {
+      if (row) {
+        commit(types.SET_DATA, { item: 'keepControlDeviceIds', value: [row.DeviceId] })
+      }
+    }
+    commit(types.SET_DATA, { item: 'dialogVisibleKeep', value: isShow })
+  },
   getDeviceCtrlKeepList ({ commit, state, getters, rootState, rootGetters, dispatch }) {
     let postData = {
       ProjectId: rootState.areaId,
@@ -126,6 +140,23 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
       commit(types.SET_LOADING_STATUS, { item: 'isLoadingSwitchList', value: false })
+    })
+  },
+  controlDeviceKeep ({ commit, state, getters, rootState, rootGetters, dispatch }) {
+    let postData = {
+      DeviceIds: state.keepControlDeviceIds,
+      Param: state.keepControlState,
+      Type: SETTING_TYPE_KEEP
+    }
+    let controlDeviceKeepReq = api.deviceCtrl.postDeviceCtrlSoftware(postData)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'controlDeviceKeepReq', value: controlDeviceKeepReq.cancel })
+    controlDeviceKeepReq.request.then(res => {
+      commit(types.CHECKOUT_SUCCEED, res.State)
+      dispatch('getDeviceCtrlKeepList')
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      dispatch('showDialogKeep', { isShow: false })
     })
   }
 }

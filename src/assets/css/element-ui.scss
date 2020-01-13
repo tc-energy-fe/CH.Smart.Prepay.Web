@@ -210,3 +210,16 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     }
   }
 }
+
+/*el-dialog*/
+.el-dialog__wrapper {
+  .el-dialog {
+    .el-dialog__body {
+      //font-size: 1rem;
+    }
+    .el-dialog__footer {
+      text-align: center;
+      @include setEqualInterval();
+    }
+  }
+}

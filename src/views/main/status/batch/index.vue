@@ -68,10 +68,16 @@
               <eg-button @click="getDeviceCtrlKeepList">查询</eg-button>
             </template>
             <template v-slot:headerRight>
-              <eg-button>批量设置</eg-button>
+              <eg-button @click="batchClick">批量设置</eg-button>
             </template>
             <template v-slot:content>
-              <el-table :data="keepList" v-loading="isLoadingKeepList">
+              <el-table
+                :data="keepList"
+                ref="keepTable"
+                row-key="DeviceId"
+                v-loading="isLoadingKeepList"
+                @selection-change="handleSelectionChangeKeep"
+              >
                 <el-table-column type="selection" align="center" />
                 <el-table-column prop="RoomFullName" label="房间信息" align="center" />
                 <el-table-column prop="DeviceSN" label="电表" align="center" />
@@ -79,7 +85,7 @@
                 <el-table-column prop="KeepStateText" label="保电状态" align="center" />
                 <el-table-column width="150px" label="操作" align="center">
                   <template v-slot="{row}">
-                    <eg-button type="text" @click="keepDialogVisible = true">保电设置</eg-button>
+                    <eg-button type="text" @click="showDialogKeep({isShow: true, row})">保电设置</eg-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -97,14 +103,22 @@
           </eg-box>
           <el-dialog
             title="保电设置"
-            :visible.sync="keepDialogVisible"
+            :visible="dialogVisibleKeep"
             width="30rem"
             top="30vh"
+            @close="showDialogKeep({isShow: false})"
           >
-            <div slot="footer">
-              <eg-button type="minor">取消</eg-button>
-              <eg-button>下发命令</eg-button>
+            <div>
+              <label style="margin-right: 1rem;">保电状态</label>
+              <el-radio-group :value="keepControlState" @input="updateStateData({item: 'keepControlState', value: $event})">
+                <el-radio :label="true">保电</el-radio>
+                <el-radio :label="false">不保电</el-radio>
+              </el-radio-group>
             </div>
+            <template v-slot:footer>
+              <eg-button type="minor">取消</eg-button>
+              <eg-button @click="controlDeviceKeep">下发命令</eg-button>
+            </template>
           </el-dialog>
         </template>
         <template v-if="settingTypeIsSwitch">
@@ -171,7 +185,6 @@
     name: 'Batch',
     data () {
       return {
-        keepDialogVisible: false
       }
     },
     components: {},
@@ -196,7 +209,10 @@
         'keepList',
         'switchList',
         'isLoadingSwitchList',
-        'isLoadingKeepList'
+        'isLoadingKeepList',
+        'dialogVisibleKeep',
+        'keepControlDeviceIds',
+        'keepControlState'
       ]),
       ...mapGetters([
         'currentNodeId',
@@ -211,8 +227,10 @@
     },
     methods: {
       ...mapActions([
+        'showDialogKeep',
         'getDeviceCtrlKeepList',
         'getDeviceCtrlSwitchList',
+        'controlDeviceKeep',
         'updateStateData'
       ]),
       handleCurrentNodeChange (data) {
@@ -243,6 +261,17 @@
         }
         if (this.settingTypeIsSwitch) {
           this.getDeviceCtrlSwitchList()
+        }
+      },
+      handleSelectionChangeKeep (selection) {
+        let keepControlDeviceIds = selection.map(item => item.DeviceId)
+        this.updateStateData({ item: 'keepControlDeviceIds', value: keepControlDeviceIds })
+      },
+      batchClick () {
+        if (this.keepControlDeviceIds.length) {
+          this.showDialogKeep({ isShow: true })
+        } else {
+          ElAlert('请勾选设备！', '提示').then(() => {})
         }
       }
     },
