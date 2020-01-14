@@ -5,7 +5,7 @@
 <script>
   import Echarts from 'echarts/lib/echarts'
   export default {
-    name: 'SimplePieChart',
+    name: 'MultiBarChart',
     props: {
       data: {
         type: Array,
@@ -13,39 +13,59 @@
       },
       customProps: {
         type: Object,
-        default: () => {}
-      },
-      unit: {
-        type: String,
-        default: 'kWh'
+        default: () => ({
+          xAxisName: '',
+          yAxisName: ''
+        })
       }
     },
     methods: {
       draw () {
         let data = this.data || []
-        let props = this.customProps || {}
+        let props = this.customProps
         let options = {
           color: window.colorArr,
-          grid: {
-            containLabel: true
+          tooltip: {
+            trigger: 'axis'
           },
-          legend: {
-            orient: 'horizontal',
-            bottom: 0,
-            icon: 'rect',
-            data: data.map(d => d.name)
+          xAxis: {
+            name: props.xAxisName || '',
+            type: 'category',
+            axisTick: {
+              show: false
+            },
+            splitLine: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0,
+              rotate: 0,
+              color: '#5e5e5e'
+            },
+            data: data[0] ? data[0].data.map(d => d.label) : []
           },
-          series: [{
-            name: '用电量',
-            type: 'pie',
-            data: data,
-            radius: props.radius || ['55%', '65%'],
-            center: props.center || ['50%', '45%'],
-            label: {
-              formatter: `{b} {c} ${this.unit}`
+          yAxis: {
+            name: props.yAxisName || '',
+            type: 'value',
+            axisTick: {
+              show: false
+            },
+            splitLine: {
+              show: false
+            },
+            axisLabel: {
+              color: '#5e5e5e'
             }
-          }]
+          },
+          series: data.map(d => ({
+            name: d.name,
+            type: 'bar',
+            data: d.data,
+            stack: 'money',
+            barWidth: 20
+          }))
         }
+
         if (props.grid) {
           options.grid = {
             containLabel: true,
@@ -58,9 +78,9 @@
           options.grid = {
             containLabel: true,
             top: 10,
-            bottom: 40,
+            bottom: 10,
             left: 20,
-            right: 20
+            right: 40
           }
         }
         let chart = Echarts.init(this.$refs.chart)
@@ -72,8 +92,8 @@
       }
     },
     watch: {
-      data (newValue) {
-        if (!isEmpty(newValue)) {
+      data (newValue, oldValue) {
+        if (!isEmpty(newValue) && newValue !== oldValue) {
           this.draw()
         }
       }
