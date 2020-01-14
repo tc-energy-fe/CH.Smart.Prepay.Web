@@ -83,7 +83,13 @@
             ></el-pagination>
           </template>
           <div v-else class="income-detail__chart">
-            <detail-bar-chart :data="detailBarData"></detail-bar-chart>
+            <detail-bar-chart
+              :data="detailBarData"
+              :custom-props="{
+                xAxisName: barUnit,
+                yAxisName: '元'
+              }"
+            ></detail-bar-chart>
           </div>
         </div>
       </eg-box>
@@ -128,6 +134,10 @@
       },
       paginationData () {
         return this.reportList.slice(this.pageSize * (this.currentPage - 1), this.pageSize * this.currentPage)
+      },
+      barUnit () {
+        let type = this.searchData.dateType
+        return type === 3 ? '时' : type === 2 ? '日' : '月'
       }
     },
     methods: {

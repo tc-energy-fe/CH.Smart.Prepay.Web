@@ -62,7 +62,13 @@ axiosIns.interceptors.response.use(function (response) {
   } else {
     // 处理错误
     console.error('Response error', error)
-    return Promise.reject(error)
+    let response = error.response
+    // eslint-disable-next-line prefer-promise-reject-errors
+    return Promise.reject({
+      code: response.data.State,
+      msg: response.data.Msg,
+      desc: response.data.Desc
+    })
   }
 })
 

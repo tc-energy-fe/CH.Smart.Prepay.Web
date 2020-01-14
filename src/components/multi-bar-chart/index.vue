@@ -13,20 +13,30 @@
       },
       customProps: {
         type: Object,
-        default: () => ({
-          xAxisName: '',
-          yAxisName: ''
-        })
-      }
+        default: () => ({})
+      },
+      unit: String
     },
     methods: {
       draw () {
+        let _this = this
         let data = this.data || []
         let props = this.customProps
         let options = {
           color: window.colorArr,
           tooltip: {
-            trigger: 'axis'
+            trigger: 'axis',
+            padding: 10,
+            formatter (params) {
+              let html = `<span style="padding-left: 1rem">${params[0].data.label}</span>`
+              let circle = (color) => `<span style="display:inline-block;width: .8rem;height: .8rem;background-color: ${color};border-radius: .4rem"></span>`
+              params.forEach(p => {
+                html += '<br/>'
+                html += `${circle(p.color)}<span style="padding: 0 .5rem;">${p.seriesName}</span>
+                  <span>${p.value}${_this.unit || props.yAxisName || ''}</span>`
+              })
+              return html
+            }
           },
           xAxis: {
             name: props.xAxisName || '',
@@ -42,7 +52,7 @@
               rotate: 0,
               color: '#5e5e5e'
             },
-            data: data[0] ? data[0].data.map(d => d.label) : []
+            data: data[0] ? data[0].data.map(d => d.xAxis) : []
           },
           yAxis: {
             name: props.yAxisName || '',
@@ -77,7 +87,7 @@
         } else {
           options.grid = {
             containLabel: true,
-            top: 10,
+            top: 30,
             bottom: 10,
             left: 20,
             right: 40

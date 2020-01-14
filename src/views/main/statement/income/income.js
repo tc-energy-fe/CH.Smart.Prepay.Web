@@ -69,18 +69,22 @@ const actions = {
           let alipay = detailBarData[1].data
           let cash = detailBarData[2].data
           reportList.forEach(r => {
-            let date = moment(r.Date).format(dateType === 1 ? 'M月' : dateType === 2 ? 'M.D' : 'H时')
+            let date = moment(r.Date).format(dateType === 1 ? 'M' : dateType === 2 ? 'M.D' : 'H')
+            let label = moment(r.Date).format(dateType === 1 ? 'YYYY.MM' : dateType === 2 ? 'YYYY.MM.DD' : 'YYYY.MM.DD H时')
             weixin.push({
-              label: date,
-              value: r.Weixin
+              label: label,
+              value: r.Weixin,
+              xAxis: date
             })
             alipay.push({
-              label: date,
-              value: r.Alipay
+              label: label,
+              value: r.Alipay,
+              xAxis: date
             })
             cash.push({
-              label: date,
-              value: r.Cash
+              label: label,
+              value: r.Cash,
+              xAxis: date
             })
           })
         }
