@@ -64,6 +64,8 @@ const actions = {
     } else {
       commit(types.SET_DATA, { item: 'reportTotal', value: {} })
       commit(types.SET_DATA, { item: 'reportList', value: [] })
+      commit(types.SET_DATA, { item: 'pieData', value: [] })
+      ElAlert('请选择房间！', '提示')
       return
     }
     let getRoomReportReq = api.frozen.getEleReportRoom(postData)

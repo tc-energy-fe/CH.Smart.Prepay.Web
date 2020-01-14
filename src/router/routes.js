@@ -47,6 +47,13 @@ const routes = [
           Store.registerModule(['statement', 'eleCharge'], require('@/views/main/statement/eleCharge/eleCharge').default)
           return import('@/views/main/statement/eleCharge/index')
         }
+      },
+      {
+        path: 'income',
+        component: (resolve) => {
+          Store.registerModule(['statement', 'income'], require('@/views/main/statement/income/income').default)
+          return import('@/views/main/statement/income/index')
+        }
       }
     ]
   },

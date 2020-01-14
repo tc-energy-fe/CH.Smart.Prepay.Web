@@ -186,11 +186,11 @@
       ]),
       nodeOnChange (value) {
         this.updateStateData({ item: 'currentNode', value })
-        this.updateStateData({ item: 'currentPage', value: 1 })
+        this.currentPageOnChange(1)
         this.getSearchRoomList()
       },
       search () {
-        this.updateStateData({ item: 'currentPage', value: 1 })
+        this.currentPageOnChange(1)
         this.getRoomReport()
       },
       searchDataOnChange (key, value) {
@@ -213,13 +213,13 @@
             this.$refs.tree.setCurrentKey(newValue[0].value)
           })
           this.updateStateData({ item: 'currentNode', value: newValue[0] || {} })
-          this.updateStateData({ item: 'currentPage', value: 1 })
+          this.currentPageOnChange(1)
           this.getSearchRoomList()
         }
       },
       'searchData.dateType' (newValue, oldValue) {
         if (!isEmpty(newValue) && newValue !== oldValue) {
-          this.updateStateData({ item: 'currentPage', value: 1 })
+          this.currentPageOnChange(1)
           this.getSearchRoomList()
         }
       }
@@ -232,7 +232,7 @@
         if (isEmpty(this.currentNodeId)) {
           this.updateStateData({ item: 'currentNode', value: this.groupTree[0] || {} })
         }
-        this.updateStateData({ item: 'currentPage', value: 1 })
+        this.currentPageOnChange(1)
         this.getSearchRoomList()
       }
     },
