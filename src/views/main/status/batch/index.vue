@@ -19,16 +19,16 @@
     </div>
     <div class="main-content">
       <div class="status-batch__tab">
-        <el-radio-group :value="settingType" @input="updateStateData({item: 'settingType', value: $event})">
-          <el-radio-button
+        <eg-tab-group :value="settingType" @change="updateStateData({item: 'settingType', value: $event})">
+          <eg-tab-button
             v-for="(item, index) of settingTypeRadioList"
             :label="item.label"
             :key="index"
             :disabled="item.disabled"
           >
             {{item.text}}
-          </el-radio-button>
-        </el-radio-group>
+          </eg-tab-button>
+        </eg-tab-group>
       </div>
       <div class="status-batch__content">
         <template v-if="settingTypeIsPower">
@@ -68,7 +68,7 @@
               <eg-button @click="getDeviceCtrlKeepList">查询</eg-button>
             </template>
             <template v-slot:headerRight>
-              <eg-button @click="batchClick">批量设置</eg-button>
+              <eg-button @click="batchKeepClick">批量设置</eg-button>
             </template>
             <template v-slot:content>
               <el-table
@@ -78,7 +78,7 @@
                 v-loading="isLoadingKeepList"
                 @selection-change="handleSelectionChangeKeep"
               >
-                <el-table-column type="selection" align="center" />
+                <el-table-column type="selection" align="center" :reserve-selection="true" />
                 <el-table-column prop="RoomFullName" label="房间信息" align="center" />
                 <el-table-column prop="DeviceSN" label="电表" align="center" />
                 <el-table-column prop="KeepEleTypeText" label="保电方式" align="center" />
@@ -144,19 +144,25 @@
               <eg-button @click="getDeviceCtrlSwitchList">查询</eg-button>
             </template>
             <template v-slot:headerRight>
-              <eg-button>批量设置</eg-button>
+              <eg-button @click="batchSwitchClick">批量设置</eg-button>
             </template>
             <template v-slot:content>
-              <el-table :data="switchList" v-loading="isLoadingSwitchList">
-                <el-table-column type="selection" align="center" />
+              <el-table
+                :data="switchList"
+                row-key="DeviceId"
+                v-loading="isLoadingSwitchList"
+                @selection-change="handleSelectionChangeSwitch"
+              >
+                <el-table-column type="selection" align="center" :reserve-selection="true" />
                 <el-table-column prop="RoomFullName" label="房间信息" align="center" />
                 <el-table-column prop="DeviceSN" label="电表" align="center" />
                 <el-table-column prop="SwitchStateText" label="电表状态" align="center" />
                 <el-table-column width="150px" label="操作" align="center">
                   <template v-slot="{row}">
-                    <eg-button v-if="row.SwitchState === undefined" type="text">设置</eg-button>
-                    <eg-button v-else-if="row.SwitchState" type="text" color="danger">断闸</eg-button>
-                    <eg-button v-else type="text" color="success">合闸</eg-button>
+                    <eg-button v-if="row.SwitchState === undefined" type="text" @click="showDialogSwitch({isShow: true, row})">设置</eg-button>
+                    <eg-button v-else type="text" :color="row.SwitchState ? 'danger' : 'success'" @click="switchClick(row)">
+                      {{row.SwitchState ? '断闸' : '合闸'}}
+                    </eg-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -172,6 +178,25 @@
               />
             </template>
           </eg-box>
+          <el-dialog
+            title="开合闸设置"
+            :visible="dialogVisibleSwitch"
+            width="30rem"
+            top="30vh"
+            @close="showDialogSwitch({isShow: false})"
+          >
+            <div>
+              <label style="margin-right: 1rem;">开合闸</label>
+              <el-radio-group :value="switchControlState" @input="updateStateData({item: 'switchControlState', value: $event})">
+                <el-radio :label="false">开闸</el-radio>
+                <el-radio :label="true">合闸</el-radio>
+              </el-radio-group>
+            </div>
+            <template v-slot:footer>
+              <eg-button type="minor">取消</eg-button>
+              <eg-button @click="controlDeviceSwitch" v-loading.fullscreen="isControlling">下发命令</eg-button>
+            </template>
+          </el-dialog>
         </template>
       </div>
     </div>
@@ -211,8 +236,12 @@
         'isLoadingSwitchList',
         'isLoadingKeepList',
         'dialogVisibleKeep',
+        'dialogVisibleSwitch',
         'keepControlDeviceIds',
-        'keepControlState'
+        'switchControlDeviceIds',
+        'switchControlState',
+        'keepControlState',
+        'isControlling'
       ]),
       ...mapGetters([
         'currentNodeId',
@@ -228,9 +257,11 @@
     methods: {
       ...mapActions([
         'showDialogKeep',
+        'showDialogSwitch',
         'getDeviceCtrlKeepList',
         'getDeviceCtrlSwitchList',
         'controlDeviceKeep',
+        'controlDeviceSwitch',
         'updateStateData'
       ]),
       handleCurrentNodeChange (data) {
@@ -267,12 +298,28 @@
         let keepControlDeviceIds = selection.map(item => item.DeviceId)
         this.updateStateData({ item: 'keepControlDeviceIds', value: keepControlDeviceIds })
       },
-      batchClick () {
+      handleSelectionChangeSwitch (selection) {
+        let switchControlDeviceIds = selection.map(item => item.DeviceId)
+        this.updateStateData({ item: 'switchControlDeviceIds', value: switchControlDeviceIds })
+      },
+      batchKeepClick () {
         if (this.keepControlDeviceIds.length) {
           this.showDialogKeep({ isShow: true })
         } else {
           ElAlert('请勾选设备！', '提示').then(() => {})
         }
+      },
+      batchSwitchClick () {
+        if (this.switchControlDeviceIds.length) {
+          this.showDialogSwitch({ isShow: true })
+        } else {
+          ElAlert('请勾选设备！', '提示').then(() => {})
+        }
+      },
+      switchClick (row) {
+        ElConfirm(`确定要对此电表进行${row.SwitchState ? '断闸' : '合闸'}操作`, '提示', { type: 'warning' }).then(() => {
+          this.controlDeviceSwitch({ row })
+        })
       }
     },
     watch: {
