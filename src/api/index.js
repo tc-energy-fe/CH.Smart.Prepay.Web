@@ -13,6 +13,7 @@ import charge from './charge'
 import frozen from './frozen'
 import payHistory from './payHistory'
 import deviceCtrl from './deviceCtrl'
+import status from './status'
 
 export default {
   login,
@@ -29,5 +30,6 @@ export default {
   charge,
   frozen,
   deviceCtrl,
+  status,
   payHistory
 }

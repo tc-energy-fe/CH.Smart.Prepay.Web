@@ -12,7 +12,7 @@
         :current-node-key="currentNodeId"
         :expand-on-click-node="false"
         @current-change="nodeOnChange"
-      ></el-tree>
+      />
     </div>
     <div class="main-content">
       <div class="emeter-overview">
@@ -20,7 +20,8 @@
           :icon="Icons.total"
           title="在线总数"
           unit="个"
-        ></overview-block>
+          name=""
+        />
       </div>
     </div>
   </div>

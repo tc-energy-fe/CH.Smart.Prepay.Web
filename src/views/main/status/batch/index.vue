@@ -149,6 +149,7 @@
             <template v-slot:content>
               <el-table
                 :data="switchList"
+                ref="switchTable"
                 row-key="DeviceId"
                 v-loading="isLoadingSwitchList"
                 @selection-change="handleSelectionChangeSwitch"
@@ -327,6 +328,13 @@
         if (newValue.length && newValue !== oldValue) {
           this.updateStateData({ item: 'currentNode', value: newValue[0] || {} })
           this.handleCurrentPageChange(1)
+          // 清除表格勾选项
+          if (this.settingTypeIsKeep) {
+            this.$refs.keepTable.clearSelection()
+          }
+          if (this.settingTypeIsSwitch) {
+            this.$refs.switchTable.clearSelection()
+          }
         }
       },
       settingType () {

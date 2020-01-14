@@ -193,15 +193,16 @@ const actions = {
         if (data.State !== 0) {
           // 任务执行完成
           commit(types.SET_DATA, { item: 'isControlling', value: false })
+          dispatch('getDeviceCtrlSwitchList')
         } else {
           // 任务执行中
           dispatch('getDeviceControlWait', { id: data.Id })
         }
       }
     }).catch(err => {
+      commit(types.SET_DATA, { item: 'isControlling', value: false })
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
-      commit(types.SET_DATA, { item: 'isControlling', value: false })
       dispatch('showDialogSwitch', { isShow: false })
     })
   },
@@ -218,11 +219,13 @@ const actions = {
         if (data.State !== 0) {
           // 任务执行结束
           commit(types.SET_DATA, { item: 'isControlling', value: false })
+          dispatch('getDeviceCtrlSwitchList')
         } else {
           dispatch('getDeviceControlWait', { id: data.Id })
         }
       }
     }).catch(err => {
+      commit(types.SET_DATA, { item: 'isControlling', value: false })
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
     })
