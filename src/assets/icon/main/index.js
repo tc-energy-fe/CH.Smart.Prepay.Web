@@ -6,5 +6,7 @@ export default {
   tab_icon_offline: require('./tab_icon_offline.png'),
   tab_icon_online: require('./tab_icon_online.png'),
   tab_icon_open: require('./tab_icon_open.png'),
-  tab_icon_power: require('./tab_icon_power.png')
+  tab_icon_power: require('./tab_icon_power.png'),
+  content_icon_gateway: require('./content_icon_gateway.png'),
+  loginout: require('./tab_icon_loginout.png')
 }

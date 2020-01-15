@@ -68,22 +68,22 @@
           ></eg-input>
           <i class="iconfont icon-content_icon_required"></i>
         </div>
-        <div class="gateway-edit__row">
-          <label>设备类型</label>
-          <el-select
-            :value="editData.TypeId"
-            placeholder="请选择类型"
-            @change="editDataOnChange('TypeId', $event)"
-          >
-            <el-option
-              v-for="item in deviceTypeList"
-              :value="item.value"
-              :label="item.label"
-              :key="item.value"
-            ></el-option>
-          </el-select>
-          <i class="iconfont icon-content_icon_required"></i>
-        </div>
+<!--        <div class="gateway-edit__row">-->
+<!--          <label>设备类型</label>-->
+<!--          <el-select-->
+<!--            :value="editData.TypeId"-->
+<!--            placeholder="请选择类型"-->
+<!--            @change="editDataOnChange('TypeId', $event)"-->
+<!--          >-->
+<!--            <el-option-->
+<!--              v-for="item in deviceTypeList"-->
+<!--              :value="item.value"-->
+<!--              :label="item.label"-->
+<!--              :key="item.value"-->
+<!--            ></el-option>-->
+<!--          </el-select>-->
+<!--          <i class="iconfont icon-content_icon_required"></i>-->
+<!--        </div>-->
         <div class="gateway-edit__row">
           <label>安装位置</label>
           <eg-input

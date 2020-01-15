@@ -24,10 +24,12 @@
           <el-radio-button :label="1">年</el-radio-button>
         </el-radio-group>
         <el-date-picker
+          :key="searchData.dateType"
           :editable="false"
           :clearable="false"
           :value="searchData.date"
           :format="dateFormat"
+          :type="searchData.dateType === 1 ? 'year' : 'month'"
           @input="searchDataOnChange('date', $event)"
         ></el-date-picker>
         <el-select

@@ -3,6 +3,8 @@ import Mutations from '@/store/mutations'
 import moment from 'moment'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
+import { download } from '@/utils/file'
+import apiUrl from '@/api/apiUrl'
 // import apiUrl from '@/api/analysis/apiUrl'
 // import download from '@/utils/download'
 // import moment from 'moment'
@@ -46,7 +48,7 @@ const actions = {
       let reportList = data.Datas || []
       let dateType = postData.Form
       reportList.forEach(r => {
-        r.DateText = moment(r.Date).format(dateType === 1 ? 'YYYY-MM' : dateType === 2 ? 'YYYY-MM-DD' : 'YYYY-M-D HH:mm:ss')
+        r.DateText = moment(r.Date).format(dateType === 1 ? 'YYYY-MM' : dateType === 2 ? 'MM-DD' : 'HH:mm')
       })
       let totalData = Object.keys(data) || []
       let pieData = []
@@ -58,7 +60,7 @@ const actions = {
           { name: '支付宝收入', value: data.AlipayTotal },
           { name: '现金收入', value: data.CashTotal }
         ]
-        totalTableData = [{ name: '总收入', value: data.Total }].concat(pieData, [{ name: '退费金额', value: data.Refund }])
+        totalTableData = [{ name: '总收入', value: data.Total }].concat(pieData, [{ name: '退费金额', value: data.RefundTotal }])
         if (reportList && reportList.length) {
           detailBarData = [
             { name: '微信支付', data: [] },
@@ -97,6 +99,32 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
       commit(types.SET_LOADING_STATUS, { item: 'isLoadingPayData', value: false })
+    })
+  },
+  exportExcel ({ state, getters, rootState, commit }) {
+    let searchData = state.searchData
+    let postData = {
+      ProjectId: rootState.areaId,
+      Form: searchData.dateType,
+      StaticTime: moment(searchData.date).format('YYYY-MM-DD')
+    }
+    let groupId = getters.currentNodeId
+    if (!isEmpty(groupId) && groupId !== rootState.areaId) {
+      postData.GroupId = groupId
+    }
+    let exportExcelReq = api.payHistory.exportReport(postData)
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingExcel', value: true })
+    commit(types.ADD_REQUEST_CANCEL, { item: 'exportExcelReq', value: exportExcelReq.cancel })
+    exportExcelReq.request.then(res => {
+      let data = res.Data || null
+      if (data) {
+        download(`${apiUrl}/File?fid=${data}&filename=${encodeURIComponent('收入明细报表.xlsx')}`, '收入明细报表.xlsx')
+      } else {
+      }
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingExcel', value: false })
     })
   }
 }

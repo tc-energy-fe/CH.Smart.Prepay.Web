@@ -5,83 +5,69 @@
 <script>
   import Echarts from 'echarts/lib/echarts'
   export default {
-    name: 'SingleLineChart',
+    name: 'SimplePieChart',
     props: {
       data: {
-        type: [Array, Object],
+        type: Array,
         required: true
-      },
-      customProps: {
-        type: Object,
-        default: () => ({
-          xAxisName: '',
-          yAxisName: '',
-          grid: [10, 10, 20, 20]
-        })
       }
     },
     methods: {
       draw () {
-        let props = this.customProps
+        let data = this.data || []
         let options = {
-          color: window.colorArr,
-          tooltip: {
-            trigger: 'axis'
-          },
+          color: '#3d7dff',
           grid: {
-            containLabel: true
-          },
-          xAxis: {
-            name: props.xAxisName || '',
-            type: 'category',
-            axisTick: {
-              show: false
-            },
-            splitLine: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0,
-              rotate: 0,
-              color: '#5e5e5e'
-            },
-            data: this.data.map(d => d.name)
-          },
-          yAxis: {
-            name: props.yAxisName || '',
-            type: 'value',
-            axisTick: {
-              show: false
-            },
-            splitLine: {
-              show: false
-            },
-            axisLabel: {
-              color: '#5e5e5e'
-            }
-          },
-          series: [{
-            name: '用电量',
-            type: 'line',
-            data: this.data,
-            smooth: true
-          }]
-        }
-        if (props.grid) {
-          options.grid = {
             containLabel: true,
-            top: props.grid[0],
-            bottom: props.grid[1],
-            left: props.grid[2],
-            right: props.grid[3]
-          }
-        } else {
-          options.grid = {
-            containLabel: true,
-            top: 30,
-            bottom: 10,
             left: 20,
             right: 40
+          },
+          xAxis: {
+            name: '',
+            type: 'value',
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            splitLine: {
+              show: false
+            },
+            axisLabel: {
+              show: false
+            }
+          },
+          yAxis: {
+            name: '',
+            type: 'category',
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            splitLine: {
+              show: false
+            },
+            axisLabel: {
+              color: '#5e5e5e'
+            },
+            data: data.map(d => d.name)
+          },
+          series: {
+            type: 'bar',
+            barWidth: 20,
+            data: data.map(d => d.value),
+            label: {
+              show: true,
+              position: 'right',
+              formatter: '{c}条',
+              color: '#5e5e5e'
+            },
+            itemStyle: {
+              barBorderRadius: 10
+            }
           }
         }
         let chart = Echarts.init(this.$refs.chart)

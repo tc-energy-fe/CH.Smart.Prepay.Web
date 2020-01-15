@@ -41,6 +41,7 @@
             data: data,
             radius: props.radius || ['55%', '65%'],
             center: props.center || ['50%', '45%'],
+            startAngle: isEmpty(props.startAngle) ? 90 : props.startAngle,
             label: {
               formatter: `{b} {c} ${this.unit}`
             }

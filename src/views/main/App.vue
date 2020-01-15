@@ -24,6 +24,7 @@
         <span class="app-header_user">{{account.Name || 'master'}}</span>
         <i class="app-header_split"></i>
         <div class="app-logout">
+          <img :src="Icons.logout">
           <span class="app-logout_text" @click="logout">退出</span>
         </div>
       </div>
@@ -72,11 +73,15 @@
 
 <script>
   import './app.scss'
+  import Icons from '@/assets/icon/main'
   import { mapState, mapGetters, mapActions } from 'vuex'
   export default {
     data () {
       return {
-        isNavCollapse: false
+        isNavCollapse: false,
+        Icons: {
+          logout: Icons.loginout
+        }
       }
     },
     computed: {

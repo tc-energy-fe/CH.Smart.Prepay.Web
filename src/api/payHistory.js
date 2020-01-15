@@ -12,5 +12,16 @@ export default {
     method: 'POST',
     url: '/PayHistory/Report',
     data
+  }),
+  // 导出明细报表
+  exportReport: data => http({
+    method: 'POST',
+    url: '/PayHistory/Export',
+    data
+  }),
+  // 首页营收统计
+  getIncome: params => http({
+    url: '/PayHistory/HomePage',
+    params
   })
 }
