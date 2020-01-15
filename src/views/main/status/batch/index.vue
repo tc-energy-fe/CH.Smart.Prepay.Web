@@ -65,7 +65,7 @@
                   :key="index"
                 />
               </el-select>
-              <eg-button @click="getDeviceCtrlKeepList">查询</eg-button>
+              <eg-button @click="searchClick">查询</eg-button>
             </template>
             <template v-slot:headerRight>
               <eg-button @click="batchKeepClick">批量设置</eg-button>
@@ -141,7 +141,7 @@
                   :key="index"
                 />
               </el-select>
-              <eg-button @click="getDeviceCtrlSwitchList">查询</eg-button>
+              <eg-button @click="searchClick">查询</eg-button>
             </template>
             <template v-slot:headerRight>
               <eg-button @click="batchSwitchClick">批量设置</eg-button>
@@ -198,6 +198,49 @@
               <eg-button @click="controlDeviceSwitch" v-loading.fullscreen="isControlling">下发命令</eg-button>
             </template>
           </el-dialog>
+          <el-dialog
+            class="dialog-control"
+            title="命令下发中"
+            :visible="dialogVisibleSwitchBatch"
+            width="30rem"
+            top="30vh"
+            :show-close="false"
+            :close-on-click-modal="false"
+            :close-on-press-escape="false"
+          >
+            <div class="dialog-control__content">
+              <div class="dialog-control__process">
+                <div class="dialog-control__process-percent" :style="{width: `${finishedPercentSwitch}%`}" />
+              </div>
+              <p class="dialog-control__text">{{finishedPercentSwitch}}%</p>
+            </div>
+            <template v-slot:footer>
+              <eg-button type="minor" @click="cancelClick">取消任务</eg-button>
+            </template>
+          </el-dialog>
+          <el-dialog
+            class="dialog-result"
+            title="下发结果"
+            :visible="dialogVisibleSwitchResult"
+            width="40rem"
+            top="30vh"
+            :close-on-click-modal="false"
+            :close-on-press-escape="false"
+            @close="showDialogSwitchResult({isShow: false})"
+          >
+            <div class="dialog-result__info">
+              <p>下发成功：<span class="success-text">36</span></p>
+              <p>下发失败：<span class="warning-text">9</span></p>
+            </div>
+            <el-table :data="[]">
+              <el-table-column prop="RoomFullName" label="房间信息" align="center" />
+              <el-table-column prop="DeviceSN" label="电表" align="center" />
+              <el-table-column prop="Result" label="下发结果" align="center" />
+            </el-table>
+            <template v-slot:footer>
+              <eg-button type="minor" @click="showDialogSwitchResult({isShow: false})">关闭</eg-button>
+            </template>
+          </el-dialog>
         </template>
       </div>
     </div>
@@ -238,6 +281,8 @@
         'isLoadingKeepList',
         'dialogVisibleKeep',
         'dialogVisibleSwitch',
+        'dialogVisibleSwitchBatch',
+        'dialogVisibleSwitchResult',
         'keepControlDeviceIds',
         'switchControlDeviceIds',
         'switchControlState',
@@ -248,7 +293,8 @@
         'currentNodeId',
         'settingTypeIsPower',
         'settingTypeIsKeep',
-        'settingTypeIsSwitch'
+        'settingTypeIsSwitch',
+        'finishedPercentSwitch'
       ]),
       ...Vuex.mapState({
         groupTree: 'mainGroupTreeHasRoot',
@@ -259,15 +305,17 @@
       ...mapActions([
         'showDialogKeep',
         'showDialogSwitch',
+        'showDialogSwitchResult',
         'getDeviceCtrlKeepList',
         'getDeviceCtrlSwitchList',
         'controlDeviceKeep',
         'controlDeviceSwitch',
+        'cancelDeviceControlTask',
         'updateStateData'
       ]),
       handleCurrentNodeChange (data) {
         this.updateStateData({ item: 'currentNode', value: data })
-        this.searchMethod()
+        this.handleCurrentPageChange(1)
       },
       handleCurrentPageChange (current) {
         if (this.settingTypeIsKeep) {
@@ -295,6 +343,9 @@
           this.getDeviceCtrlSwitchList()
         }
       },
+      searchClick () {
+        this.handleCurrentPageChange(1)
+      },
       handleSelectionChangeKeep (selection) {
         let keepControlDeviceIds = selection.map(item => item.DeviceId)
         this.updateStateData({ item: 'keepControlDeviceIds', value: keepControlDeviceIds })
@@ -320,6 +371,13 @@
       switchClick (row) {
         ElConfirm(`确定要对此电表进行${row.SwitchState ? '断闸' : '合闸'}操作`, '提示', { type: 'warning' }).then(() => {
           this.controlDeviceSwitch({ row })
+        }).catch(cancel => {
+        })
+      },
+      cancelClick () {
+        ElConfirm('已经下发的命令无法撤销，确定终止下发命令吗？', '提示', { type: 'warning' }).then(() => {
+          this.cancelDeviceControlTask()
+        }).catch(cancel => {
         })
       }
     },

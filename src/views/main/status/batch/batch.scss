@@ -36,5 +36,45 @@
         flex: 1;
         background-color: white;
         overflow: auto;
+        .dialog-control {
+            &__content {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            &__process {
+                width: 70%;
+                height: 1rem;
+                background-color: #e5eeff;
+                margin-right: 1rem;
+                border-radius: 0.5rem;
+                &-percent {
+                    width: 0;
+                    max-width: 100%;
+                    height: inherit;
+                    background-color: $main-color;
+                    border-radius: inherit;
+                }
+            }
+            &__text {
+                font-size: 1rem;
+            }
+        }
+        .dialog-result {
+            &__info {
+                font-size: 1rem;
+                margin-bottom: 1rem;
+                @include setEqualInterval(2rem);
+                > * {
+                    display: inline-block;
+                }
+                .success-text {
+                    color: $color-success;
+                }
+                .warning-text {
+                    color: $color-warning;
+                }
+            }
+        }
     }
 }

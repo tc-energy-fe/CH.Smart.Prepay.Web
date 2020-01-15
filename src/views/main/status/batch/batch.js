@@ -49,20 +49,28 @@ const state = {
   isLoadingKeepList: false,
   dialogVisibleKeep: false,
   dialogVisibleSwitch: false,
+  dialogVisibleSwitchBatch: false,
+  dialogVisibleSwitchResult: false,
   keepControlSingleDeviceId: null,
   keepControlDeviceIds: [],
+  keepControlState: false,
   switchControlSingleDeviceId: null,
   switchControlDeviceIds: [],
   switchControlState: false,
-  keepControlState: false,
-  isControlling: false
+  isControlling: false,
+  finishedNumberSwitch: 0,
+  taskIdSwitch: null
 }
 
 const getters = {
   currentNodeId: (state) => state.currentNode.value,
   settingTypeIsPower: (state) => state.settingType === SETTING_TYPE_POWER,
   settingTypeIsKeep: (state) => state.settingType === SETTING_TYPE_KEEP,
-  settingTypeIsSwitch: (state) => state.settingType === SETTING_TYPE_SWITCH
+  settingTypeIsSwitch: (state) => state.settingType === SETTING_TYPE_SWITCH,
+  finishedPercentSwitch: (state, getters) => {
+    let totalNumber = state.switchControlDeviceIds.length
+    return totalNumber ? ((state.finishedNumberSwitch / totalNumber) * 100).toFixed(0) : 0
+  }
 }
 
 const actions = {
@@ -88,6 +96,21 @@ const actions = {
       }
     }
     commit(types.SET_DATA, { item: 'dialogVisibleSwitch', value: isShow })
+  },
+  showDialogControlSwitch ({ commit, state, getters, dispatch }, { isShow, taskId }) {
+    if (!isShow) {
+      commit(types.SET_DATA, { item: 'finishedNumberSwitch', value: 0 })
+      commit(types.SET_DATA, { item: 'taskIdSwitch', value: null })
+    } else {
+      commit(types.SET_DATA, { item: 'taskIdSwitch', value: taskId })
+    }
+    commit(types.SET_DATA, { item: 'dialogVisibleSwitchBatch', value: isShow })
+  },
+  showDialogSwitchResult ({ commit, state, getters, dispatch }, { isShow }) {
+    if (!isShow) {
+    } else {
+    }
+    commit(types.SET_DATA, { item: 'dialogVisibleSwitchResult', value: isShow })
   },
   getDeviceCtrlKeepList ({ commit, state, getters, rootState, rootGetters, dispatch }) {
     let postData = {
@@ -190,14 +213,11 @@ const actions = {
     controlDeviceSwitchReq.request.then(res => {
       let data = res.Data || {}
       if (res.State === 0) {
-        if (data.State !== 0) {
-          // 任务执行完成
-          commit(types.SET_DATA, { item: 'isControlling', value: false })
-          dispatch('getDeviceCtrlSwitchList')
-        } else {
-          // 任务执行中
-          dispatch('getDeviceControlWait', { id: data.Id })
+        let isBatch = isEmpty(singleDeviceIdSwitch) && isEmpty(row)
+        if (isBatch) {
+          dispatch('showDialogControlSwitch', { isShow: true, taskId: data.Id || null })
         }
+        dispatch('handleSwitchTaskInfo', { resData: data, isBatch: isBatch })
       }
     }).catch(err => {
       commit(types.SET_DATA, { item: 'isControlling', value: false })
@@ -206,7 +226,7 @@ const actions = {
       dispatch('showDialogSwitch', { isShow: false })
     })
   },
-  getDeviceControlWait ({ commit, state, getters, rootState, rootGetters, dispatch }, { id, tracking = true }) {
+  getDeviceControlWait ({ commit, state, getters, rootState, rootGetters, dispatch }, { id, tracking = true, isBatch }) {
     let params = {
       id,
       tracking
@@ -216,13 +236,7 @@ const actions = {
     getDeviceControlWaitReq.request.then(res => {
       let data = res.Data || {}
       if (res.State === 0) {
-        if (data.State !== 0) {
-          // 任务执行结束
-          commit(types.SET_DATA, { item: 'isControlling', value: false })
-          dispatch('getDeviceCtrlSwitchList')
-        } else {
-          dispatch('getDeviceControlWait', { id: data.Id })
-        }
+        dispatch('handleSwitchTaskInfo', { resData: data, isBatch: isBatch })
       }
     }).catch(err => {
       commit(types.SET_DATA, { item: 'isControlling', value: false })
@@ -230,13 +244,60 @@ const actions = {
     }).finally(() => {
     })
   },
-  cancelDeviceControlTask ({ commit, state, getters, rootState, rootGetters, dispatch }, id) {
-    let cancelDeviceControlTaskReq = api.deviceCtrl.deleteDeviceCtrlCancel(id)
+  handleSwitchTaskInfo ({ commit, state, getters, rootState, rootGetters, dispatch }, { resData, isBatch }) {
+    if (resData.State !== 0) {
+      // 任务执行结束
+      commit(types.SET_DATA, { item: 'isControlling', value: false })
+      if (resData.State === 1) {
+        console.log(resData.Data)
+        if (resData.Data.State === 0) {
+          let devicesObject = resData.Data.Data
+          let deviceList = Object.entries(devicesObject).map(([key, value]) => {
+            return Object.assign({}, value, {
+              Id: parseInt(key)
+            })
+          })
+          console.log(deviceList)
+          commit(types.SET_DATA, { item: 'finishedNumberSwitch', value: deviceList.length })
+          dispatch('showDialogSwitchResult', { isShow: true })
+          dispatch('getDeviceCtrlSwitchList')
+        } else {
+          ElAlert(resData.Data.StateDesc, '提示').then(() => {})
+        }
+        if (isBatch) {
+          dispatch('showDialogControlSwitch', { isShow: false })
+        }
+      } else {
+        ElAlert('任务失败', '提示').then(() => {})
+      }
+    } else {
+      // 任务执行中继续查询
+      if (resData.Data) {
+        if (resData.Data.State === 0) {
+          if (resData.Data.Data) {
+            let devicesObject = resData.Data.Data
+            let deviceList = Object.entries(devicesObject).map(([key, value]) => {
+              return Object.assign({}, value, {
+                Id: parseInt(key)
+              })
+            })
+            commit(types.SET_DATA, { item: 'finishedNumberSwitch', value: deviceList.length })
+          }
+        }
+      }
+      dispatch('getDeviceControlWait', { id: resData.Id, isBatch })
+    }
+  },
+  cancelDeviceControlTask ({ commit, state, getters, rootState, rootGetters, dispatch }) {
+    let taskId = state.taskIdSwitch
+    let cancelDeviceControlTaskReq = api.deviceCtrl.deleteDeviceCtrlCancel(taskId)
     commit(types.ADD_REQUEST_CANCEL, { item: 'cancelDeviceControlTaskReq', value: cancelDeviceControlTaskReq.cancel })
     cancelDeviceControlTaskReq.request.then(res => {
+      commit(types.CHECKOUT_SUCCEED, res.State)
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
+      dispatch('showDialogControlSwitch', { isShow: false })
     })
   }
 }
