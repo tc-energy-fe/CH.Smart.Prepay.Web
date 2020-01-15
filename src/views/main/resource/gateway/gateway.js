@@ -67,8 +67,8 @@ const actions = {
       PageIndex: state.currentPage,
       PageSize: state.pageSize
     }
-    let type = state.searchDeviceTypeId
-    if (!isEmpty(type) && type !== -1) postData.TypeId = type
+    // let type = state.searchDeviceTypeId
+    // if (!isEmpty(type) && type !== -1) postData.TypeId = type
     let getGatewayListReq = api.gateway.getGatewayList(postData)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingGatewayList', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'getGatewayListReq', value: getGatewayListReq.cancel })
@@ -94,10 +94,10 @@ const actions = {
       ElAlert('请填写设备名称！', '提示')
       return null
     }
-    if (isEmpty(postData.TypeId)) {
-      ElAlert('请选择设备类型！', '提示')
-      return null
-    }
+    // if (isEmpty(postData.TypeId)) {
+    //   ElAlert('请选择设备类型！', '提示')
+    //   return null
+    // }
     return postData
   },
   addGateway ({ state, getters, commit, dispatch }) {
@@ -105,7 +105,6 @@ const actions = {
       if (!res) {
         return
       }
-      console.log(res)
       let addGatewayListReq = api.gateway.addGateway(res)
       commit(types.SET_LOADING_STATUS, { item: 'isAddingGateway', value: true })
       commit(types.ADD_REQUEST_CANCEL, { item: 'addGatewayListReq', value: addGatewayListReq.cancel })

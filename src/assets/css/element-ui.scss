@@ -109,8 +109,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 }
 
 // date-picker 单个picker
-.el-date-editor.el-date-editor--date,
-.el-date-editor.el-date-editor--time {
+.el-date-editor {
   .el-input__inner {
     height: $normal-input-height;
     line-height: $normal-input-height;

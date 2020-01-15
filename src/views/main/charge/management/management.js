@@ -166,6 +166,7 @@ const actions = {
     balancePayReq.request.then(res => {
       commit(types.CHECKOUT_SUCCEED, res.State)
       dispatch('showEdit', { isShow: false })
+      dispatch('getBalanceList')
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {

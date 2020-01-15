@@ -5,7 +5,7 @@ const routes = [
   {
     path: '/home',
     component: (resolve) => {
-      Store.registerModule('home', require('@/views/main/home/index').default)
+      Store.registerModule('home', require('@/views/main/home/home').default)
       return import('../views/main/home/index')
     }
   },

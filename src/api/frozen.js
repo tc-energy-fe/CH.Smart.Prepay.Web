@@ -16,5 +16,9 @@ export default {
     method: 'POST',
     url: '/Frozen/Export/Frozen',
     data
+  }),
+  getHomePage: params => http({
+    url: '/Frozen/Ele/HomePage',
+    params
   })
 }

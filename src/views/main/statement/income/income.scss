@@ -39,13 +39,9 @@
     height: initial;
     margin-top: 1rem;
 
-    .eg-box__header--right{
-      height: 1.5rem;
-    }
-
     .income-detail__header--center{
       position: absolute;
-      top: .5rem;
+      top: 1rem;
       right: 50%;
       transform: translateX(50%);
     }

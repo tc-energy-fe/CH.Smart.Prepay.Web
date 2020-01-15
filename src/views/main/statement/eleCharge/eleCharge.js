@@ -76,8 +76,8 @@ const actions = {
       let reportList = data.Datas || []
       let dateType = postData.Form
       reportList.forEach(r => {
-        r.Date = moment(r.Date).format(dateType === 1 ? 'YYYY-MM' : 'YYYY-MM-DD')
-        r.DateTime = moment(r.DateTime).format('YYYY-MM-DD HH:mm:ss')
+        r.Date = moment(r.Date).format(dateType === 1 ? 'YYYY-MM' : 'MM-DD')
+        r.DateTime = r.DataTime ? moment(r.DataTime).format('YYYY-MM-DD HH:mm:ss') : ''
         r.FullName = state.searchRoomList.find(room => room.Id === groupId).FullName
       })
       let pieData = Object.keys(data) || []

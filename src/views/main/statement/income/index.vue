@@ -25,10 +25,12 @@
           <el-radio-button :label="1">年</el-radio-button>
         </el-radio-group>
         <el-date-picker
+          :key="searchData.dateType"
           :editable="false"
           :clearable="false"
           :value="searchData.date"
           :format="dateFormat"
+          :type="searchData.dateType === 1 ? 'year' : searchData.dateType === 2 ? 'month' : 'date'"
           @input="searchDataOnChange('date', $event)"
         ></el-date-picker>
         <eg-button @click="search">查询</eg-button>
@@ -51,25 +53,26 @@
         </div>
       </eg-box>
       <eg-box title="明细报表" class="income-detail">
-        <div class=""></div>
-        <div slot="headerRight" class="income-detail__header--center">
-          <el-radio-group v-model="detailTabIndex">
-            <el-radio-button label="table">
-              <i class="iconfont icon-tab_icon_table"></i>
-            </el-radio-button>
-            <el-radio-button label="chart">
-              <i class="iconfont icon-tab_icon_histogram"></i>
-            </el-radio-button>
-          </el-radio-group>
-        </div>
+        <eg-button slot="headerRight" @click="exportExcel">导出</eg-button>
         <div class="income-detail__content" slot="content">
+          <div class="income-detail__header--center">
+            <el-radio-group v-model="detailTabIndex">
+              <el-radio-button label="table">
+                <i class="iconfont icon-tab_icon_table"></i>
+              </el-radio-button>
+              <el-radio-button label="chart">
+                <i class="iconfont icon-tab_icon_histogram"></i>
+              </el-radio-button>
+            </el-radio-group>
+          </div>
           <template v-if="detailTabIndex === 'table'">
             <el-table :data="paginationData">
-              <el-table-column prop="DateText" label="日期" align="center"></el-table-column>
+              <el-table-column prop="DateText" label="时间" align="center"></el-table-column>
               <el-table-column prop="Total" label="总收入(元)" align="center"></el-table-column>
               <el-table-column prop="Weixin" label="微信收入(元)" align="center"></el-table-column>
               <el-table-column prop="Alipay" label="支付宝收入(元)" align="center"></el-table-column>
               <el-table-column prop="Cash" label="现金收入(元)" align="center"></el-table-column>
+              <el-table-column prop="Refund" label="退费金额(元)" align="center"></el-table-column>
             </el-table>
             <el-pagination
               background
@@ -83,7 +86,13 @@
             ></el-pagination>
           </template>
           <div v-else class="income-detail__chart">
-            <detail-bar-chart :data="detailBarData"></detail-bar-chart>
+            <detail-bar-chart
+              :data="detailBarData"
+              :custom-props="{
+                xAxisName: barUnit,
+                yAxisName: '元'
+              }"
+            ></detail-bar-chart>
           </div>
         </div>
       </eg-box>
@@ -128,13 +137,18 @@
       },
       paginationData () {
         return this.reportList.slice(this.pageSize * (this.currentPage - 1), this.pageSize * this.currentPage)
+      },
+      barUnit () {
+        let type = this.searchData.dateType
+        return type === 3 ? '时' : type === 2 ? '日' : '月'
       }
     },
     methods: {
       ...mapActions([
         'updateStateData',
         'updateObjectData',
-        'getPayData'
+        'getPayData',
+        'exportExcel'
       ]),
       search () {
         this.getPayData()

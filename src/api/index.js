@@ -14,6 +14,7 @@ import frozen from './frozen'
 import payHistory from './payHistory'
 import deviceCtrl from './deviceCtrl'
 import status from './status'
+import warn from './warn'
 
 export default {
   login,
@@ -31,5 +32,6 @@ export default {
   frozen,
   deviceCtrl,
   status,
-  payHistory
+  payHistory,
+  warn
 }

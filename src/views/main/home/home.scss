@@ -1,3 +1,190 @@
 .home{
-  background-color: #FFF;
+  display: flow-root;
+  min-height: 700px;
+  min-width: 1300px;
+
+  > .home__block{
+    float: left;
+    height: 50%;
+  }
+
+  .home-status{
+    width: 40%;
+    padding-right: .5rem;
+    padding-bottom: .5rem;
+
+    .home-status--up, .home-status--down{
+      height: 50%;
+
+      > .home-status__block {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        background-color: $background-color;
+
+        > p{
+          display: flex;
+          align-items: center;
+          padding-top: 1rem;
+          padding-left: 1rem;
+          float: left;
+
+          .iconfont{
+            color: $main-color;
+            margin-right: .5rem;
+            font-size: 1.1rem;
+          }
+
+          img{
+            width: 1.1rem;
+            height: 1.1rem;
+            margin-right: .5rem;
+          }
+        }
+
+        .home-status__content{
+          flex: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          .home-status__item{
+            width: 30%;
+            text-align: center;
+
+            > p{
+              margin: .5rem 0;
+            }
+
+            .num{
+              font-size: 1.3rem;
+              margin-right: .3rem;
+            }
+
+            .unit{
+              font-size: .9rem;
+            }
+          }
+        }
+      }
+    }
+
+    .home-status--up{
+      padding-bottom: .5rem;
+    }
+    .home-status--down{
+      padding-top: .5rem;
+    }
+  }
+
+  .home-income{
+    width: 60%;
+    padding-left: .5rem;
+    padding-bottom: .5rem;
+
+    .home-income__total{
+      height: 40%;
+      display: flex;
+      padding-bottom: 1rem;
+      @include setEqualInterval(1rem);
+
+      &-item{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        padding: 1rem;
+        background-color: $background-color;
+
+        > .label{
+          padding-bottom: 1rem;
+        }
+
+        .num{
+          float: left;
+          font-size: 1.3rem;
+        }
+        .unit{
+          float: right;
+          font-size: .9rem;
+        }
+
+        &:nth-of-type(1) .num {
+          color: $main-color;
+        }
+        &:nth-of-type(2) .num {
+          color: #f56c6c;
+        }
+        &:nth-of-type(3) .num {
+          color: #67c23a;
+        }
+      }
+    }
+
+    .home-income__total-period{
+      display: flow-root;
+      height: 60%;
+
+      > div{
+        float: left;
+        height: 100%;
+      }
+
+      .period--left{
+        display: flex;
+        flex-direction: column;
+        width: 40%;
+
+        .period-total{
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+
+          &__time{
+            text-align: center;
+            margin-bottom: 1rem;
+          }
+
+          &__num{
+            text-align: center;
+            margin-bottom: 2rem;
+            .num{
+              font-size: 1.3rem;
+              color: $main-color;
+              margin-right: .5rem;
+            }
+            .unit{
+              font-size: .9rem;
+            }
+          }
+
+          &--bottom{
+            display: flow-root;
+            width: 100%;
+          }
+        }
+      }
+
+      .period--right{
+        width: 60%;
+        padding: 1rem
+      }
+    }
+  }
+
+  .home-warn{
+    width: 40%;
+    padding-right: .5rem;
+    padding-top: .5rem;
+  }
+
+  .home-trend{
+    width: 60%;
+    padding-left: .5rem;
+    padding-top: .5rem;
+  }
 }

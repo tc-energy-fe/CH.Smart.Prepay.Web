@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from '@/router'
 import store from '@/store'
-import { currency } from '@/utils/currency'
+import { currency, miss } from '@/utils/currency'
 
 import { Tree, Table, TableColumn, Pagination, Select, Option, Input, Popover, Loading, MessageBox, Radio, RadioGroup, RadioButton, Checkbox, Dialog, Menu, Submenu, MenuItem, DatePicker, TimePicker, CheckboxButton, CheckboxGroup } from 'element-ui'
 import 'css/element-ui.scss'
@@ -35,6 +35,7 @@ window.ElAlert = MessageBox.alert
 window.ElConfirm = MessageBox.confirm
 
 Vue.filter('currency', currency)
+Vue.filter('miss', miss)
 
 // 按需引入tc-ui组件
 Vue.use(EgUi)
@@ -50,7 +51,7 @@ window.isEmpty = function (value) {
   return value === undefined || value === null
 }
 
-window.colorArr = ['#3d7dff', '#68c23b', '#ff7a8b', '#edac3a']
+window.colorArr = ['#3d7dff', '#67c23a', '#ff7a8b', '#edac3a']
 
 Vue.config.productionTip = false
 
