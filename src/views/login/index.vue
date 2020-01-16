@@ -1,8 +1,30 @@
 <template>
   <div class="login">
-    <input v-model="username" placeholder="username"/><br/>
-    <input v-model="password" placeholder="password"/>
-    <button @click="loginOnClick">login</button>
+    <div class="login-form">
+      <p class="login-title">预付费管理系统</p>
+      <p class="login-form__item">
+        <i class="iconfont icon-login_icon_user"></i>
+        <label for="username">用户名</label>
+        <span class="split"></span>
+        <input
+          id="username"
+          v-model="username"
+          autocomplete="off"
+          placeholder="点击此处输入">
+      </p>
+      <p class="login-form__item">
+        <i class="iconfont icon-login_icon_password"></i>
+        <label for="password">用户名</label>
+        <span class="split"></span>
+        <input
+          id="password"
+          v-model="password"
+          autocomplete="off"
+          type="password"
+          placeholder="点击此处输入">
+      </p>
+      <p class="login-form__submit" @click="loginOnClick">登<span class="space"></span>录</p>
+    </div>
   </div>
 </template>
 
@@ -30,7 +52,7 @@
     methods: {
       loginOnClick () {
         if (this.username === '' || this.password === '') {
-          ElAlert('请输入用户名和登录密码！', '提示').then(() => {})
+          ElAlert('用户名或登录密码不能为空！', '提示').then(() => {})
           return
         }
         this.login()
@@ -69,7 +91,7 @@
             ElAlert('数据处理出错!', '错误').then(() => {})
           } else if (!err.abort) {
             let code = err.code.toString()
-            let errorMsg = ERROR_CODE['login'][code] || err.desc || `未知错误：${code}`
+            let errorMsg = err.msg || err.desc || ERROR_CODE['login'][code] || `未知错误：${code}`
             ElAlert(errorMsg, '错误').then(() => {})
           }
         }).finally(() => {
@@ -85,3 +107,4 @@
 </script>
 
 <style lang="scss" src="./login.scss"></style>
+<style lang="scss" src="@/assets/css/common.scss"></style>
