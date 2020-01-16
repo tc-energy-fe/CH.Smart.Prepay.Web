@@ -1,0 +1,33 @@
+
+.warn-time {
+    .main-search {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        .tree-wrapper {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            overflow: auto;
+            .group-tree {
+                min-width: 100%;
+            }
+        }
+    }
+    .main-content {
+        .warn-info {
+            display: flex;
+            @include setEqualInterval(2rem);
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+            > p {
+                > span {
+                    color: $color-warning;
+                }
+            }
+        }
+    }
+}

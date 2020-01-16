@@ -208,6 +208,29 @@ const routes = [
       // }
     ]
   },
+  {
+    path: '/warn',
+    component: () => {
+      Store.registerModule('warn', { namespaced: true })
+      return import('../views/main/warn/index')
+    },
+    children: [
+      {
+        path: 'time',
+        component: () => {
+          Store.registerModule(['warn', 'time'], require('@/views/main/warn/time/time').default)
+          return import('@/views/main/warn/time/index')
+        }
+      }
+      // {
+      //   path: 'emeter',
+      //   component: () => {
+      //     Store.registerModule(['warn', 'emeter'], require('@/views/main/warn/emeter/emeter').default)
+      //     return import('@/views/main/warn/emeter/index')
+      //   }
+      // }
+    ]
+  },
   // 404Page
   {
     path: '*',

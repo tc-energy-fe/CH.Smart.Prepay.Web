@@ -85,7 +85,7 @@ const actions = {
     let params = {
       projectId: projectId
     }
-    if (!isEmpty(groupId) && groupId !== rootState.areaId) {
+    if (!isEmpty(groupId) && groupId !== projectId) {
       params.groupId = groupId
     }
     let getEMeterStaticReq = api.status.getStatusEMeterStatic(params)
