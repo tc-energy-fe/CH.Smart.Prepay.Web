@@ -186,5 +186,15 @@
     width: 60%;
     padding-left: .5rem;
     padding-top: .5rem;
+
+    .home-trend__content{
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      .home-trend__chart{
+        flex: 1;
+      }
+    }
   }
 }

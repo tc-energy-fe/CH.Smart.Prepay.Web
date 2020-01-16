@@ -119,7 +119,22 @@
       </eg-box>
     </div>
     <div class="home__block home-trend">
-      <eg-box title="电量趋势"></eg-box>
+      <eg-box title="电量趋势">
+        <div class="home-trend__content" slot="content">
+          <el-radio-group :value="trendDateType" @input="trendDateTypeOnChange">
+            <el-radio-button :label="2">本月趋势</el-radio-button>
+            <el-radio-button :label="1">本年趋势</el-radio-button>
+          </el-radio-group>
+          <ele-line-chart
+            class="home-trend__chart"
+            :data="eleTrendData"
+            :custom-props="{
+              xAxisName: trendDateType === 2 ? '日' : '月',
+              yAxisName: 'kWh'
+            }"
+          ></ele-line-chart>
+        </div>
+      </eg-box>
     </div>
   </div>
 </template>
@@ -129,6 +144,7 @@
   import Icons from '@/assets/icon/main'
   import IncomePieChart from '@/components/simple-pie-chart'
   import WarnBarChart from './components/warn-bar-chart'
+  import EleLineChart from '@/components/single-line-chart'
   import { createNamespacedHelpers } from 'vuex'
   const { mapGetters, mapActions, mapState } = createNamespacedHelpers('home')
   export default {
@@ -140,7 +156,7 @@
         }
       }
     },
-    components: { IncomePieChart, WarnBarChart },
+    components: { IncomePieChart, WarnBarChart, EleLineChart },
     computed: {
       ...mapState([
         'gatewayStatus',
@@ -149,7 +165,9 @@
         'incomeData',
         'incomeEleData',
         'incomeChartData',
-        'warnData'
+        'warnData',
+        'trendDateType',
+        'eleTrendData'
       ]),
       ...mapGetters([]),
       projectId () {
@@ -164,11 +182,16 @@
         'getIncomeData',
         'abortAllRequests',
         'getWarnData',
-        'getIncomeEle'
+        'getIncomeEle',
+        'getEleTrendData'
       ]),
       incomeDateTypeOnChange (value) {
         this.updateFormData({ item: 'incomeDateType', value })
         this.getIncomeData()
+      },
+      trendDateTypeOnChange (value) {
+        this.updateFormData({ item: 'trendDateType', value })
+        this.getEleTrendData()
       }
     },
     watch: {
@@ -179,6 +202,7 @@
           this.getIncomeEle()
           this.getIncomeData()
           this.getWarnData()
+          this.getEleTrendData()
         }
       }
     },
@@ -189,6 +213,7 @@
         this.getIncomeEle()
         this.getIncomeData()
         this.getWarnData()
+        this.getEleTrendData()
       }
     },
     beforeDestroy () {

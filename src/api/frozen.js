@@ -12,6 +12,12 @@ export default {
     url: '/Frozen/Ele/Report/Room',
     data
   }),
+  // 电量消费报表
+  getEleReport: data => http({
+    method: 'POST',
+    url: '/Frozen/Ele/Report',
+    data
+  }),
   exportFrozen: data => http({
     method: 'POST',
     url: '/Frozen/Export/Frozen',
