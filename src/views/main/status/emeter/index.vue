@@ -168,6 +168,7 @@
       ]),
       handleCurrentNodeChange (data) {
         this.updateStateData({ item: 'currentNode', value: data })
+        this.searchClick()
       },
       handleCurrentPageChange (current) {
         this.updateStateData({ item: 'currentPage', value: current })

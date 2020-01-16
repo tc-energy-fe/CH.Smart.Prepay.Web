@@ -83,7 +83,8 @@ const actions = {
         chartData = [
           { name: '微信收入', value: data.WeixinTotal },
           { name: '支付宝收入', value: data.AlipayTotal },
-          { name: '现金收入', value: data.CashTotal }
+          { name: '现金收入', value: data.CashTotal },
+          { name: '退费', value: data.RefundTotal }
         ]
         data.Start = data.StartTime ? moment(data.StartTime).format(dateFormat) : ''
         data.End = data.EndTime ? moment(data.EndTime).format(dateFormat) : ''
