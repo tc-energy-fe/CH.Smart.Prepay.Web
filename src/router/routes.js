@@ -198,14 +198,14 @@ const routes = [
           Store.registerModule(['status', 'emeter'], require('@/views/main/status/emeter/emeter').default)
           return import('@/views/main/status/emeter/index')
         }
+      },
+      {
+        path: 'gateway',
+        component: () => {
+          Store.registerModule(['status', 'gateway'], require('@/views/main/status/gateway/gateway').default)
+          return import('@/views/main/status/gateway/index')
+        }
       }
-      // {
-      //   path: 'gateway',
-      //   component: () => {
-      //     Store.registerModule(['status', 'gateway'], require('@/views/main/status/gateway/gateway').default)
-      //     return import('@/views/main/status/gateway/index')
-      //   }
-      // }
     ]
   },
   {

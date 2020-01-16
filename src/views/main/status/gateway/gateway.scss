@@ -1,0 +1,19 @@
+
+.status-gateway{
+    .gateway-overview {
+        height: 7.5rem;
+        width: 100%;
+        display: flex;
+        margin-bottom: 1rem;
+        @include setEqualInterval(1rem);
+        &__item {
+            flex: 1;
+        }
+    }
+    .gateway-list {
+        width: 100%;
+        flex: 1;
+        background-color: white;
+        overflow: auto;
+    }
+}

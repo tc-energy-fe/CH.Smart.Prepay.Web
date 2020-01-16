@@ -23,9 +23,9 @@
         <span>欢迎您，</span>
         <span class="app-header_user">{{account.Name || 'master'}}</span>
         <i class="app-header_split"></i>
-        <div class="app-logout">
+        <div class="app-logout" @click="logout">
           <img :src="Icons.logout">
-          <span class="app-logout_text" @click="logout">退出</span>
+          <span class="app-logout_text">退出</span>
         </div>
       </div>
     </header>
