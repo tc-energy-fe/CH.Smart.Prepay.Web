@@ -44,6 +44,11 @@ export default {
     url: `/Group/Room/${id}`,
     method: 'delete'
   }),
+  importRoom: (params) => http({
+    url: `/Group/Import`,
+    method: 'delete',
+    params
+  }),
   /** RoomAccount **/
   getRoomAccountList: (data) => http({
     method: 'post',

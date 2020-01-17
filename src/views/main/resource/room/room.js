@@ -2,9 +2,7 @@ import Actions from '@/store/actions'
 import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
-// import apiUrl from '@/api/analysis/apiUrl'
-// import download from '@/utils/download'
-// import moment from 'moment'
+import { upload } from '@/utils/file'
 
 const state = {
   reqCancels: new Map(),
@@ -37,7 +35,6 @@ const state = {
 }
 
 const getters = {
-  mainGroupList: (state, getters, rootState) => rootState.mainGroupList,
   groupTree: (state, getters, rootState) => rootState.mainGroupTreeHasRoot,
   projectId: (state, getters, rootState, rootGetters) => rootGetters.projectId,
   currentNodeId: state => state.currentNode.value
@@ -198,13 +195,31 @@ const actions = {
     }).catch(() => {
     })
   },
-  importRoom ({ state, getters, commit, dispatch }) {
-    let el = document.createElement('input')
-    el.type = 'file'
-    el.style.display = 'none'
-    document.body.appendChild(el)
-    el.click()
-    document.body.removeChild(el)
+  uploadFile ({ state, commit, dispatch }) {
+    upload().then(res => {
+      let uploadFileReq = api.file.uploadFile(res)
+      commit(types.ADD_REQUEST_CANCEL, { item: 'uploadFileReq', value: uploadFileReq.cancel })
+      uploadFileReq.request.then(res => {
+        dispatch('importRoom', res.Data)
+      }).catch(err => {
+        commit(types.CHECKOUT_FAILURE, err)
+      }).finally(() => {
+      })
+    })
+  },
+  importRoom ({ state, getters, commit, dispatch }, fileId) {
+    let importRoomReq = api.group.importRoom({
+      fileId: fileId,
+      projectId: getters.projectId
+    })
+    commit(types.ADD_REQUEST_CANCEL, { item: 'importRoomReq', value: importRoomReq.cancel })
+    importRoomReq.request.then(res => {
+      commit(types.CHECKOUT_SUCCEED, res.State)
+      dispatch('getRoomList')
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+    })
   }
 }
 

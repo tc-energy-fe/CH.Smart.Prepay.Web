@@ -30,7 +30,7 @@
             <eg-button @click="getRoomList">查询</eg-button>
           </template>
           <template v-slot:headerRight>
-            <eg-button style="margin-right: 1rem;" @click="importRoom">导入房间</eg-button>
+            <eg-button style="margin-right: 1rem;" @click="uploadFile">导入房间</eg-button>
             <eg-button @click="showEdit">新建房间</eg-button>
           </template>
           <template v-slot:content>
@@ -187,7 +187,6 @@
         'isShowEditDevice'
       ]),
       ...mapGetters([
-        'mainGroupList',
         'projectId',
         'groupTree',
         'currentNodeId'
@@ -216,7 +215,7 @@
         'showEdit',
         'editRoom',
         'deleteRoom',
-        'importRoom',
+        'uploadFile',
         'getGatewayList',
         'updateFormData',
         'updateObjectData',

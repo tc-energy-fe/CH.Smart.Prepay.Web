@@ -49,6 +49,13 @@ const routes = [
         }
       },
       {
+        path: 'ele',
+        component: (resolve) => {
+          Store.registerModule(['statement', 'ele'], require('@/views/main/statement/ele/ele').default)
+          return import('@/views/main/statement/ele/index')
+        }
+      },
+      {
         path: 'income',
         component: (resolve) => {
           Store.registerModule(['statement', 'income'], require('@/views/main/statement/income/income').default)

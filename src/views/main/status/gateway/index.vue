@@ -5,24 +5,24 @@
         class="gateway-overview__item"
         :icon="Icons.total"
         unit="个"
-        name="电表总数"
+        name="网关总数"
         :color="{left: '#cfe0ff', right: 'white', text: '#3d7dff'}"
         :text="gatewayStaticData.Total"
       />
       <overview-block
         class="gateway-overview__item"
-        :icon="Icons.switchOff"
+        :icon="Icons.on"
         unit="个"
-        name="开闸数"
+        name="在线数"
         :color="{left: '#bfefbb', right: 'white', text: '#67c23a'}"
         :text="gatewayStaticData.Offline"
       />
       <overview-block
         class="gateway-overview__item"
-        :icon="Icons.switchOn"
+        :icon="Icons.off"
         unit="个"
-        name="合闸数"
-        :color="{left: '#cfe0ff', right: 'white', text: '#3d7dff'}"
+        name="离线数"
+        :color="{left: '#f9cfcf', right: 'white', text: '#f56c6c'}"
         :text="gatewayStaticData.Online"
       />
     </div>
@@ -86,9 +86,8 @@
       return {
         Icons: {
           total: Icons.icon_meter_total,
-          switchOff: Icons.tab_icon_open,
-          switchOn: Icons.tab_icon_close,
-          frozen: Icons.tab_icon_alarm
+          on: Icons.tab_icon_online,
+          off: Icons.tab_icon_offline
         }
       }
     },
