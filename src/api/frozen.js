@@ -23,6 +23,11 @@ export default {
     url: '/Frozen/Export/Frozen',
     data
   }),
+  exportEle: data => http({
+    method: 'POST',
+    url: '/Frozen/Export/Ele',
+    data
+  }),
   getHomePage: params => http({
     url: '/Frozen/Ele/HomePage',
     params

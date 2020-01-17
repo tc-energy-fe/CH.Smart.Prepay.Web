@@ -1,0 +1,67 @@
+.statement-ele{
+
+  .ele-content__search{
+    display: flow-root;
+    width: 100%;
+    padding: $normal-padding;
+    background-color: #FFF;
+    @include setEqualInterval(1rem);
+
+    > *{
+      float: left;
+    }
+  }
+
+  .ele-statistic{
+    height: 20rem;
+    margin-top: 1rem;
+
+    &__content{
+      display: flex;
+      height: 100%;
+
+      &--left{
+        display: flex;
+        flex-direction: column;
+        width: 35%;
+        height: 100%;
+        @include setEqualInterval(1rem, down);
+      }
+
+      &--right{
+        width: 60%;
+        height: 100%;
+      }
+    }
+  }
+
+  .ele-report{
+    position: relative;
+    height: initial;
+    margin-top: 1rem;
+
+    .ele-detail__header--center{
+      position: absolute;
+      top: 1rem;
+      right: 50%;
+      transform: translateX(50%);
+    }
+
+    .ele-detail__chart{
+      height: 15rem;
+    }
+  }
+}
+
+.ele-report__popper{
+  min-width: initial;
+  .ele-report__pop{
+    > p{
+      padding: .2rem;
+
+      > label {
+        padding-right: 1rem;
+      }
+    }
+  }
+}

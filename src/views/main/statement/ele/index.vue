@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container statement-income has-search">
+  <div class="main-container statement-ele has-search">
     <div class="main-search">
       <p class="main-search__title">选择区域</p>
       <el-tree
@@ -15,12 +15,11 @@
       ></el-tree>
     </div>
     <div class="main-content">
-      <div class="income-content__search">
+      <div class="ele-content__search">
         <el-radio-group
           :value="searchData.dateType"
           @input="searchDataOnChange('dateType', $event)"
         >
-          <el-radio-button :label="3">日</el-radio-button>
           <el-radio-button :label="2">月</el-radio-button>
           <el-radio-button :label="1">年</el-radio-button>
         </el-radio-group>
@@ -30,32 +29,34 @@
           :clearable="false"
           :value="searchData.date"
           :format="dateFormat"
-          :type="searchData.dateType === 1 ? 'year' : searchData.dateType === 2 ? 'month' : 'date'"
+          :type="searchData.dateType === 1 ? 'year' : 'month'"
           @input="searchDataOnChange('date', $event)"
         ></el-date-picker>
         <eg-button @click="search">查询</eg-button>
       </div>
-      <eg-box title="汇总统计" class="income-statistic">
-        <div class="income-statistic__content" slot="content">
-          <div class="income-statistic__content--left">
-            <total-pie-chart v-if="!isLoadingPayData" :data="pieData" unit="元"></total-pie-chart>
+      <eg-box class="ele-statistic" title="汇总统计">
+        <div slot="content" class="ele-statistic__content">
+          <div class="ele-statistic__content--left">
+            <overview-block
+              :icon="Icons.totalEle" name="总用电量"
+              :color="{ text: '#3d7dff' }" unit="kWh"
+              :text="reportTotal.DeltaTotalSum | currency"
+            ></overview-block>
+            <overview-block
+              :icon="Icons.totalMoney" name="总用电费"
+              :color="{ left: '#bfefbb', text: '#67c23a' }" unit="元"
+              :text="reportTotal.DeltaCostSum | currency"
+            ></overview-block>
           </div>
-          <div class="income-statistic__content--right">
-            <el-table :data="totalTableData">
-              <el-table-column prop="name" label="类型" align="center"></el-table-column>
-              <el-table-column prop="value" label="金额(元)" align="center">
-                <template slot-scope="{ row, $index }">
-                  <span :style="$index === totalTableData.length - 1 ? 'color: #f56c6c;' : ''">{{row.value | currency}}</span>
-                </template>
-              </el-table-column>
-            </el-table>
+          <div class="ele-statistic__content--right">
+            <total-pie-chart :data="pieData"></total-pie-chart>
           </div>
         </div>
       </eg-box>
-      <eg-box title="明细报表" class="income-detail">
+      <eg-box class="ele-report" title="明细报表">
         <eg-button slot="headerRight" @click="exportExcel">导出</eg-button>
-        <div class="income-detail__content" slot="content">
-          <div class="income-detail__header--center">
+        <div slot="content">
+          <div class="ele-detail__header--center">
             <el-radio-group v-model="detailTabIndex">
               <el-radio-button label="table">
                 <i class="iconfont icon-tab_icon_table"></i>
@@ -66,13 +67,14 @@
             </el-radio-group>
           </div>
           <template v-if="detailTabIndex === 'table'">
-            <el-table :data="paginationData" v-loading="isLoadingPayData">
-              <el-table-column prop="DateText" label="时间" align="center"></el-table-column>
-              <el-table-column prop="Total" label="总收入(元)" align="center"></el-table-column>
-              <el-table-column prop="Weixin" label="微信收入(元)" align="center"></el-table-column>
-              <el-table-column prop="Alipay" label="支付宝收入(元)" align="center"></el-table-column>
-              <el-table-column prop="Cash" label="现金收入(元)" align="center"></el-table-column>
-              <el-table-column prop="Refund" label="退费金额(元)" align="center"></el-table-column>
+            <el-table :data="paginationData" v-loading="isLoadingEleReport">
+              <el-table-column prop="DateText" label="日期" align="center" min-width="110"></el-table-column>
+              <el-table-column prop="DeltaTotal" label="总用电量(kWh)" align="center" min-width="130"></el-table-column>
+              <el-table-column prop="DeltaCost" label="总用电费(元)" align="center" min-width="120"></el-table-column>
+              <el-table-column prop="DeltaPointed" label="尖用电量(kWh)" align="center" min-width="130"></el-table-column>
+              <el-table-column prop="DeltaPeak" label="峰用电量(kWh)" align="center" min-width="130"></el-table-column>
+              <el-table-column prop="DeltaFlat" label="平用电量(kWh)" align="center" min-width="130"></el-table-column>
+              <el-table-column prop="DeltaValley" label="谷用电量(kWh)" align="center" min-width="130"></el-table-column>
             </el-table>
             <el-pagination
               background
@@ -85,12 +87,13 @@
               :total="reportList.length"
             ></el-pagination>
           </template>
-          <div v-else class="income-detail__chart" v-loading="isLoadingPayData">
+          <div v-else class="ele-detail__chart">
             <detail-bar-chart
+              v-loading="isLoadingEleReport"
               :data="detailBarData"
               :custom-props="{
-                xAxisName: barUnit,
-                yAxisName: '元'
+                xAxisName: searchData.dateType === 2 ? '日' : '月',
+                yAxisName: 'kWh'
               }"
             ></detail-bar-chart>
           </div>
@@ -101,28 +104,36 @@
 </template>
 
 <script>
-  import './income.scss'
+  import './ele.scss'
+  import Icons from '@/assets/icon/main'
+  import { createNamespacedHelpers } from 'vuex'
+  import OverviewBlock from 'overview-block'
   import TotalPieChart from '@/components/simple-pie-chart'
   import DetailBarChart from '@/components/multi-bar-chart'
-  import { createNamespacedHelpers } from 'vuex'
-  const { mapGetters, mapActions, mapState } = createNamespacedHelpers('statement/income')
+  const { mapGetters, mapActions, mapState } = createNamespacedHelpers('statement/ele')
   export default {
-    name: 'statement-income',
+    name: 'statement-elecharge',
     data () {
       return {
-        detailTabIndex: 'table',
+        searchRoomFilterText: '',
+        Icons: {
+          totalEle: Icons.icon_meter_total,
+          totalMoney: Icons.tab_icon_money
+        },
+        pageSize: 5,
         currentPage: 1,
-        pageSize: 5
+        detailTabIndex: 'table'
       }
     },
-    components: { TotalPieChart, DetailBarChart },
+    components: { OverviewBlock, TotalPieChart, DetailBarChart },
     computed: {
       ...mapState([
         'searchData',
-        'totalTableData',
-        'pieData',
-        'isLoadingPayData',
+        'searchRoomList',
+        'isLoadingEleReport',
         'reportList',
+        'reportTotal',
+        'pieData',
         'detailBarData'
       ]),
       ...mapGetters([
@@ -137,25 +148,22 @@
       },
       paginationData () {
         return this.reportList.slice(this.pageSize * (this.currentPage - 1), this.pageSize * this.currentPage)
-      },
-      barUnit () {
-        let type = this.searchData.dateType
-        return type === 3 ? '时' : type === 2 ? '日' : '月'
       }
     },
     methods: {
       ...mapActions([
         'updateStateData',
         'updateObjectData',
-        'getPayData',
+        'getEleReport',
         'exportExcel'
       ]),
-      search () {
-        this.getPayData()
-      },
       nodeOnChange (value) {
         this.updateStateData({ item: 'currentNode', value })
         this.search()
+      },
+      search () {
+        this.currentPageOnChange(1)
+        this.getEleReport()
       },
       searchDataOnChange (key, value) {
         this.updateObjectData({ obj: 'searchData', item: key, value })
@@ -173,6 +181,7 @@
           this.$nextTick(function () {
             this.$refs.tree.setCurrentKey(newValue[0].value)
           })
+          this.updateStateData({ item: 'currentNode', value: newValue[0] || {} })
           this.search()
         }
       },

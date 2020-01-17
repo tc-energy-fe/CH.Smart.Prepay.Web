@@ -107,7 +107,10 @@
           font-size: 1.3rem;
         }
         .unit{
+          display: inline-block;
           float: right;
+          height: 100%;
+          line-height: 1.3rem;
           font-size: .9rem;
         }
 
