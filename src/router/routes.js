@@ -221,14 +221,14 @@ const routes = [
           Store.registerModule(['warn', 'time'], require('@/views/main/warn/time/time').default)
           return import('@/views/main/warn/time/index')
         }
+      },
+      {
+        path: 'history',
+        component: () => {
+          Store.registerModule(['warn', 'history'], require('@/views/main/warn/history/history').default)
+          return import('@/views/main/warn/history/index')
+        }
       }
-      // {
-      //   path: 'emeter',
-      //   component: () => {
-      //     Store.registerModule(['warn', 'emeter'], require('@/views/main/warn/emeter/emeter').default)
-      //     return import('@/views/main/warn/emeter/index')
-      //   }
-      // }
     ]
   },
   // 404Page

@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container has-search warn-time">
+  <div class="main-container has-search warn-history">
     <div class="main-search">
       <h4 class="main-search__title">选择区域</h4>
       <div class="tree-wrapper" v-loading="isLoadingMainGroupList">
@@ -20,20 +20,18 @@
     <div class="main-content">
       <eg-box>
         <template v-slot:headerLeft>
-          <eg-input
-            :value="searchName"
-            @input="updateStateData({item: 'searchName', value: $event})"
-            placeholder="报警名称搜索"
+          <el-date-picker
+            :value="searchDateRange"
+            @input="updateStateData({item: 'searchDateRange', value: $event})"
+            type="daterange"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
           />
           <el-select
             :value="searchWarnType"
             @input="updateStateData({item: 'searchWarnType', value: $event})"
             placeholder="报警类型"
           >
-            <el-option
-              label="全部类型"
-              :value="null"
-            />
             <el-option
               v-for="(item, index) of searchWarnTypeOptions"
               :label="item.label"
@@ -42,6 +40,11 @@
             />
           </el-select>
           <eg-input
+            :value="searchName"
+            @input="updateStateData({item: 'searchName', value: $event})"
+            placeholder="报警名称搜索"
+          />
+          <eg-input
             :value="searchWarnObject"
             @input="updateStateData({item: 'searchWarnObject', value: $event})"
             placeholder="报警对象搜索"
@@ -49,21 +52,12 @@
           <eg-button @click="searchClick">查询</eg-button>
         </template>
         <template v-slot:content>
-          <div class="warn-info">
-            <p>
-              网关离线：
-              <span>{{warnStaticData.GatewayOffline}}</span>
-            </p>
-            <p>
-              冻结异常：
-              <span>{{warnStaticData.FrozenErr}}</span>
-            </p>
-          </div>
           <el-table :data="warnListPagination" v-loading="isLoadingWarnList">
             <el-table-column prop="Name" label="报警名称" align="center" />
             <el-table-column prop="TypeText" label="报警类型" align="center" />
             <el-table-column prop="OwnName" label="报警对象" align="center" />
             <el-table-column prop="ProduceTimeText" label="报警时间" align="center" />
+            <el-table-column prop="EndTimeText" label="解除时间" align="center" />
           </el-table>
           <el-pagination
             background
@@ -83,9 +77,9 @@
 
 <script>
   import Vuex from 'vuex'
-  const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('warn/time')
+  const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('warn/history')
   export default {
-    name: 'WarnTime',
+    name: 'WarnHistory',
     data () {
       return {
       }
@@ -97,11 +91,11 @@
         'searchWarnType',
         'searchWarnTypeOptions',
         'searchWarnObject',
+        'searchDateRange',
         'warnList',
         'currentPage',
         'pageSize',
-        'isLoadingWarnList',
-        'warnStaticData'
+        'isLoadingWarnList'
       ]),
       ...mapGetters([
         'currentNodeId',
@@ -118,12 +112,11 @@
       ...mapActions([
         'getWarnList',
         'getWarnTypeList',
-        'getWarnStaticData',
         'updateStateData'
       ]),
       handleCurrentNodeChange (data) {
+        // 变更currentNodeId
         this.updateStateData({ item: 'currentNode', value: data })
-        this.getWarnStaticData()
         this.searchClick()
       },
       handleCurrentPageChange (current) {
@@ -138,7 +131,6 @@
         this.getWarnList()
       },
       searchMethod () {
-        this.getWarnStaticData()
         this.handleCurrentPageChange(1)
         this.getWarnTypeList()
       }
@@ -164,4 +156,4 @@
   }
 </script>
 
-<style scoped src="./time.scss" lang="scss" />
+<style scoped src="./history.scss" lang="scss" />
