@@ -15,5 +15,5 @@
 
 .icon-content_icon_required:before {
     color: #f56c6c;
-    /*font-size: 12px;*/
+    font-size: .5rem;
 }

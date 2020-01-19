@@ -1,4 +1,6 @@
 .config-switch {
+    display: flex;
+    flex-direction: column;
     .switch-edit {
         &__row {
             display: flex;

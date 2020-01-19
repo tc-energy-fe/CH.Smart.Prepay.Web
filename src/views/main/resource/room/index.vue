@@ -2,7 +2,7 @@
   <div class="resource-room main-container has-search">
     <template v-if="!isShowEdit">
       <div class="main-search">
-        <p>选择区域</p>
+        <p class="main-search__title">选择区域</p>
         <el-tree
           :key="'tree'"
           ref="tree"
@@ -255,7 +255,6 @@
     },
     beforeDestroy () {
       this.showEdit({ isShow: false })
-      this.updateFormData({ item: 'currentNode', value: {} })
     }
   }
 </script>

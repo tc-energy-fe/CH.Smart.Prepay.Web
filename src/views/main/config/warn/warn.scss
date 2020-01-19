@@ -1,4 +1,6 @@
 .config-warn {
+    display: flex;
+    flex-direction: column;
     .warn-edit {
         &__row {
             display: flex;

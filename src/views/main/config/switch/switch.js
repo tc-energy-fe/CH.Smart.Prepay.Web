@@ -14,8 +14,9 @@ const state = {
   searchNameRoom: '',
   searchNameTask: '',
   currentPageSwitch: 1,
+  switchPageSize: 10,
   currentPageRoom: 1,
-  pageSize: 5,
+  roomPageSize: 10,
   switchList: [],
   roomList: [],
   totalCountSwitch: 1,
@@ -34,8 +35,8 @@ const state = {
   editPeriodList: [
     {
       SwitchParam: true,
-      Time: new Date(),
-      Days: [1, 3, 7]
+      Time: moment(moment().format('YYYY-MM-DD 06:00:00')).toDate(),
+      Days: [1, 2, 3, 4, 5, 6, 7]
     }
   ],
   editTreeData: [],
@@ -66,8 +67,8 @@ const actions = {
         value: [
           {
             SwitchParam: true,
-            Time: new Date(),
-            Days: [1, 3, 7]
+            Time: moment(moment().format('YYYY-MM-DD 06:00:00')).toDate(),
+            Days: [1, 2, 3, 4, 5, 6, 7]
           }
         ]
       })
@@ -92,7 +93,7 @@ const actions = {
       TaskType: 0,
       Name: state.searchNameSwitch,
       PageIndex: state.currentPageSwitch,
-      PageSize: state.pageSize
+      PageSize: state.switchPageSize
     }
     let getSwitchTaskListReq = api.task.getTaskList(postData)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingSwitchList', value: true })
@@ -117,7 +118,7 @@ const actions = {
       Name: state.searchNameTask,
       TaskType: 0,
       PageIndex: state.currentPageRoom,
-      PageSize: state.pageSize
+      PageSize: state.roomPageSize
     }
     let getRoomSchemeListReq = api.task.getRoomTaskList(postData)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingRoomList', value: true })

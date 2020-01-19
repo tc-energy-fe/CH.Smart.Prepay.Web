@@ -1,87 +1,87 @@
 <template>
   <div class="main-container config-switch">
     <template v-if="!isShowEdit">
-      <div class="config-scheme">
-        <p class="scheme-title">定时开合闸任务管理</p>
-        <eg-box>
-          <template v-slot:headerLeft>
-            <eg-input
-              placeholder="任务名称搜索"
-              :value="searchNameSwitch"
-              @input="updateStateData({item: 'searchNameSwitch', value: $event})"
-            />
-            <eg-button @click="getSwitchTaskList">查询</eg-button>
-          </template>
-          <template v-slot:headerRight>
-            <eg-button @click="showEdit">新建定时任务</eg-button>
-          </template>
-          <template v-slot:content>
-            <div class="table-wrapper">
-              <el-table height="100%" :data="switchList" v-loading="isLoadingSwitchList">
-                <el-table-column prop="Name" label="任务名称" width="200px" align="center" />
-                <el-table-column prop="ContentText" label="任务内容" align="center">
-                  <template v-slot="{row}">
-                    <p v-for="(item, index) of row.Periods" :key="index">
-                      {{`${index + 1}.【${item.Days.map(day => (taskDaysDic[day])).join('、')}】${item.Time} ${item.SwitchParam ? '开闸' : '合闸'}`}}
-                    </p>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="StatusText" label="启用状态" width="200px" align="center" />
-                <el-table-column label="操作" width="200px" align="center">
-                  <template v-slot="{row}">
-                    <eg-button type="text" style="margin-right: 1rem;" @click="showEdit({row})">编辑</eg-button>
-                    <eg-button v-if="row.Status === 3" @click="editTaskStatus({ row, status: 0 })" type="text" color="success">启用</eg-button>
-                    <eg-button v-else-if="row.Status === 0" @click="editTaskStatus({ row, status: 3 })" type="text" color="danger">停用</eg-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <el-pagination
-                background
-                :current-page="currentPageSwitch"
-                :page-size="pageSize"
-                :total="totalCountSwitch"
-                layout="total, ->, prev, pager, next"
-                @current-change="currentPageSwitchChange($event)"
-              />
-            </div>
-          </template>
-        </eg-box>
+      <div class="config-tab">
+        <eg-tab-group v-model="tabIndex">
+          <eg-tab-button :label="1">定时开合闸任务管理</eg-tab-button>
+          <eg-tab-button :label="2">房间方案查询</eg-tab-button>
+        </eg-tab-group>
       </div>
-      <div class="config-room">
-        <p class="scheme-title">房间定时任务查询</p>
-        <eg-box>
-          <template v-slot:headerLeft>
-            <eg-input
-              placeholder="房间编号/名称搜索"
-              :value="searchNameRoom"
-              @input="updateStateData({item: 'searchNameRoom', value: $event})"
-            />
-            <eg-input
-              placeholder="任务名称搜索"
-              :value="searchNameTask"
-              @input="updateStateData({item: 'searchNameTask', value: $event})"
-            />
-            <eg-button @click="getRoomList">查询</eg-button>
-          </template>
-          <template v-slot:content>
-            <div class="table-wrapper">
-              <el-table height="100%" :data="roomList" v-loading="isLoadingRoomList">
-                <el-table-column prop="RoomNo" label="房间编号" align="center" />
-                <el-table-column prop="FullName" label="房间信息" align="center" />
-                <el-table-column prop="TaskName" label="任务名称" align="center" />
-              </el-table>
-              <el-pagination
-                background
-                :current-page="currentPageRoom"
-                :page-size="pageSize"
-                :total="totalCountRoom"
-                layout="total, ->, prev, pager, next"
-                @current-change="currentPageRoomChange($event)"
-              />
-            </div>
-          </template>
-        </eg-box>
-      </div>
+      <eg-box class="config-scheme" v-show="tabIndex===1">
+        <template v-slot:headerLeft>
+          <eg-input
+            placeholder="任务名称搜索"
+            :value="searchNameSwitch"
+            @input="updateStateData({item: 'searchNameSwitch', value: $event})"
+          />
+          <eg-button @click="getSwitchTaskList">查询</eg-button>
+        </template>
+        <template v-slot:headerRight>
+          <eg-button @click="showEdit">新建定时任务</eg-button>
+        </template>
+        <template v-slot:content>
+          <el-table :data="switchList" v-loading="isLoadingSwitchList">
+            <el-table-column prop="Name" label="任务名称" width="200px" align="center" />
+            <el-table-column prop="ContentText" label="任务内容" align="center">
+              <template v-slot="{row}">
+                <p v-for="(item, index) of row.Periods" :key="index">
+                  {{`${index + 1}.【${item.Days.map(day => (taskDaysDic[day])).join('、')}】${item.Time} ${item.SwitchParam ? '开闸' : '合闸'}`}}
+                </p>
+              </template>
+            </el-table-column>
+            <el-table-column prop="StatusText" label="启用状态" width="200px" align="center" />
+            <el-table-column label="操作" width="200px" align="center">
+              <template v-slot="{row}">
+                <eg-button type="text" style="margin-right: 1rem;" @click="showEdit({row})">编辑</eg-button>
+                <eg-button v-if="row.Status === 3" @click="editTaskStatus({ row, status: 0 })" type="text" color="success">启用</eg-button>
+                <eg-button v-else-if="row.Status === 0" @click="editTaskStatus({ row, status: 3 })" type="text" color="danger">停用</eg-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            :current-page="currentPageSwitch"
+            :page-size="switchPageSize"
+            :page-sizes="[10, 15, 20, 25]"
+            :total="totalCountSwitch"
+            layout="total, ->, prev, pager, next, sizes, jumper"
+            @current-change="currentPageSwitchChange"
+            @size-change="switchPagesSizeOnChange"
+          />
+        </template>
+      </eg-box>
+      <eg-box class="config-room" v-show="tabIndex===2">
+        <template v-slot:headerLeft>
+          <eg-input
+            placeholder="房间编号/名称搜索"
+            :value="searchNameRoom"
+            @input="updateStateData({item: 'searchNameRoom', value: $event})"
+          />
+          <eg-input
+            placeholder="任务名称搜索"
+            :value="searchNameTask"
+            @input="updateStateData({item: 'searchNameTask', value: $event})"
+          />
+          <eg-button @click="getRoomList">查询</eg-button>
+        </template>
+        <template v-slot:content>
+          <el-table :data="roomList" v-loading="isLoadingRoomList">
+            <el-table-column prop="RoomNo" label="房间编号" align="center" />
+            <el-table-column prop="FullName" label="房间信息" align="center" />
+            <el-table-column prop="TaskName" label="任务名称" align="center" />
+          </el-table>
+          <el-pagination
+            background
+            :current-page="currentPageRoom"
+            :page-size="roomPageSize"
+            :page-sizes="[10, 15, 20, 25]"
+            :total="totalCountRoom"
+            layout="total, ->, prev, pager, next, sizes, jumper"
+            @current-change="currentPageRoomChange"
+            @size-change="roomPageSizeOnChange"
+          />
+        </template>
+      </eg-box>
     </template>
     <template v-if="isShowEdit">
       <eg-box class="edit-wrapper switch-edit">
@@ -158,7 +158,7 @@
             <label class="switch-edit__row-title align-top">执行房间</label>
             <div class="switch-edit__row-box" v-loading="isLoadingEditTree">
               <eg-input
-                placeholder="房间名称搜索"
+                placeholder="房间门牌号搜索"
                 :value="editSearchRoomName"
                 @input="updateStateData({item: 'editSearchRoomName', value: $event})">
                 <i slot="suffix" class="iconfont icon-content_icon_search"/>
@@ -188,11 +188,13 @@
 
 <script>
   import { createNamespacedHelpers } from 'vuex'
+  import moment from 'moment'
   const { mapGetters, mapActions, mapState } = createNamespacedHelpers('config/switch')
   export default {
     name: 'ConfigSwitch',
     data () {
       return {
+        tabIndex: 1
       }
     },
     components: {},
@@ -202,7 +204,9 @@
         'searchNameRoom',
         'searchNameTask',
         'currentPageSwitch',
+        'switchPageSize',
         'currentPageRoom',
+        'roomPageSize',
         'pageSize',
         'switchList',
         'roomList',
@@ -243,9 +247,17 @@
         this.updateStateData({ item: 'currentPageSwitch', value: page })
         this.getSwitchTaskList()
       },
+      switchPagesSizeOnChange (value) {
+        this.updateStateData({ item: 'switchPagesSize', value: value })
+        this.currentPageSwitchChange(1)
+      },
       currentPageRoomChange (page) {
         this.updateStateData({ item: 'currentPageRoom', value: page })
         this.getRoomList()
+      },
+      roomPageSizeOnChange (page) {
+        this.updateStateData({ item: 'roomPageSize', value: page })
+        this.currentPageRoomChange(1)
       },
       saveClick () {
         let checkedKeys = this.$refs.editTree.getCheckedKeys(true)
@@ -268,8 +280,8 @@
         let editPeriodList = JSON.parse(JSON.stringify(this.editPeriodList))
         editPeriodList.push({
           SwitchParam: true,
-          Time: new Date(),
-          Days: [1, 3, 7]
+          Time: moment(moment().format('YYYY-MM-DD 06:00:00')).toDate(),
+          Days: [1, 2, 3, 4, 5, 6, 7]
         })
         this.updateStateData({ item: 'editPeriodList', value: editPeriodList })
       },

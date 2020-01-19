@@ -8,7 +8,7 @@ const state = {
   reqCancels: new Map(),
   searchTaskName: '',
   currentPageTask: 1,
-  pageSize: 5,
+  taskPageSize: 10,
   taskList: [],
   totalCountTask: 0,
   isLoadingTaskList: false,
@@ -17,6 +17,7 @@ const state = {
   roomList: [],
   totalCountRoom: 0,
   currentPageRoom: 1,
+  roomPageSize: 10,
   isLoadingRoomList: false,
   isShowEdit: false,
   isModify: false,
@@ -100,7 +101,7 @@ const actions = {
       name: state.searchTaskName,
       type: 1,
       PageIndex: state.currentPageTask,
-      PageSize: state.pageSize
+      PageSize: state.taskPageSize
     }
     let getTaskListReq = api.task.getTaskList(params)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingTaskList', value: true })
@@ -181,7 +182,7 @@ const actions = {
       Name: state.searchTaskType,
       TaskType: 1,
       PageIndex: state.currentPageRoom,
-      PageSize: state.pageSize
+      PageSize: state.roomPageSize
     }
     let getRoomTaskListReq = api.task.getRoomTaskList(postData)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingRoomList', value: true })

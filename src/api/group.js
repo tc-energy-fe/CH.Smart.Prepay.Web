@@ -46,7 +46,7 @@ export default {
   }),
   importRoom: (params) => http({
     url: `/Group/Import`,
-    method: 'delete',
+    method: 'POST',
     params
   }),
   /** RoomAccount **/

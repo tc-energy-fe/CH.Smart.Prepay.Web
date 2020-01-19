@@ -238,8 +238,6 @@
         this.getSearchRoomList()
       }
     },
-    beforeDestroy () {
-      this.updateStateData({ item: 'currentNode', value: {} })
-    }
+    beforeDestroy () {}
   }
 </script>

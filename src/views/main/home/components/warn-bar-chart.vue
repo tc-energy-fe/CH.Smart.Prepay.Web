@@ -57,7 +57,7 @@
           },
           series: {
             type: 'bar',
-            barWidth: 20,
+            barWidth: 15,
             data: data.map(d => d.value),
             label: {
               show: true,
