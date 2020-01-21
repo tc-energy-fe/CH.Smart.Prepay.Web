@@ -32,7 +32,7 @@
           <eg-input
             :value="searchName"
             @input="updateStateData({item: 'searchName', value: $event})"
-            placeholder="房间编号/名称搜索"
+            placeholder="设备名称/编码搜索"
           />
           <el-select
             :value="searchState"

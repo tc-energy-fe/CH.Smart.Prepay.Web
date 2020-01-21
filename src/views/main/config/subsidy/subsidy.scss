@@ -1,4 +1,6 @@
 .config-subsidy {
+  display: flex;
+  flex-direction: column;
 
   .subsidy-edit__row{
     display: flex;

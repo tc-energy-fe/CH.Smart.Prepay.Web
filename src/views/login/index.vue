@@ -14,7 +14,7 @@
       </p>
       <p class="login-form__item">
         <i class="iconfont icon-login_icon_password"></i>
-        <label for="password">用户名</label>
+        <label for="password">密码</label>
         <span class="split"></span>
         <input
           id="password"

@@ -1,86 +1,86 @@
 <template>
   <div class="main-container config-price">
     <template v-if="!isShowEdit">
-      <div class="config-scheme">
-        <p class="scheme-title">电价方案查询</p>
-        <eg-box slot="content">
-          <template v-slot:headerLeft>
-            <eg-input
-              placeholder="方案名称搜索"
-              :value="searchPriceName"
-              @input="updateFormData({ item: 'searchPriceName', value: $event })"
-            ></eg-input>
-            <eg-button @click="search('price')">查询</eg-button>
-          </template>
-          <template v-slot:headerRight>
-            <eg-button @click="showEdit({ isShow: true })">新建电价方案</eg-button>
-          </template>
-          <template v-slot:content>
-            <div class="table-wrapper">
-              <el-table height="100%" v-loading="isLoadingPriceList" :data="priceList">
-                <el-table-column prop="Name" label="方案名称" align="center"></el-table-column>
-                <el-table-column prop="StatusText" label="启用状态" align="center"></el-table-column>
-                <el-table-column label="操作" align="center">
-                  <template slot-scope="{ row }">
-                    <eg-button type="text" @click="showEdit({ isShow: true, row })" style="margin-right: 1.5rem;">编辑</eg-button>
-                    <eg-button
-                      v-if="row.Status === 0"
-                      type="text" color="success"
-                      @click="modifySchemeStatus({ row, status: 3 })">停用</eg-button>
-                    <eg-button
-                      v-else
-                      type="text" color="danger"
-                      @click="modifySchemeStatus({ row, status: 0 })">启用</eg-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <el-pagination
-                background
-                @current-change="currentPricePageOnChange"
-                :current-page="currentPricePage"
-                :page-size="5"
-                layout="total, ->, prev, pager, next, jumper"
-                :total="totalPriceCount"
-              ></el-pagination>
-            </div>
-          </template>
-        </eg-box>
+      <div class="config-tab">
+        <eg-tab-group v-model="tabIndex">
+          <eg-tab-button :label="1">电价方案管理</eg-tab-button>
+          <eg-tab-button :label="2">房间方案查询</eg-tab-button>
+        </eg-tab-group>
       </div>
-      <div class="config-room">
-        <p class="scheme-title">房间方案查询</p>
-        <eg-box slot="content">
-          <template v-slot:headerLeft>
-            <eg-input
-              placeholder="房间编号/名称搜索"
-              :value="searchRoomName"
-              @input="updateFormData({ item: 'searchRoomName', value: $event })"
-            ></eg-input>
-            <eg-input
-              placeholder="电价方案搜索"
-              :value="searchSchemeType"
-              @input="updateFormData({ item: 'searchSchemeType', value: $event })"
-            ></eg-input>
-            <eg-button @click="search('room')">查询</eg-button>
-          </template>
-          <template v-slot:content>
-            <div class="table-wrapper">
-              <el-table height="100%" v-loading="isLoadingRoomList" :data="roomList">
-                <el-table-column prop="RoomNo" label="房间编号" align="center"></el-table-column>
-                <el-table-column prop="FullName" label="房间信息" align="center"></el-table-column>
-                <el-table-column prop="SchemeName" label="电价方案" align="center"></el-table-column>
-              </el-table>
-              <el-pagination
-                background
-                @current-change="currentRoomPageOnChange"
-                :current-page="currentPricePage"
-                :page-size="5"
-                layout="total, ->, prev, pager, next, jumper"
-                :total="totalPriceCount"
-              ></el-pagination>
-            </div>
-          </template>
-        </eg-box>
-      </div>
+      <eg-box v-if="tabIndex===1" class="config-scheme">
+        <template v-slot:headerLeft>
+          <eg-input
+            placeholder="方案名称搜索"
+            :value="searchPriceName"
+            @input="updateFormData({ item: 'searchPriceName', value: $event })"
+          ></eg-input>
+          <eg-button @click="search('price')">查询</eg-button>
+        </template>
+        <template v-slot:headerRight>
+          <eg-button @click="showEdit({ isShow: true })">新建电价方案</eg-button>
+        </template>
+        <template v-slot:content>
+          <el-table v-loading="isLoadingPriceList" :data="priceList" key="price">
+            <el-table-column prop="Name" label="方案名称" align="center"></el-table-column>
+            <el-table-column prop="StatusText" label="启用状态" align="center"></el-table-column>
+            <el-table-column label="操作" align="center">
+              <template slot-scope="{ row }">
+                <eg-button type="text" @click="showEdit({ isShow: true, row })" style="margin-right: 1.5rem;">编辑</eg-button>
+                <eg-button
+                  v-if="row.Status === 0"
+                  type="text" color="success"
+                  @click="modifySchemeStatus({ row, status: 3 })">停用</eg-button>
+                <eg-button
+                  v-else
+                  type="text" color="danger"
+                  @click="modifySchemeStatus({ row, status: 0 })">启用</eg-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            @current-change="currentPricePageOnChange"
+            @size-change="pricePageSizeOnChange"
+            :current-page="currentPricePage"
+            :page-size="pricePageSize"
+            :page-sizes="[10, 15, 20, 25]"
+            layout="total, ->, prev, pager, next, sizes, jumper"
+            :total="totalPriceCount"
+          ></el-pagination>
+        </template>
+      </eg-box>
+      <eg-box v-else class="config-scheme">
+        <template v-slot:headerLeft>
+          <eg-input
+            placeholder="房间编号/名称搜索"
+            :value="searchRoomName"
+            @input="updateFormData({ item: 'searchRoomName', value: $event })"
+          ></eg-input>
+          <eg-input
+            placeholder="电价方案搜索"
+            :value="searchSchemeType"
+            @input="updateFormData({ item: 'searchSchemeType', value: $event })"
+          ></eg-input>
+          <eg-button @click="search('room')">查询</eg-button>
+        </template>
+        <template v-slot:content>
+          <el-table v-loading="isLoadingRoomList" :data="roomList" key="room">
+            <el-table-column prop="RoomNo" label="房间编号" align="center"></el-table-column>
+            <el-table-column prop="FullName" label="房间信息" align="center"></el-table-column>
+            <el-table-column prop="SchemeName" label="电价方案" align="center"></el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            @current-change="currentRoomPageOnChange"
+            @size-change="roomPageSizeOnChange"
+            :current-page="currentRoomPage"
+            :page-size="roomPageSize"
+            :page-sizes="[10, 15, 20, 25]"
+            layout="total, ->, prev, pager, next, sizes, jumper"
+            :total="totalPriceCount"
+          ></el-pagination>
+        </template>
+      </eg-box>
     </template>
     <template v-if="isShowEdit">
       <eg-box class="edit-wrapper">
@@ -113,7 +113,11 @@
                 >
                   <p class="price-block__title">
                     <span style="margin-right: 1rem">时段{{pCIndex + 1}}</span>
-                    <eg-button v-if="pCIndex !== 0" type="text" @click="removeEditPriceContentItem(pCIndex)">删除时段</eg-button>
+                    <eg-button
+                      v-if="pCIndex !== 0"
+                      color="danger" type="text"
+                      @click="removeEditPriceContentItem(pCIndex)"
+                    >删除时段</eg-button>
                   </p>
                   <div class="price-block__condition">
                     <el-date-picker
@@ -298,7 +302,8 @@
     name: 'config-price',
     data () {
       return {
-        editRoomSearchName: ''
+        editRoomSearchName: '',
+        tabIndex: 1
       }
     },
     components: {},
@@ -309,8 +314,10 @@
         'priceList',
         'isLoadingPriceList',
         'currentPricePage',
+        'pricePageSize',
         'totalPriceCount',
         'currentRoomPage',
+        'roomPageSize',
         'totalRoomCount',
         'isLoadingRoomList',
         'roomList',
@@ -346,9 +353,17 @@
         this.updateFormData({ item: 'currentPricePage', value })
         this.getPriceList()
       },
+      pricePageSizeOnChange (value) {
+        this.updateFormData({ item: 'pricePageSize', value })
+        this.currentPricePageOnChange(1)
+      },
       currentRoomPageOnChange (value) {
         this.updateFormData({ item: 'currentRoomPage', value })
         this.getRoomList()
+      },
+      roomPageSizeOnChange (value) {
+        this.updateFormData({ item: 'roomPageSize', value })
+        this.currentRoomPageOnChange(1)
       },
       search (type) {
         switch (type) {

@@ -65,7 +65,7 @@
         </el-menu>
       </div>
       <div class="app-main">
-        <router-view></router-view>
+        <router-view v-if="!isLoadingMainGroupList"></router-view>
       </div>
     </div>
   </div>
@@ -96,6 +96,20 @@
       ]),
       defaultUrl () {
         return this.$route.path
+      }
+    },
+    watch: {
+      areaId (newValue, oldValue) {
+        if (!isEmpty(newValue) && newValue !== oldValue) {
+          let moduleList = this.$store._modulesNamespaceMap
+          for (let key in moduleList) {
+            let module = moduleList[key]
+            // moduleList[module].state.currentNode = {}
+            if (module._rawModule.mutations && module._rawModule.mutations.SET_DATA) {
+              module.context.commit('SET_DATA', { item: 'currentNode', value: {} })
+            }
+          }
+        }
       }
     },
     methods: {

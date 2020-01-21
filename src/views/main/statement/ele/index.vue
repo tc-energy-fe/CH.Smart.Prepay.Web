@@ -202,8 +202,6 @@
         this.search()
       }
     },
-    beforeDestroy () {
-      this.updateStateData({ item: 'currentNode', value: {} })
-    }
+    beforeDestroy () {}
   }
 </script>

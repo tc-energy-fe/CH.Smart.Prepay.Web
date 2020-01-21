@@ -16,8 +16,9 @@ const state = {
   searchNameRoom: '',
   searchNameScheme: '',
   currentPageWarn: 1,
+  warnPageSize: 10,
   currentPageRoom: 1,
-  pageSize: 5,
+  roomPageSize: 10,
   warnList: [],
   roomList: [],
   totalCountWarn: 1,
@@ -92,7 +93,7 @@ const actions = {
       Name: state.searchNameWarn,
       SchemeType: 1,
       PageIndex: state.currentPageWarn,
-      PageSize: state.pageSize
+      PageSize: state.warnPageSize
     }
     let getWarnSchemeListReq = api.scheme.getSchemeList(postData)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingWarnList', value: true })
@@ -119,7 +120,7 @@ const actions = {
       Name: state.searchNameScheme,
       SchemeType: 1,
       PageIndex: state.currentPageRoom,
-      PageSize: state.pageSize
+      PageSize: state.roomPageSize
     }
     let getRoomSchemeListReq = api.scheme.getRoomSchemeList(postData)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingRoomList', value: true })

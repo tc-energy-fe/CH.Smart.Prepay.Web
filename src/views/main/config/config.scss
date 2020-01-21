@@ -1,35 +1,14 @@
-// 基本配置上下两个部分的布局
+// 基本配置布局
+.config-tab{
+  padding: 1rem;
+  text-align: center;
+  background-color: #FFF;
+  margin-bottom: 1rem;
+}
 
 .config-scheme{
-  padding-bottom: .5rem;
-  padding-top: 2rem;
-  > .scheme-title{
-    top: 0;
-  }
-}
-
-.config-room{
-  padding-top: 2.5rem;
-  > .scheme-title{
-    top: 0.5rem;
-  }
-}
-
-.config-scheme, .config-room{
+  height: 0;
+  flex: 1;
   position: relative;
-  height: 50%;
-  > .scheme-title{
-    position: absolute;
-    left: 0;
-    display: block;
-    height: 2rem;
-    width: 100%;
-    padding-left: 1rem;
-    padding-top: 1rem;
-    background-color: #FFF;
-  }
-
-  > .eg-box{
-    height: 100%;
-  }
+  background-color: #FFF;
 }

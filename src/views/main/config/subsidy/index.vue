@@ -1,84 +1,88 @@
 <template>
   <div class="main-container config-subsidy">
     <template v-if="!isShowEdit">
-      <div class="config-scheme">
-        <p class="scheme-title">补助方案查询</p>
-        <eg-box>
-          <template v-slot:headerLeft>
-            <eg-input
-              placeholder="方案名称搜索"
-              :value="searchTaskName"
-              @input="updateStateData({item: 'searchTaskName', value: $event})"
-            ></eg-input>
-            <eg-button @click="searchTask">查询</eg-button>
-          </template>
-          <template v-slot:headerRight>
-            <eg-button @click="showEdit({ isShow: true })">新建补助方案</eg-button>
-          </template>
-          <div class="table-wrapper" slot="content">
-            <el-table v-loading="isLoadingTaskList" :data="taskList" height="100%">
-              <el-table-column prop="Name" label="方案名称" align="center"></el-table-column>
-              <el-table-column prop="SubTypeText" label="补助方式" align="center"></el-table-column>
-              <el-table-column prop="IsClearText" label="补助清零" align="center"></el-table-column>
-              <el-table-column prop="StatusText" label="启用状态" align="center"></el-table-column>
-              <el-table-column label="操作" align="center">
-                <template slot-scope="{ row }">
-                  <eg-button type="text" @click="showEdit({ isShow: true, row })" style="margin-right: 1.5rem;">编辑</eg-button>
-                  <eg-button
-                    v-if="row.Status === 0"
-                    type="text" color="success"
-                    @click="modifySubsidyStatus({ row, status: 3 })">停用</eg-button>
-                  <eg-button
-                    v-else
-                    type="text" color="danger"
-                    @click="modifySubsidyStatus({ row, status: 0 })">启用</eg-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <el-pagination
-              background
-              @current-change="currentTaskPageOnChange"
-              :current-page="currentPageTask"
-              :page-size="pageSize"
-              layout="total, ->, prev, pager, next, jumper"
-              :total="totalCountTask"
-            ></el-pagination>
-          </div>
-        </eg-box>
+      <div class="config-tab">
+        <eg-tab-group v-model="tabIndex">
+          <eg-tab-button :label="1">补助方案管理</eg-tab-button>
+          <eg-tab-button :label="2">房间方案查询</eg-tab-button>
+        </eg-tab-group>
       </div>
-      <div class="config-room">
-        <p class="scheme-title">房间方案查询</p>
-        <eg-box>
-          <template v-slot:headerLeft>
-            <eg-input
-              placeholder="房间编号/名称搜索"
-              :value="searchNameRoom"
-              @input="updateStateData({item: 'searchNameRoom', value: $event})"
-            ></eg-input>
-            <eg-input
-              placeholder="补助方案搜索"
-              :value="searchTaskType"
-              @input="updateStateData({item: 'searchTaskType', value: $event})"
-            ></eg-input>
-            <eg-button @click="searchRoom">查询</eg-button>
-          </template>
-          <div class="table-wrapper" slot="content">
-            <el-table v-loading="isLoadingRoomList" :data="roomList" height="100%">
-              <el-table-column prop="RoomNo" label="房间编号" align="center"></el-table-column>
-              <el-table-column prop="FullName" label="房间信息" align="center"></el-table-column>
-              <el-table-column prop="TaskName" label="补助方案" align="center"></el-table-column>
-            </el-table>
-            <el-pagination
-              background
-              @current-change="currentRoomPageOnChange"
-              :current-page="currentPageRoom"
-              :page-size="pageSize"
-              layout="total, ->, prev, pager, next, jumper"
-              :total="totalCountRoom"
-            ></el-pagination>
-          </div>
-        </eg-box>
-      </div>
+      <eg-box v-show="tabIndex===1" class="config-scheme">
+        <template v-slot:headerLeft>
+          <eg-input
+            placeholder="方案名称搜索"
+            :value="searchTaskName"
+            @input="updateStateData({item: 'searchTaskName', value: $event})"
+          ></eg-input>
+          <eg-button @click="searchTask">查询</eg-button>
+        </template>
+        <template v-slot:headerRight>
+          <eg-button @click="showEdit({ isShow: true })">新建补助方案</eg-button>
+        </template>
+        <template v-slot:content>
+          <el-table v-loading="isLoadingTaskList" :data="taskList" key="subsidy">
+            <el-table-column prop="Name" label="方案名称" align="center"></el-table-column>
+            <el-table-column prop="SubTypeText" label="补助方式" align="center"></el-table-column>
+            <el-table-column prop="IsClearText" label="补助清零" align="center"></el-table-column>
+            <el-table-column prop="StatusText" label="启用状态" align="center"></el-table-column>
+            <el-table-column label="操作" align="center">
+              <template slot-scope="{ row }">
+                <eg-button type="text" @click="showEdit({ isShow: true, row })" style="margin-right: 1.5rem;">编辑</eg-button>
+                <eg-button
+                  v-if="row.Status === 0"
+                  type="text" color="success"
+                  @click="modifySubsidyStatus({ row, status: 3 })">停用</eg-button>
+                <eg-button
+                  v-else
+                  type="text" color="danger"
+                  @click="modifySubsidyStatus({ row, status: 0 })">启用</eg-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            @current-change="currentTaskPageOnChange"
+            @size-change="taskPageSizeOnChange"
+            :current-page="currentPageTask"
+            :page-size="taskPageSize"
+            :page-sizes="[10, 15, 20, 25]"
+            layout="total, ->, prev, pager, next, sizes, jumper"
+            :total="totalCountTask"
+          ></el-pagination>
+        </template>
+      </eg-box>
+      <eg-box v-show="tabIndex===2" class="config-room">
+        <template v-slot:headerLeft>
+          <eg-input
+            placeholder="房间户号/门牌号搜索"
+            :value="searchNameRoom"
+            @input="updateStateData({item: 'searchNameRoom', value: $event})"
+          ></eg-input>
+          <eg-input
+            placeholder="补助方案搜索"
+            :value="searchTaskType"
+            @input="updateStateData({item: 'searchTaskType', value: $event})"
+          ></eg-input>
+          <eg-button @click="searchRoom">查询</eg-button>
+        </template>
+        <template v-slot:content>
+          <el-table v-loading="isLoadingRoomList" :data="roomList" key="room">
+            <el-table-column prop="RoomNo" label="户号" align="center"></el-table-column>
+            <el-table-column prop="FullName" label="房间信息" align="center"></el-table-column>
+            <el-table-column prop="TaskName" label="补助方案" align="center"></el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            @current-change="currentRoomPageOnChange"
+            @size-change="roomPageSizeOnChange"
+            :current-page="currentPageRoom"
+            :page-size="roomPageSize"
+            :page-sizes="[10, 15, ,20, 25]"
+            layout="total, ->, prev, pager, next, sizes, jumper"
+            :total="totalCountRoom"
+          ></el-pagination>
+        </template>
+      </eg-box>
     </template>
     <template v-if="isShowEdit">
       <eg-box class="edit-wrapper">
@@ -150,7 +154,7 @@
                   <eg-button
                     v-if="index !== 0"
                     type="text" color="danger"
-                    @click="deletePricePeriod(index)">删除该时段</eg-button>
+                    @click="deletePricePeriod(index)">删除时段</eg-button>
                 </p>
                 <eg-checkbox-group
                   v-if="!isLoadingTaskDic && !isLoadingTaskDetail"
@@ -171,7 +175,7 @@
                     @input="editPricePeriodDataOnChange({ index, key: 'Monney', value: $event })"></eg-input>
                 </p>
               </div>
-              <eg-button type="text" @click="addPricePeriod">添加金额设置</eg-button>
+              <eg-button type="text" @click="addPricePeriod">添加时段</eg-button>
             </div>
             <i class="iconfont icon-content_icon_required"></i>
           </div>
@@ -215,7 +219,8 @@
     name: 'config-subsidy',
     data () {
       return {
-        editRoomSearchName: ''
+        editRoomSearchName: '',
+        tabIndex: 1
       }
     },
     components: { MonthRangePicker },
@@ -228,11 +233,13 @@
         'totalCountTask',
         'pageSize',
         'currentPageTask',
+        'taskPageSize',
         'isLoadingTaskList',
         'roomList',
         'searchNameRoom',
         'searchTaskType',
         'currentPageRoom',
+        'roomPageSize',
         'isLoadingRoomList',
         'totalCountRoom',
         'springTerm',
@@ -279,9 +286,17 @@
         this.updateStateData({ item: 'currentPageTask', value })
         this.getTaskList()
       },
+      taskPageSizeOnChange (value) {
+        this.updateStateData({ item: 'taskPageSize', value })
+        this.currentTaskPageOnChange(1)
+      },
       currentRoomPageOnChange (value) {
         this.updateStateData({ item: 'currentPageRoom', value })
         this.getRoomList()
+      },
+      roomPageSizeOnChange (value) {
+        this.updateStateData({ item: 'roomPageSize', value })
+        this.currentRoomPageOnChange(1)
       },
       editTermMonthsOnChange (type, value) {
         switch (type) {

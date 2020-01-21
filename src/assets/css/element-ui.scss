@@ -1,6 +1,8 @@
 /***********
  * 变量重写 *
  ***********/
+$--color-primary: $main-color;
+$--font-size-base: $font-size;
 
 // select
 $--select-input-focus-border-color: $main-color;

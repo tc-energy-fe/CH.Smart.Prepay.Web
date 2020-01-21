@@ -139,6 +139,7 @@ const actions = {
       let data = res.Data || []
       let list = data.map(item => ({
         name: moment(item.Date).format('MM-DD'),
+        label: moment(item.Date).format('YYYY.MM.DD'),
         value: isEmpty(item.DeltaTotal) ? '-' : item.DeltaTotal
       }))
       commit(types.SET_DATA, { item: 'sevenDayData', value: list })

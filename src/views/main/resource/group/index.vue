@@ -183,7 +183,6 @@
     },
     beforeDestroy () {
       this.showEdit({ isShow: false })
-      this.updateFormData({ item: 'currentNode', value: {} })
     }
   }
 </script>

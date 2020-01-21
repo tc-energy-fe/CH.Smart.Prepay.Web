@@ -1,4 +1,7 @@
 .config-price{
+  display: flex;
+  flex-direction: column;
+
   .price-edit{
     width: 100%;
     height: 100%;
@@ -19,7 +22,6 @@
 
     > .iconfont{
       margin-left: .5rem;
-      font-size: .6rem;
     }
 
     // 电价设置

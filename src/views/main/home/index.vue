@@ -107,7 +107,7 @@
               </div>
             </div>
             <div class="period--right">
-              <income-pie-chart :data="incomeChartData" unit="元" :custom-props="{ startAngle: 0 }"></income-pie-chart>
+              <income-pie-chart :data="incomeChartData" unit="元" :custom-props="{ startAngle: 0, radius: ['45%', '55%'] }"></income-pie-chart>
             </div>
           </div>
         </template>

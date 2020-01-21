@@ -44,6 +44,10 @@
             startAngle: isEmpty(props.startAngle) ? 90 : props.startAngle,
             label: {
               formatter: `{b} {c} ${this.unit}`
+            },
+            labelLine: {
+              length: 5,
+              length2: 10
             }
           }]
         }

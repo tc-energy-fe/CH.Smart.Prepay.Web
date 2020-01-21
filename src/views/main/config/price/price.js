@@ -13,8 +13,10 @@ const state = {
   priceList: [],
   isLoadingPriceList: false,
   currentPricePage: 1,
+  pricePageSize: 10,
   totalPriceCount: 0,
   currentRoomPage: 1,
+  roomPageSize: 10,
   totalRoomCount: 0,
   isLoadingRoomList: false,
   roomList: [],
@@ -69,13 +71,13 @@ const actions = {
         StepPrice: false,
         SettlDay: null,
         PricePeriod: Array.apply(null, Array(3)).map(() => ({
-          EleUpLine: null,
-          AvgPrice: null,
-          EleDownLine: null,
-          Point: null,
-          Peak: null,
-          Flat: null,
-          Valley: null
+          EleUpLine: 0,
+          AvgPrice: 0,
+          EleDownLine: 0,
+          Point: 0,
+          Peak: 0,
+          Flat: 0,
+          Valley: 0
         }))
       }]
     })
@@ -109,7 +111,7 @@ const actions = {
       Name: state.searchPriceName,
       SchemeType: 0, // 电价方案
       PageIndex: state.currentPricePage,
-      PageSize: 5
+      PageSize: state.pricePageSize
     }
     let getPriceListReq = api.scheme.getSchemeList(postData)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingPriceList', value: true })
@@ -196,7 +198,6 @@ const actions = {
       schemeType: 0
     }
     if (state.isModify) params.configId = id
-
     let getEditRoomListReq = state.isModify ? api.group.getRoomConfigEditList(params) : api.group.getRoomConfigAddList(params)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingEditRoomList', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'getEditRoomListReq', value: getEditRoomListReq.cancel })
@@ -210,7 +211,7 @@ const actions = {
     })
   },
   modifySchemeStatus ({ state, getters, commit, dispatch }, { row, status }) {
-    ElConfirm(`是否${status === 0 ? '启用' : '停用'}方案 ${row.Name} ？`).then(res => {
+    ElConfirm(`是否${status === 0 ? '启用' : '停用'}方案 ${row.Name} ？`, '提示').then(res => {
       let postData = {
         Id: row.Id,
         Status: status
@@ -270,7 +271,8 @@ const actions = {
       return null
     }
     // 电价设置验证
-    let PriceContent = editPriceContent.map((pc, pcIndex) => {
+    let PriceContent = []
+    let PriceContentValid = editPriceContent.some((pc, pcIndex) => {
       let item = {
         DateStart: moment(pc.DateStart).format('M/D'),
         DateEnd: moment(pc.DateEnd).format('M/D'),
@@ -279,9 +281,9 @@ const actions = {
       }
       if (pc.StepPrice) {
         // 阶梯电价
-        if (isEmpty(pc.SettlDay)) {
+        if (isEmpty(pc.SettlDay) || pc.SettlDay === '') {
           ElAlert(`请选择 电价设置：时段${pcIndex + 1} - 结算日！`, '提示')
-          return null
+          return true
         } else {
           item.SettlDay = pc.SettlDay
         }
@@ -291,7 +293,7 @@ const actions = {
           // 判断电价方式
           if (pc.PriceType) {
             // 统一电价
-            if (isEmpty(p.AvgPrice)) {
+            if (isEmpty(p.AvgPrice) || p.AvgPrice === '') {
               ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 总电价！`, '提示')
               return true
             } else {
@@ -300,31 +302,31 @@ const actions = {
           } else {
             // 分时电价
             if (index === arr.length - 1) {
-              if (isEmpty(p.EleDownLine)) {
+              if (isEmpty(p.EleDownLine) || p.EleDownLine === '') {
                 ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 电量上限！`, '提示')
                 return true
               }
               period.EleDownLine = p.EleDownLine
             } else {
-              if (isEmpty(p.EleUpLine)) {
+              if (isEmpty(p.EleUpLine) || p.EleUpLine === '') {
                 ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 电量下限！`, '提示')
                 return true
               }
               period.EleUpLine = p.EleUpLine
             }
-            if (isEmpty(p.Point)) {
+            if (isEmpty(p.Point) || p.Point === '') {
               ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 尖电价！`, '提示')
               return true
             }
-            if (isEmpty(p.Peak)) {
+            if (isEmpty(p.Peak) || p.Peak === '') {
               ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 峰电价！`, '提示')
               return true
             }
-            if (isEmpty(p.Flat)) {
+            if (isEmpty(p.Flat) || p.Flat === '') {
               ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 平电价！`, '提示')
               return true
             }
-            if (isEmpty(p.Valley)) {
+            if (isEmpty(p.Valley) || p.Valley === '') {
               ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 第${index + 1}阶梯 - 谷电价！`, '提示')
               return true
             }
@@ -335,7 +337,7 @@ const actions = {
           }
         })
         if (periodsValid) {
-          return null
+          return true
         } else {
           item.PricePeriod = periods
         }
@@ -347,29 +349,29 @@ const actions = {
         if (pc.PriceType) {
           // 统一电价
           let avg = p.AvgPrice
-          if (isEmpty(avg)) {
+          if (isEmpty(avg) || avg === '') {
             ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 总电价！`, '提示')
-            return null
+            return true
           } else {
             period.AvgPrice = avg
           }
         } else {
           // 分时电价
-          if (isEmpty(p.Point)) {
+          if (isEmpty(p.Point) || p.Point === '') {
             ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 尖电价！`, '提示')
-            return null
+            return true
           }
-          if (isEmpty(p.Peak)) {
+          if (isEmpty(p.Peak) || p.Peak === '') {
             ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 峰电价！`, '提示')
-            return null
+            return true
           }
-          if (isEmpty(p.Flat)) {
+          if (isEmpty(p.Flat) || p.Flat === '') {
             ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 平电价！`, '提示')
-            return null
+            return true
           }
-          if (isEmpty(p.Valley)) {
+          if (isEmpty(p.Valley) || p.Valley === '') {
             ElAlert(`请填写 电价设置：时段${pcIndex + 1} - 谷电价！`, '提示')
-            return null
+            return true
           }
           period.Point = p.Point
           period.Peak = p.Peak
@@ -378,9 +380,9 @@ const actions = {
         }
         item.PricePeriod = { 1: period }
       }
-      return item
+      PriceContent.push(item)
     })
-    if (PriceContent.some(p => isEmpty(p))) {
+    if (PriceContentValid) {
       return null
     }
     postData.PriceContent = PriceContent
@@ -409,13 +411,13 @@ const mutations = {
       StepPrice: false,
       SettlDay: null,
       PricePeriod: Array.apply(null, Array(3)).map(() => ({
-        EleUpLine: null,
-        AvgPrice: null,
-        EleDownLine: null,
-        Point: null,
-        Peak: null,
-        Flat: null,
-        Valley: null
+        EleUpLine: 0,
+        AvgPrice: 0,
+        EleDownLine: 0,
+        Point: 0,
+        Peak: 0,
+        Flat: 0,
+        Valley: 0
       }))
     })
   },

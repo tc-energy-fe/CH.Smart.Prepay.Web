@@ -1,82 +1,82 @@
 <template>
   <div class="main-container config-warn">
     <template v-if="!isShowEdit">
-      <div class="config-scheme">
-        <p class="scheme-title">余额告警方案管理</p>
-        <eg-box>
-          <template v-slot:headerLeft>
-            <eg-input
-              placeholder="方案名称搜索"
-              :value="searchNameWarn"
-              @input="updateStateData({item: 'searchNameWarn', value: $event})"
-            />
-            <eg-button @click="getWarnSchemeList">查询</eg-button>
-          </template>
-          <template v-slot:headerRight>
-            <eg-button @click="showEdit">新建报警方案</eg-button>
-          </template>
-          <template v-slot:content>
-            <div class="table-wrapper">
-              <el-table height="100%" :data="warnList" v-loading="isLoadingWarnList">
-                <el-table-column prop="Name" label="方案名称" align="center" />
-                <el-table-column prop="WarnValueText" label="报警阈值（元）" align="center" />
-                <el-table-column prop="OffTypeText" label="拉闸方式" align="center" />
-                <el-table-column prop="StatusText" label="启用状态" align="center" />
-                <el-table-column label="操作" align="center">
-                  <template v-slot="{row}">
-                    <eg-button type="text" style="margin-right: 1rem;" @click="showEdit({row})">编辑</eg-button>
-                    <eg-button v-if="row.Status === 3" @click="editSchemeStatus({ row, status: 0 })" type="text" color="success">启用</eg-button>
-                    <eg-button v-else-if="row.Status === 0" @click="editSchemeStatus({ row, status: 3 })" type="text" color="danger">停用</eg-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <el-pagination
-                background
-                :current-page="currentPageWarn"
-                :page-size="pageSize"
-                :total="totalCountWarn"
-                layout="total, ->, prev, pager, next"
-                @current-change="currentPageWarnChange($event)"
-              />
-            </div>
-          </template>
-        </eg-box>
+      <div class="config-tab">
+        <eg-tab-group v-model="tabIndex">
+          <eg-tab-button :label="1">余额告警方案管理</eg-tab-button>
+          <eg-tab-button :label="2">房间方案查询</eg-tab-button>
+        </eg-tab-group>
       </div>
-      <div class="config-room">
-        <p class="scheme-title">房间方案查询</p>
-        <eg-box>
-          <template v-slot:headerLeft>
-            <eg-input
-              placeholder="房间编号/名称搜索"
-              :value="searchNameRoom"
-              @input="updateStateData({item: 'searchNameRoom', value: $event})"
-            />
-            <eg-input
-              placeholder="余额报警方案搜索"
-              :value="searchNameScheme"
-              @input="updateStateData({item: 'searchNameScheme', value: $event})"
-            />
-            <eg-button @click="getRoomList">查询</eg-button>
-          </template>
-          <template v-slot:content>
-            <div class="table-wrapper">
-              <el-table height="100%" :data="roomList" v-loading="isLoadingRoomList">
-                <el-table-column prop="RoomNo" label="房间编号" align="center" />
-                <el-table-column prop="FullName" label="房间信息" align="center" />
-                <el-table-column prop="SchemeName" label="余额报警方案" align="center" />
-              </el-table>
-              <el-pagination
-                background
-                :current-page="currentPageRoom"
-                :page-size="pageSize"
-                :total="totalCountRoom"
-                layout="total, ->, prev, pager, next"
-                @current-change="currentPageRoomChange($event)"
-              />
-            </div>
-          </template>
-        </eg-box>
-      </div>
+      <eg-box v-show="tabIndex===1" class="config-scheme">
+        <template v-slot:headerLeft>
+          <eg-input
+            placeholder="方案名称搜索"
+            :value="searchNameWarn"
+            @input="updateStateData({item: 'searchNameWarn', value: $event})"
+          />
+          <eg-button @click="getWarnSchemeList">查询</eg-button>
+        </template>
+        <template v-slot:headerRight>
+          <eg-button @click="showEdit">新建报警方案</eg-button>
+        </template>
+        <template v-slot:content>
+          <el-table :data="warnList" v-loading="isLoadingWarnList">
+            <el-table-column prop="Name" label="方案名称" align="center" />
+            <el-table-column prop="WarnValueText" label="报警阈值（元）" align="center" />
+            <el-table-column prop="OffTypeText" label="拉闸方式" align="center" />
+            <el-table-column prop="StatusText" label="启用状态" align="center" />
+            <el-table-column label="操作" align="center">
+              <template v-slot="{row}">
+                <eg-button type="text" style="margin-right: 1rem;" @click="showEdit({row})">编辑</eg-button>
+                <eg-button v-if="row.Status === 3" @click="editSchemeStatus({ row, status: 0 })" type="text" color="success">启用</eg-button>
+                <eg-button v-else-if="row.Status === 0" @click="editSchemeStatus({ row, status: 3 })" type="text" color="danger">停用</eg-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            :current-page="currentPageWarn"
+            :page-size="warnPageSize"
+            :page-sizes="[10, 15, 20, 25]"
+            :total="totalCountWarn"
+            layout="total, ->, prev, pager, next, sizes, jumper"
+            @current-change="currentPageWarnChange"
+            @size-change="warnPageSizeOnChange"
+          />
+        </template>
+      </eg-box>
+      <eg-box v-show="tabIndex===2" class="config-room">
+        <template v-slot:headerLeft>
+          <eg-input
+            placeholder="房间户号/门牌号搜索"
+            :value="searchNameRoom"
+            @input="updateStateData({item: 'searchNameRoom', value: $event})"
+          />
+          <eg-input
+            placeholder="余额报警方案搜索"
+            :value="searchNameScheme"
+            @input="updateStateData({item: 'searchNameScheme', value: $event})"
+          />
+          <eg-button @click="getRoomList">查询</eg-button>
+        </template>
+        <template v-slot:content>
+          <el-table :data="roomList" v-loading="isLoadingRoomList">
+            <el-table-column prop="RoomNo" label="户号" align="center" />
+            <el-table-column prop="FullName" label="房间信息" align="center" />
+            <el-table-column prop="SchemeName" label="余额报警方案" align="center" />
+          </el-table>
+          <el-pagination
+            background
+            :current-page="currentPageRoom"
+            :page-size="roomPageSize"
+            :page-sizes="[10, 15, 20, 25]"
+            :total="totalCountRoom"
+            layout="total, ->, prev, pager, next, sizes, jumper"
+            @current-change="currentPageRoomChange"
+            @size-change="roomPageSizeOnChange"
+          />
+        </template>
+      </eg-box>
     </template>
     <template v-if="isShowEdit">
       <eg-box class="edit-wrapper warn-edit">
@@ -194,6 +194,7 @@
     name: 'ConfigWarn',
     data () {
       return {
+        tabIndex: 1
       }
     },
     components: {},
@@ -203,7 +204,9 @@
         'searchNameRoom',
         'searchNameScheme',
         'currentPageWarn',
+        'warnPageSize',
         'currentPageRoom',
+        'roomPageSize',
         'pageSize',
         'warnList',
         'roomList',
@@ -241,9 +244,17 @@
         this.updateStateData({ item: 'currentPageWarn', value: page })
         this.getWarnSchemeList()
       },
+      warnPageSizeOnChange (page) {
+        this.updateStateData({ item: 'warnPageSize', value: page })
+        this.currentPageWarnChange(1)
+      },
       currentPageRoomChange (page) {
         this.updateStateData({ item: 'currentPageRoom', value: page })
         this.getRoomList()
+      },
+      roomPageSizeOnChange (value) {
+        this.updateStateData({ item: 'roomPageSize', value })
+        this.currentPageRoomChange(1)
       },
       saveClick () {
         let checkedKeys = this.$refs.editTree.getCheckedKeys(true)
