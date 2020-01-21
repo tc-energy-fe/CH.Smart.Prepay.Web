@@ -191,6 +191,19 @@ const actions = {
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
+  },
+  deleteRoleData ({ commit, state, getters, dispatch }, { row }) {
+    ElConfirm(`确认要删除此角色${row.RoleName}`, '提示').then(() => {
+      let roleId = row.Id
+      let deleteRoleDataReq = api.role.deleteSingleRole(roleId)
+      commit(types.ADD_REQUEST_CANCEL, { item: 'deleteRoleDataReq', value: deleteRoleDataReq.cancel })
+      deleteRoleDataReq.request.then(res => {
+        commit(types.CHECKOUT_SUCCEED, res.State)
+        dispatch('getRoleListData')
+      }).catch(err => {
+        commit(types.CHECKOUT_FAILURE, err)
+      })
+    })
   }
 }
 

@@ -9,11 +9,11 @@
     overflow: hidden;
 }
 
-.icon-tab_icon_fold:before {
+.icon-tab_icon_fold {
     color: #3D7DFF;
 }
 
-.icon-content_icon_required:before {
+.icon-content_icon_required {
     color: #f56c6c;
-    /*font-size: 12px;*/
+    font-size: 12px;
 }

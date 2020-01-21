@@ -281,7 +281,7 @@ const actions = {
         Id: row.Id,
         Status: status
       }
-      let changeUserStatusReq = api.user.putUserManage(postData)
+      let changeUserStatusReq = api.user.putUserManageStatus(postData)
       commit(types.ADD_REQUEST_CANCEL, { item: 'changeUserStatusReq', value: changeUserStatusReq.cancel })
       changeUserStatusReq.request.then(res => {
         commit(types.CHECKOUT_SUCCEED, res.State)

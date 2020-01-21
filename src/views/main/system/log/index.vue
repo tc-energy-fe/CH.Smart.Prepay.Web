@@ -24,7 +24,7 @@
         <el-table :data="logList" v-loading="isLoadingLogList">
           <el-table-column label="操作人" prop="OperatorName" align="center"/>
           <el-table-column label="操作类型" prop="OTypeText" align="center"/>
-          <el-table-column label="操作时间" prop="Time" align="center"/>
+          <el-table-column label="操作时间" prop="TimeText" align="center"/>
           <el-table-column label="操作内容" prop="Content" align="center"/>
         </el-table>
         <el-pagination

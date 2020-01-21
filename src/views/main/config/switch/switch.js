@@ -34,8 +34,8 @@ const state = {
   editPeriodList: [
     {
       SwitchParam: true,
-      Time: new Date(),
-      Days: [1, 3, 7]
+      Time: moment().hour(6).startOf('hour').toDate(),
+      Days: [1, 2, 3, 4, 5, 6, 7]
     }
   ],
   editTreeData: [],
@@ -66,8 +66,8 @@ const actions = {
         value: [
           {
             SwitchParam: true,
-            Time: new Date(),
-            Days: [1, 3, 7]
+            Time: moment().hour(6).startOf('hour').toDate(),
+            Days: [1, 2, 3, 4, 5, 6, 7]
           }
         ]
       })

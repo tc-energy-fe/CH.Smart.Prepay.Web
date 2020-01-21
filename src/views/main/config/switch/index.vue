@@ -52,7 +52,7 @@
         <eg-box>
           <template v-slot:headerLeft>
             <eg-input
-              placeholder="房间编号/名称搜索"
+              placeholder="房间门牌号搜索"
               :value="searchNameRoom"
               @input="updateStateData({item: 'searchNameRoom', value: $event})"
             />
