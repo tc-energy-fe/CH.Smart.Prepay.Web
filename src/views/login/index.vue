@@ -101,8 +101,15 @@
     },
     watch: {},
     created () {
+      window.onkeydown = (event) => {
+        console.log(event)
+        if (event.key === 'Enter') {
+          this.loginOnClick()
+        }
+      }
     },
-    beforeDestroy () {}
+    beforeDestroy () {
+    }
   }
 </script>
 

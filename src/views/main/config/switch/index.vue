@@ -125,15 +125,15 @@
                   <eg-button type="text" color="danger" @click="handleDeletePeriod(index)">删除时段</eg-button>
                 </div>
                 <div>
-                  <el-checkbox-group :value="item.Days" @input="handleInputPeriod($event, index, 'Days')">
-                    <el-checkbox-button
+                  <eg-checkbox-group size="short" :value="item.Days" @change="handleInputPeriod($event, index, 'Days')">
+                    <eg-checkbox-button
                       v-for="(day, dayIndex) of editTaskDays"
                       :key="dayIndex"
                       :label="day.label"
                     >
                       {{day.text}}
-                    </el-checkbox-button>
-                  </el-checkbox-group>
+                    </eg-checkbox-button>
+                  </eg-checkbox-group>
                 </div>
                 <div>
                   <el-time-picker
