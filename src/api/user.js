@@ -15,6 +15,11 @@ export default {
     method: 'PUT',
     data
   }),
+  putUserManageStatus: (data) => http({
+    url: `/UserManage/Status`,
+    method: 'PUT',
+    data
+  }),
   postUserManage: (data) => http({
     url: `/UserManage`,
     method: 'POST',

@@ -2,6 +2,7 @@ import Actions from '@/store/actions'
 import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
+import moment from 'moment'
 
 const TOTAL_OPTION_VALUE = 'total'
 
@@ -65,7 +66,8 @@ const actions = {
       let searchOperateTypeList = state.searchOperateTypeList
       let logList = data.map(item => {
         return Object.assign({}, item, {
-          OTypeText: searchOperateTypeList.find(type => (type.value === item.OType)).label
+          OTypeText: searchOperateTypeList.find(type => (type.value === item.OType)).label,
+          TimeText: moment(item.Time).format('YYYY-MM-DD HH:mm:ss')
         })
       })
       commit(types.SET_DATA, { item: 'logList', value: logList })

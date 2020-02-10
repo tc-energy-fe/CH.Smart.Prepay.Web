@@ -27,7 +27,7 @@
             <template v-slot="{row}">
               <el-popover title="角色权限详情" popper-class="row-popper">
                 <div class="row-popper__content">
-                  <el-tree :data="singleRoleMenusTreeData"/>
+                  <el-tree :data="singleRoleMenusTreeData" default-expand-all/>
                 </div>
                 <eg-button slot="reference" type="text" @click="getSingleRoleData({id: row.RoleId, isEdit: false})">查看权限</eg-button>
               </el-popover>
@@ -38,7 +38,7 @@
           <el-table-column label="操作" align="center">
             <template v-slot="{row}">
               <eg-button type="text" style="margin-right: 1rem;" @click="showEdit({row})">编辑</eg-button>
-              <eg-button type="text" color="danger">删除</eg-button>
+              <eg-button type="text" color="danger" @click="deleteRoleData({row})">删除</eg-button>
             </template>
           </el-table-column>
         </el-table>
@@ -166,6 +166,7 @@
         'getSingleRoleData',
         'addRoleData',
         'saveRoleData',
+        'deleteRoleData',
         'currentPageOnChange',
         'pageSizeOnChange',
         'updateStateData',
