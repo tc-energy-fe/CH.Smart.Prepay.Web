@@ -150,7 +150,7 @@ const actions = {
       Name: editData.Name
     }
     if (!postData.Name || postData.Name === '') {
-      ElAlert('请填写房间名称！', '提示').then(() => {})
+      ElAlert('请填写门牌编号！', '提示').then(() => {})
       return
     }
     if (state.isModify) {
@@ -183,7 +183,7 @@ const actions = {
     }).finally(() => {})
   },
   deleteRoom ({ state, commit, dispatch }, data) {
-    ElConfirm(`确定要删除区域 ${data.Name} 吗？`, '提示').then(() => {
+    ElConfirm(`确定要删除房间 ${data.Name} 吗？`, '提示').then(() => {
       let deleteRoomReq = api.group.deleteRoom(data.Id)
       commit(types.ADD_REQUEST_CANCEL, { item: 'deleteRoomReq', value: deleteRoomReq.cancel })
       deleteRoomReq.request.then(res => {

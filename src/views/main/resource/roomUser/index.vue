@@ -2,7 +2,7 @@
   <div class="resource-roomuser main-container has-search">
     <template v-if="!isShowEdit">
       <div class="main-search">
-        <p>选择区域</p>
+        <p class="main-search__title">选择区域</p>
         <el-tree
           :key="'tree'"
           ref="tree"
@@ -19,7 +19,7 @@
       <div class="main-content">
         <eg-box v-show="!isShowEdit">
           <template v-slot:headerLeft>
-            <eg-input placeholder="房间编号搜索"></eg-input>
+            <eg-input placeholder="户号搜索"></eg-input>
             <eg-input placeholder="名称搜索"></eg-input>
             <el-select
               placeholder="开户状态"
@@ -37,7 +37,7 @@
           </template>
           <template v-slot:content>
             <el-table :data="roomList" v-loading="isLoadingRoomAccountList">
-              <el-table-column prop="GroupNo" label="房间编号" align="center" min-width="130"></el-table-column>
+              <el-table-column prop="GroupNo" label="户号" align="center" min-width="130"></el-table-column>
               <el-table-column prop="FullName" label="房间信息" align="center" min-width="180"></el-table-column>
               <el-table-column prop="StateText" label="开户状态" align="center" min-width="80"></el-table-column>
               <el-table-column prop="HostName" label="开户人姓名" align="center" min-width="100"></el-table-column>

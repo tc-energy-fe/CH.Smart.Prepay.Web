@@ -2,9 +2,6 @@ import Actions from '@/store/actions'
 import Mutations from '@/store/mutations'
 import api from '@/api'
 import * as types from '@/store/mutation-types'
-// import apiUrl from '@/api/analysis/apiUrl'
-// import download from '@/utils/download'
-// import moment from 'moment'
 
 const state = {
   reqCancels: new Map(),
@@ -117,18 +114,34 @@ const actions = {
     }
     console.log(postData)
 
-    let editAccountReq = isAddAccount ? api.group.addRoomAccount(postData) : api.group.deleteRoomAccount(postData)
     commit(types.SET_LOADING_STATUS, { item: 'isEditingAccount', value: true })
-    commit(types.ADD_REQUEST_CANCEL, { item: 'editAccountReq', value: editAccountReq.cancel })
-    editAccountReq.request.then(res => {
-      commit(types.CHECKOUT_SUCCEED, res.State)
-      dispatch('showEdit', { isShow: false })
-      dispatch('getRoomAccountList')
-    }).catch(err => {
-      commit(types.CHECKOUT_FAILURE, err)
-    }).finally(() => {
-      commit(types.SET_LOADING_STATUS, { item: 'isEditingAccount', value: false })
-    })
+    if (!isAddAccount) {
+      ElConfirm('是否确认销户？', '提示').then(res => {
+        let editAccountReq = api.group.deleteRoomAccount(postData)
+        commit(types.ADD_REQUEST_CANCEL, { item: 'editAccountReq', value: editAccountReq.cancel })
+        editAccountReq.request.then(res => {
+          commit(types.CHECKOUT_SUCCEED, res.State)
+          dispatch('showEdit', { isShow: false })
+          dispatch('getRoomAccountList')
+        }).catch(err => {
+          commit(types.CHECKOUT_FAILURE, err)
+        }).finally(() => {
+          commit(types.SET_LOADING_STATUS, { item: 'isEditingAccount', value: false })
+        })
+      })
+    } else {
+      let editAccountReq = api.group.addRoomAccount(postData)
+      commit(types.ADD_REQUEST_CANCEL, { item: 'editAccountReq', value: editAccountReq.cancel })
+      editAccountReq.request.then(res => {
+        commit(types.CHECKOUT_SUCCEED, res.State)
+        dispatch('showEdit', { isShow: false })
+        dispatch('getRoomAccountList')
+      }).catch(err => {
+        commit(types.CHECKOUT_FAILURE, err)
+      }).finally(() => {
+        commit(types.SET_LOADING_STATUS, { item: 'isEditingAccount', value: false })
+      })
+    }
   }
 }
 

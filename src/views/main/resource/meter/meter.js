@@ -54,8 +54,8 @@ const actions = {
         PCategory: 1,
         LDeviceType: null, // 控费方式
         GatewayId: null,
-        EMeterModel: null, // 电表模块
-        IsSum: null, // 分支类型
+        EMeterModel: '单相', // 电表模块
+        IsSum: false, // 分支类型
         IsSettle: true, // 是否结算
         StartPointed: null,
         StartTotal: null,
@@ -90,6 +90,7 @@ const actions = {
         label: t[1]
       }))
       commit(types.SET_DATA, { item: 'editEleTypeList', value: list })
+      commit(types.UPDATE_OBJ_DATA, { obj: 'editData', item: 'LDeviceType', value: list[0] ? list[0].value : null })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {

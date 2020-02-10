@@ -30,11 +30,11 @@
                 <eg-button type="text" @click="showEdit({ isShow: true, row })" style="margin-right: 1.5rem;">编辑</eg-button>
                 <eg-button
                   v-if="row.Status === 0"
-                  type="text" color="success"
+                  type="text" color="danger"
                   @click="modifySubsidyStatus({ row, status: 3 })">停用</eg-button>
                 <eg-button
                   v-else
-                  type="text" color="danger"
+                  type="text" color="success"
                   @click="modifySubsidyStatus({ row, status: 0 })">启用</eg-button>
               </template>
             </el-table-column>
@@ -88,7 +88,7 @@
       <eg-box class="edit-wrapper">
         <template v-slot:headerLeft>
           <div class="edit-header">
-            <p class="edit-header__title">{{isModify ? '编辑' : '新建'}}余额报警方案</p>
+            <p class="edit-header__title">{{isModify ? '编辑' : '新建'}}补助方案</p>
             <eg-button type="text" @click="showEdit({isShow: false})">返回列表</eg-button>
           </div>
         </template>

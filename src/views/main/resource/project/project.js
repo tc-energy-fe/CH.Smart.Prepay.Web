@@ -62,7 +62,7 @@ const actions = {
           label: type[1]
         })
       })
-      commit(types.SET_DATA, { item: 'typeId', value: typeList[0] ? typeList[0].value : null })
+      commit(types.SET_DATA, { item: 'typeId', value: null })
       commit(types.SET_DATA, { item: 'editTypeId', value: typeList[0] ? typeList[0].value : null })
       commit(types.SET_DATA, { item: 'projectTypeList', value: typeList })
       dispatch('getProjectList')
@@ -75,7 +75,7 @@ const actions = {
     let params = {
       name: state.searchName
     }
-    if (!window.isEmpty(state.typeId)) params.type = state.typeId
+    if (!isEmpty(state.typeId) && state.typeId !== -1) params.type = state.typeId
     let getProjectListReq = api.project.getProjectList(params)
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingProjectList', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'getProjectListReq', value: getProjectListReq.cancel })
@@ -120,17 +120,19 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {})
   },
-  deleteProject ({ state, commit, dispatch }, id) {
-    let deleteProjectReq = api.project.deleteProject(id)
-    commit(types.ADD_REQUEST_CANCEL, { item: 'deleteProjectReq', value: deleteProjectReq.cancel })
-    deleteProjectReq.request.then(res => {
-      commit(types.CHECKOUT_SUCCEED, res.State)
-      dispatch('getUserManage', null, { root: true })
-      dispatch('getProjectList')
-      dispatch('showEdit', { isShow: false })
-    }).catch(err => {
-      commit(types.CHECKOUT_FAILURE, err)
-    }).finally(() => {})
+  deleteProject ({ state, commit, dispatch }, data) {
+    ElConfirm(`确认删除项目 ${data.Name} ？`, '提示').then(() => {
+      let deleteProjectReq = api.project.deleteProject(data.Id)
+      commit(types.ADD_REQUEST_CANCEL, { item: 'deleteProjectReq', value: deleteProjectReq.cancel })
+      deleteProjectReq.request.then(res => {
+        commit(types.CHECKOUT_SUCCEED, res.State)
+        dispatch('getUserManage', null, { root: true })
+        dispatch('getProjectList')
+        dispatch('showEdit', { isShow: false })
+      }).catch(err => {
+        commit(types.CHECKOUT_FAILURE, err)
+      }).finally(() => {})
+    }).catch(() => {})
   }
 }
 

@@ -11,6 +11,7 @@
           placeholder="项目类型"
           @change="typeOnChange"
         >
+          <el-option label="全部项目类型" :value="-1"></el-option>
           <el-option
             v-for="item in projectTypeList"
             :key="item.value"
@@ -32,7 +33,7 @@
           <el-table-column label="操作" align="center" min-width="130">
             <template slot-scope="{ row }">
               <eg-button type="text" @click="showEdit({ data: row })" style="margin-right: 1.5rem;">编辑</eg-button>
-              <eg-button type="text" color="danger" @click="deleteProject(row.Id)">删除</eg-button>
+              <eg-button type="text" color="danger" @click="deleteProject(row)">删除</eg-button>
             </template>
           </el-table-column>
         </el-table>
