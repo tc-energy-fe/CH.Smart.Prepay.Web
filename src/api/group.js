@@ -55,6 +55,13 @@ export default {
     url: '/Group/Room/Account/List',
     data
   }),
+  getRoomShareList: roomId => http({
+    method: 'get',
+    url: '/Group/Room/Account/Share',
+    params: {
+      roomId
+    }
+  }),
   addRoomAccount: (data) => http({
     method: 'put',
     url: '/Group/Room/Account',

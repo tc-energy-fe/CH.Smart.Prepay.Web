@@ -42,7 +42,26 @@
               <el-table-column prop="StateText" label="开户状态" align="center" min-width="80"></el-table-column>
               <el-table-column prop="HostName" label="开户人姓名" align="center" min-width="100"></el-table-column>
               <el-table-column prop="HostPhone" label="开户人手机号" align="center" min-width="120"></el-table-column>
-              <el-table-column prop="ShareNum" label="共享人" align="center" min-width="70"></el-table-column>
+              <el-table-column prop="ShareNum" label="共享人" align="center" min-width="70">
+                <template slot-scope="{ row }">
+                  <el-popover
+                    v-if="row.ShareNum > 0"
+                    @show="getShareList(row.Id)"
+                    @hide="shareOnHide"
+                  >
+                    <eg-button slot="reference" type="text">{{row.ShareNum}}</eg-button>
+                    <div class="roomuser-share-pop">
+                      <p class="pop-title">共享人</p>
+                      <div class="pop-content" v-loading="isLoadingShareList">
+                        <p v-for="(s, index) in shareList" :key="index">
+                          {{index + 1}} {{s.Name}} {{s.Phone || '-'}}
+                        </p>
+                      </div>
+                    </div>
+                  </el-popover>
+                  <span v-else>0</span>
+                </template>
+              </el-table-column>
               <el-table-column label="操作" align="center">
                 <template slot-scope="{ row }">
                   <eg-button
@@ -139,7 +158,10 @@
         'isShowEdit',
         'isAddAccount',
         'editData',
-        'isLoadingRoomAccountList'
+        'isLoadingRoomAccountList',
+        'reqCancels',
+        'shareList',
+        'isLoadingShareList'
       ]),
       ...mapGetters([
         'projectId',
@@ -162,7 +184,9 @@
         'getRoomAccountList',
         'showEdit',
         'updateObjectData',
-        'editAccount'
+        'editAccount',
+        'getShareList',
+        'shareOnHide'
       ]),
       nodeOnChange (val) {
         this.updateFormData({ item: 'currentNode', value: val })

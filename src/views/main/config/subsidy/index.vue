@@ -77,7 +77,7 @@
             @size-change="roomPageSizeOnChange"
             :current-page="currentPageRoom"
             :page-size="roomPageSize"
-            :page-sizes="[10, 15, ,20, 25]"
+            :page-sizes="[10, 15, 20, 25]"
             layout="total, ->, prev, pager, next, sizes, jumper"
             :total="totalCountRoom"
           ></el-pagination>
