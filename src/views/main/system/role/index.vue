@@ -25,7 +25,7 @@
           <el-table-column label="角色类型" prop="RoleTypeText" align="center"/>
           <el-table-column label="权限范围" align="center">
             <template v-slot="{row}">
-              <el-popover title="角色权限详情" popper-class="row-popper">
+              <el-popover title="角色权限详情" popper-class="row-popper" placement="right" :popper-options="{ gpuAcceleration: true }">
                 <div class="row-popper__content">
                   <el-tree :data="singleRoleMenusTreeData" default-expand-all/>
                 </div>

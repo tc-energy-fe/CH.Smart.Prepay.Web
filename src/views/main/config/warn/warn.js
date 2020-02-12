@@ -3,7 +3,6 @@ import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
 import initTree from '@/utils/tree'
-import moment from 'moment'
 
 const STATUS_ENABLED_VALUE = 0
 const STATUS_DISABLED_VALUE = 3
@@ -38,8 +37,9 @@ const state = {
     GroupIds: [],
     WarnValue: '',
     SNS: false,
-    OffType: 0,
-    OffRange: [new Date(), new Date()]
+    OffType: OFF_IMMEDIATE,
+    OffRangeStart: '10:00',
+    OffRangeEnd: '11:00'
   },
   editTreeData: [],
   editSearchRoomName: ''
@@ -68,8 +68,9 @@ const actions = {
           GroupIds: [],
           WarnValue: '',
           SNS: false,
-          OffType: 0,
-          OffRange: [new Date(), new Date()]
+          OffType: OFF_IMMEDIATE,
+          OffRangeStart: '10:00',
+          OffRangeEnd: '11:00'
         }
       })
       commit(types.SET_DATA, { item: 'editSearchRoomName', value: '' })
@@ -168,10 +169,8 @@ const actions = {
           WarnValue: data.BalanceContent.WarnValue,
           SNS: data.BalanceContent.SNS,
           OffType: data.BalanceContent.OffType,
-          OffRange: [
-            moment(`2019-12-26 ${data.BalanceContent.OffRangeStart}`).toDate(),
-            moment(`2019-12-26 ${data.BalanceContent.OffRangeEnd}`).toDate()
-          ]
+          OffRangeStart: data.BalanceContent.OffRangeStart.slice(0, -3),
+          OffRangeEnd: data.BalanceContent.OffRangeEnd.slice(0, -3)
         }
       })
     }).catch(err => {
@@ -208,8 +207,8 @@ const actions = {
         }
         if (editData.OffType === OFF_DELAY) {
           postData.BalanceContent = Object.assign({}, postData.BalanceContent, {
-            OffRangeStart: moment(editData.OffRange[0]).format('HH:mm'),
-            OffRangeEnd: moment(editData.OffRange[1]).format('HH:mm')
+            OffRangeStart: editData.OffRangeStart,
+            OffRangeEnd: editData.OffRangeEnd
           })
         }
         if (state.isModify) {

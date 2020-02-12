@@ -116,7 +116,7 @@
               </el-radio-group>
             </div>
             <template v-slot:footer>
-              <eg-button type="minor">取消</eg-button>
+              <eg-button type="minor" @click="showDialogKeep({isShow: false})">取消</eg-button>
               <eg-button @click="controlDeviceKeep">下发命令</eg-button>
             </template>
           </el-dialog>

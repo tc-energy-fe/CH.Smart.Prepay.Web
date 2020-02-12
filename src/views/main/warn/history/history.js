@@ -78,8 +78,8 @@ const actions = {
         let warnTypeItem = state.searchWarnTypeOptions.find(option => option.value === item.Type)
         return Object.assign({}, item, {
           TypeText: isEmpty(item.Type) ? '--' : (warnTypeItem ? warnTypeItem.label : '--'),
-          ProduceTimeText: isEmpty(item.ProduceTime) ? '--' : moment(item.ProduceTime).format('YYYY-MM-DD HH:mm:ss'),
-          EndTimeText: isEmpty(item.EndTime) ? '--' : moment(item.EndTime).format('YYYY-MM-DD HH:mm:ss')
+          ProduceTimeText: isEmpty(item.ProduceTime) ? '--' : moment(item.ProduceTime).format('YYYY-MM-DD HH:mm'),
+          EndTimeText: isEmpty(item.EndTime) ? '--' : moment(item.EndTime).format('YYYY-MM-DD HH:mm')
         })
       })
       commit(types.SET_DATA, { item: 'warnList', value: warnList })

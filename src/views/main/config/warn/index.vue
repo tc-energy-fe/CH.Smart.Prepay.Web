@@ -132,16 +132,30 @@
                 :value="item.value"
               />
             </el-select>
-            <el-time-picker
-              v-if="offTypeIsDelay"
-              is-range
-              start-placeholder="拉闸开始时间"
-              end-placeholder="拉闸结束时间"
-              format="HH:mm"
-              range-separator="至"
-              :value="editData.OffRange"
-              @input="updateObjectData({obj: 'editData', item: 'OffRange', value: $event})"
-            />
+            <template v-if="offTypeIsDelay">
+              <el-time-select
+                :value="editData.OffRangeStart"
+                @input="updateObjectData({obj: 'editData', item: 'OffRangeStart', value: $event})"
+                placeholder="起始时间"
+                :picker-options="{
+                  start: '00:00',
+                  step: '00:30',
+                  end: '24:00'
+                }"
+              />
+              <span>至</span>
+              <el-time-select
+                :value="editData.OffRangeEnd"
+                @input="updateObjectData({obj: 'editData', item: 'OffRangeEnd', value: $event})"
+                placeholder="结束时间"
+                :picker-options="{
+                  start: '00:00',
+                  step: '00:30',
+                  end: '24:00',
+                  minTime: editData.OffRangeStart
+                }"
+              />
+            </template>
             <i class="iconfont icon-content_icon_required"/>
           </div>
           <div class="warn-edit__row">
