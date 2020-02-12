@@ -28,7 +28,9 @@ const state = {
   totalCount: 0,
   isShowEdit: false,
   isAddAccount: false,
-  isLoadingRoomAccountList: false
+  isLoadingRoomAccountList: false,
+  shareList: [],
+  isLoadingShareList: false
 }
 
 const getters = {
@@ -142,6 +144,26 @@ const actions = {
         commit(types.SET_LOADING_STATUS, { item: 'isEditingAccount', value: false })
       })
     }
+  },
+  getShareList ({ state, getters, commit }, roomId) {
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingShareList', value: true })
+    let getShareListReq = api.group.getRoomShareList(roomId)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getShareListReq', value: getShareListReq.cancel })
+    getShareListReq.request.then(res => {
+      let data = res.Data || []
+      commit(types.SET_DATA, { item: 'shareList', value: data })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingShareList', value: false })
+    })
+  },
+  shareOnHide ({ state, commit }) {
+    let getShareListReq = state.reqCancels.get('getShareListReq')
+    if (getShareListReq) {
+      getShareListReq()
+    }
+    commit(types.SET_DATA, { item: 'shareList', value: [] })
   }
 }
 
