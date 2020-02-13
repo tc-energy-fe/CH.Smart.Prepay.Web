@@ -5,9 +5,6 @@ import * as types from '@/store/mutation-types'
 import api from '@/api'
 import { download } from '@/utils/file'
 import apiUrl from '@/api/apiUrl'
-// import apiUrl from '@/api/analysis/apiUrl'
-// import download from '@/utils/download'
-// import moment from 'moment'
 
 const state = {
   reqCancels: new Map(),

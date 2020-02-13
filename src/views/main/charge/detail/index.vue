@@ -48,7 +48,7 @@
             >
             </el-option>
           </el-select>
-          <eg-button @click="search">查询缴费记录</eg-button>
+          <eg-button @click="search">查询</eg-button>
         </template>
         <template v-slot:content>
           <el-table :data="detailList" v-loading="isLoadingDetailList">

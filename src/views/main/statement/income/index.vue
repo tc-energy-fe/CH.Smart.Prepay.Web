@@ -87,6 +87,7 @@
           </template>
           <div v-else class="income-detail__chart" v-loading="isLoadingPayData">
             <detail-bar-chart
+              v-if="!isLoadingPayData"
               :data="detailBarData"
               :custom-props="{
                 xAxisName: barUnit,
@@ -154,10 +155,12 @@
         this.getPayData()
       },
       nodeOnChange (value) {
+        this.currentPageOnChange(1)
         this.updateStateData({ item: 'currentNode', value })
         this.search()
       },
       searchDataOnChange (key, value) {
+        this.currentPageOnChange(1)
         this.updateObjectData({ obj: 'searchData', item: key, value })
       },
       currentPageOnChange (value) {

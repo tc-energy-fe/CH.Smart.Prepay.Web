@@ -87,9 +87,9 @@
               :total="reportList.length"
             ></el-pagination>
           </template>
-          <div v-else class="ele-detail__chart">
+          <div v-else class="ele-detail__chart" v-loading="isLoadingEleReport">
             <detail-bar-chart
-              v-loading="isLoadingEleReport"
+              v-if="!isLoadingEleReport"
               :data="detailBarData"
               :custom-props="{
                 xAxisName: searchData.dateType === 2 ? '日' : '月',
