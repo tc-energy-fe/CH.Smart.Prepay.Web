@@ -302,4 +302,4 @@
   }
 </script>
 
-<style scoped lang="scss" src="./warn.scss"/>
+<style lang="scss" src="./warn.scss"/>

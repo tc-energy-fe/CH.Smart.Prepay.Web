@@ -197,6 +197,10 @@ const actions = {
       ElAlert('角色名称为空！', '表单错误').then(() => {})
       return false
     }
+    if (editData.ProjectGroups.length === 0) {
+      ElAlert('区域权限为空！', '表单错误').then(() => {})
+      return false
+    }
     if (!state.isModify) {
       if (editData.Password.trim() === '') {
         ElAlert('新建用户默认密码为 123456！', '提示').then(() => {})

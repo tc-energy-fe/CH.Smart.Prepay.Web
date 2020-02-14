@@ -194,7 +194,7 @@ const actions = {
   },
   deleteRoleData ({ commit, state, getters, dispatch }, { row }) {
     ElConfirm(`确认要删除此角色${row.RoleName}`, '提示').then(() => {
-      let roleId = row.Id
+      let roleId = row.RoleId
       let deleteRoleDataReq = api.role.deleteSingleRole(roleId)
       commit(types.ADD_REQUEST_CANCEL, { item: 'deleteRoleDataReq', value: deleteRoleDataReq.cancel })
       deleteRoleDataReq.request.then(res => {

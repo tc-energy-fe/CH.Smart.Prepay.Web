@@ -67,7 +67,7 @@ const actions = {
       let logList = data.map(item => {
         return Object.assign({}, item, {
           OTypeText: searchOperateTypeList.find(type => (type.value === item.OType)).label,
-          TimeText: moment(item.Time).format('YYYY-MM-DD HH:mm:ss')
+          TimeText: moment(item.Time).format('YYYY-MM-DD HH:mm')
         })
       })
       commit(types.SET_DATA, { item: 'logList', value: logList })

@@ -2,6 +2,9 @@
     display: flex;
     flex-direction: column;
     .warn-edit {
+        .eg-box__header {
+            padding-bottom: 1rem;
+        }
         &__row {
             display: flex;
             justify-content: flex-start;
