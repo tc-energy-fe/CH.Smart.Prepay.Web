@@ -58,7 +58,7 @@
             <eg-input
               :value="searchName"
               @input="updateStateData({item: 'searchName', value: $event})"
-              placeholder="房间编号/名称搜索"
+              placeholder="房间信息搜索"
             />
             <el-select
               :value="searchEMeterState"

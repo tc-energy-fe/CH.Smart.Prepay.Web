@@ -21,13 +21,14 @@
     }
 
     > .iconfont{
+      flex-shrink: 0;
       margin-left: .5rem;
     }
 
     // 电价设置
     .price-edit__price{
       flex-shrink: 0;
-      width: 68rem;
+      //width: 68rem;
       min-height: 15rem;
       border: 1px solid #a3a7af;
       border-radius: $common-border-radius;
