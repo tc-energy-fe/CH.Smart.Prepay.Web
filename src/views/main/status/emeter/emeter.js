@@ -68,7 +68,7 @@ const actions = {
           EMeterStateText: isEmpty(item.SwitchState) ? '未知' : (item.SwitchState ? '合闸' : '开闸'),
           KeepStateText: isEmpty(item.KeepState) ? '未知' : (item.KeepState ? '保电' : '未保电'),
           FrozenStateText: isEmpty(item.FrozenState) ? '--' : state.searchFrozenStateOptions.find(option => option.value === item.FrozenState).label,
-          DataTimeText: isEmpty(item.DataTime) ? '--' : moment(item.DataTime).format('YYYY-MM-DD HH:mm:ss')
+          DataTimeText: isEmpty(item.DataTime) ? '--' : moment(item.DataTime).format('YYYY-MM-DD HH:mm')
         })
       })
       commit(types.SET_DATA, { item: 'emeterList', value: emeterList })

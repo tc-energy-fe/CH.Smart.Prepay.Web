@@ -25,6 +25,13 @@ $--menu-item-hover-fill: #e5eeff;
 $--radio-button-checked-background-color: $main-color;
 $--radio-button-checked-border-color: $main-color;
 
+// message-box
+$--msgbox-width: 25rem;
+$--messagebox-title-color: $font-color;
+$--color-info: $main-color;
+$--messagebox-content-color: $font-color;
+$--messagebox-content-font-size: 1rem;
+
 /* 改变 icon 字体路径变量，必需 */
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
@@ -240,6 +247,36 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     .el-dialog__footer {
       text-align: center;
       @include setEqualInterval();
+    }
+  }
+}
+
+// el-message-box
+.el-message-box__title {
+  font-weight: bold;
+}
+.el-message-box__content{
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  text-align: center;
+}
+.el-message-box__btns {
+  text-align: center;
+
+  > button{
+    width: 7.5rem;
+    height: $normal-input-height;
+    margin: 0 1rem;
+    font-size: 1rem;
+    border: none;
+
+    &:last-child {
+      background-color: $main-color;
+    }
+
+    &:not(:last-child) {
+      background-color: #e5eeff;
+      color: $main-color;
     }
   }
 }

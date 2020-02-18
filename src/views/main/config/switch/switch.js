@@ -102,6 +102,9 @@ const actions = {
       let data = res.Data || []
       data.forEach(item => {
         item.StatusText = item.Status === STATUS_ENABLED_VALUE ? '启用' : (item.Status === STATUS_DISABLED_VALUE ? '停用' : '其他')
+        item.Periods.forEach(p => {
+          p.Time = p.Time ? p.Time.slice(0, -3) : '--'
+        })
       })
       commit(types.SET_DATA, { item: 'switchList', value: data })
       commit(types.SET_DATA, { item: 'totalCountSwitch', value: res.Count })

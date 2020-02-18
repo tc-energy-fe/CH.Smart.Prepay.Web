@@ -52,7 +52,7 @@
       <eg-box v-else class="config-scheme">
         <template v-slot:headerLeft>
           <eg-input
-            placeholder="房间编号/名称搜索"
+            placeholder="房间户号/名称搜索"
             :value="searchRoomName"
             @input="updateFormData({ item: 'searchRoomName', value: $event })"
           ></eg-input>
@@ -65,7 +65,7 @@
         </template>
         <template v-slot:content>
           <el-table v-loading="isLoadingRoomList" :data="roomList" key="room">
-            <el-table-column prop="RoomNo" label="房间编号" align="center"></el-table-column>
+            <el-table-column prop="RoomNo" label="户号" align="center"></el-table-column>
             <el-table-column prop="FullName" label="房间信息" align="center"></el-table-column>
             <el-table-column prop="SchemeName" label="电价方案" align="center"></el-table-column>
           </el-table>

@@ -19,8 +19,16 @@
       <div class="main-content">
         <eg-box v-show="!isShowEdit">
           <template v-slot:headerLeft>
-            <eg-input placeholder="户号搜索"></eg-input>
-            <eg-input placeholder="名称搜索"></eg-input>
+            <eg-input
+              placeholder="户号搜索"
+              :value="searchData.RoomNo"
+              @input="updateObjectData({ obj: 'searchData', item: 'RoomNo', value: $event })"
+            ></eg-input>
+            <eg-input
+              placeholder="房间信息搜索"
+              :value="searchData.Name"
+              @input="updateObjectData({ obj: 'searchData', item: 'Name', value: $event })"
+            ></eg-input>
             <el-select
               placeholder="开户状态"
               :value="searchStateId"
@@ -150,6 +158,7 @@
     computed: {
       ...mapState([
         'stateList',
+        'searchData',
         'searchStateId',
         'pageSize',
         'currentPage',

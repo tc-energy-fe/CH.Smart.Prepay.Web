@@ -126,7 +126,23 @@ const actions = {
           dispatch('showEdit', { isShow: false })
           dispatch('getRoomAccountList')
         }).catch(err => {
-          commit(types.CHECKOUT_FAILURE, err)
+          if (err.code === -27) {
+            ElConfirm('该房间有欠费未缴清，是否继续销户？', '提示').then(res => {
+              let editForceAccountReq = api.group.deleteRoomAccount(Object.assign({ forceDel: true }, postData))
+              commit(types.ADD_REQUEST_CANCEL, { item: 'editForceAccountReq', value: editForceAccountReq.cancel })
+              editForceAccountReq.request.then(res => {
+                commit(types.CHECKOUT_SUCCEED, res.State)
+                dispatch('showEdit', { isShow: false })
+                dispatch('getRoomAccountList')
+              }).catch(err => {
+                commit(types.CHECKOUT_FAILURE, err)
+              }).finally(() => {
+                commit(types.SET_LOADING_STATUS, { item: 'isEditingAccount', value: false })
+              })
+            })
+          } else {
+            commit(types.CHECKOUT_FAILURE, err)
+          }
         }).finally(() => {
           commit(types.SET_LOADING_STATUS, { item: 'isEditingAccount', value: false })
         })

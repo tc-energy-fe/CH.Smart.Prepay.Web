@@ -65,9 +65,11 @@
         <span class="room-edit__back" @click="showEdit({ isShow: false })">返回列表</span>
       </template>
       <template v-slot:content>
-        <p class="room-edit__row" v-if="isModify">
+        <p class="room-edit__row">
           <label>户号</label>
-          <eg-input :value="editData.GroupNo" disabled></eg-input>
+          <eg-input v-if="isModify" :value="editData.GroupNo" disabled></eg-input>
+          <eg-input v-else placeholder="系统生成，不可修改" disabled></eg-input>
+          <i class="iconfont icon-content_icon_required"></i>
         </p>
         <p class="room-edit__row">
           <label>门牌编号</label>

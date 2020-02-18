@@ -99,8 +99,20 @@
               <el-table-column prop="CurrentVA" label="当前电压(V)" align="center" />
               <el-table-column prop="CurrentAA" label="当前电流(A)" align="center" />
               <el-table-column prop="KeepStateText" label="保电状态" align="center" />
-              <el-table-column prop="EMeterStateText" label="电表状态" align="center" />
-              <el-table-column prop="FrozenStateText" label="冻结状态" align="center" />
+              <el-table-column prop="EMeterStateText" label="电表状态" align="center">
+                <template slot-scope="{ row }">
+                  <span :style="{color: row.SwitchState === false ? '#f56c6c' : '#5e5e5e'}">
+                    {{row.EMeterStateText}}
+                  </span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="FrozenStateText" label="冻结状态" align="center">
+                <template slot-scope="{ row }">
+                  <span :style="{color: row.FrozenState ? '#5e5e5e' : '#f56c6c'}">
+                    {{row.FrozenStateText}}
+                  </span>
+                </template>
+              </el-table-column>
               <el-table-column prop="DataTimeText" label="更新时间" align="center" />
             </el-table>
             <el-pagination

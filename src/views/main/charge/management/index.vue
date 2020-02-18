@@ -57,8 +57,20 @@
               <el-table-column label="开户人手机号" prop="HostPhone" align="center" min-width="120"></el-table-column>
               <el-table-column label="剩余电费(元)" prop="Balance" align="center" min-width="120"></el-table-column>
               <el-table-column label="结算时间" prop="SettleTimeText" align="center" min-width="130"></el-table-column>
-              <el-table-column label="电表状态" prop="IsOnText" align="center" min-width="90"></el-table-column>
-              <el-table-column label="报警状态" prop="WarnTypeText" align="center" min-width="90"></el-table-column>
+              <el-table-column label="电表状态" align="center" min-width="90">
+                <template slot-scope="{ row }">
+                  <span :style="{color: row.IsOn ? '#5e5e5e' : '#f56c6c'}">
+                    {{row.IsOnText}}
+                  </span>
+                </template>
+              </el-table-column>
+              <el-table-column label="报警状态" align="center" min-width="90">
+                <template slot-scope="{ row }">
+                  <span :style="{color: row.WarnType === 0 ? '#5e5e5e' : '#f56c6c'}">
+                    {{row.WarnTypeText}}
+                  </span>
+                </template>
+              </el-table-column>
               <el-table-column label="操作" align="center">
                 <template slot-scope="{ row }">
                   <eg-button type="text" @click="showEdit({ isShow: true, data: row })">缴退费</eg-button>

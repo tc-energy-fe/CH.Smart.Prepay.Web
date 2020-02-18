@@ -69,7 +69,10 @@ export default {
   }),
   deleteRoomAccount: (data) => http({
     method: 'delete',
-    url: `/Group/Room/Account/${data.Id}`
+    url: `/Group/Room/Account/${data.Id}`,
+    params: data.forceDel ? {
+      forceDel: data.forceDel
+    } : {}
   }),
   /** RoomConfig **/
   getRoomConfigAddList: (params) => http({
