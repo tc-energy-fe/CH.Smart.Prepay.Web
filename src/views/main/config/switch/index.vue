@@ -25,7 +25,7 @@
             <el-table-column prop="ContentText" label="任务内容" align="center">
               <template v-slot="{row}">
                 <p v-for="(item, index) of row.Periods" :key="index" style="padding: 0 20%; text-align: left;">
-                  {{`${index + 1}.`}}<span style="display: inline-block;width: 22rem;">{{`【${item.Days.map(day => (taskDaysDic[day])).join('、')}】`}}</span>{{`${item.Time} ${item.SwitchParam ? '开闸' : '合闸'}`}}
+                  {{`${index + 1}.`}}<span style="display: inline-block;width: 22rem;">{{`【${item.Days.map(day => (taskDaysDic[day])).join('、')}】`}}</span>{{`${item.Time.slice(0, -3)} ${item.SwitchParam ? '开闸' : '合闸'}`}}
                 </p>
               </template>
             </el-table-column>
