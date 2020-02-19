@@ -150,8 +150,32 @@
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="EndTotal" label="本次抄读数据(kWh)" align="center" min-width="160"></el-table-column>
-          <el-table-column prop="DeltaTotal" label="用电量(kWh)" align="center" min-width="120"></el-table-column>
+          <el-table-column label="本次抄读数据(kWh)" align="center" min-width="160">
+            <template slot-scope="{ row }">
+              <el-popover trigger="hover" popper-class="recent-table__total">
+                <eg-button type="text" slot="reference">{{row.EndTotal | currency}}</eg-button>
+                <div class="recent-table__pop">
+                  <p><label>尖</label><span>{{row.EndPointed | currency}}</span></p>
+                  <p><label>峰</label><span>{{row.EndPeak | currency}}</span></p>
+                  <p><label>平</label><span>{{row.EndFlat | currency}}</span></p>
+                  <p><label>谷</label><span>{{row.EndValley | currency}}</span></p>
+                </div>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column label="用电量(kWh)" align="center" min-width="120">
+            <template slot-scope="{ row }">
+              <el-popover trigger="hover" popper-class="recent-table__total">
+                <eg-button type="text" slot="reference">{{row.DeltaTotal | currency}}</eg-button>
+                <div class="recent-table__pop">
+                  <p><label>尖</label><span>{{row.DeltaPointed | currency}}</span></p>
+                  <p><label>峰</label><span>{{row.DeltaPeak | currency}}</span></p>
+                  <p><label>平</label><span>{{row.DeltaFlat | currency}}</span></p>
+                  <p><label>谷</label><span>{{row.DeltaValley | currency}}</span></p>
+                </div>
+              </el-popover>
+            </template>
+          </el-table-column>
           <el-table-column prop="DeltaCost" label="电费(元)" align="center"></el-table-column>
           <el-table-column prop="Date" label="抄读时间" align="center" min-width="180"></el-table-column>
         </el-table>
@@ -265,17 +289,18 @@
     created () {
       if (this.groupTree.length) {
         this.$nextTick(function () {
-          this.$refs.tree.setCurrentKey(this.currentNodeId)
+          this.$refs.tree && this.$refs.tree.setCurrentKey(this.currentNodeId)
         })
         if (isEmpty(this.currentNodeId)) {
           this.updateStateData({ item: 'currentNode', value: this.groupTree[0] || {} })
+          this.showEdit({ isShow: false })
         }
         this.updateStateData({ item: 'currentPage', value: 1 })
         this.getWarnType()
       }
     },
     beforeDestroy () {
-      this.showEdit({ isShow: false })
+      // this.showEdit({ isShow: false })
     }
   }
 </script>

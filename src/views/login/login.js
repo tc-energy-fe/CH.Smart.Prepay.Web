@@ -3,7 +3,7 @@ import Login from './index.vue'
 
 import { MessageBox } from 'element-ui'
 import 'css/element-ui.scss'
-import 'tc-ui-lib/lib/style.css'
+// import 'tc-ui-lib/lib/style.css'
 
 Vue.config.productionTip = false
 window.ElAlert = MessageBox.alert

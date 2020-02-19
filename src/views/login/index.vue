@@ -84,6 +84,10 @@
           let data = res.Data
           sessionStorage.setItem('Token', data.Token)
           sessionStorage.setItem('FileToken', data.FileToken)
+          localStorage.setItem('Account', JSON.stringify({
+            username: username,
+            password: this.password
+          }))
           location.replace(location.origin + '/')
         }).catch(err => {
           console.error(err)
@@ -102,14 +106,18 @@
     watch: {},
     created () {
       window.onkeydown = (event) => {
-        console.log(event)
         if (event.key === 'Enter') {
           this.loginOnClick()
         }
       }
+      let account = localStorage.getItem('Account')
+      if (account) {
+        account = JSON.parse(account)
+        this.username = account.username
+        this.password = account.password
+      }
     },
-    beforeDestroy () {
-    }
+    beforeDestroy () {}
   }
 </script>
 
