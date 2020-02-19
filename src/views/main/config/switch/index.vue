@@ -22,14 +22,10 @@
         <template v-slot:content>
           <el-table :data="switchList" v-loading="isLoadingSwitchList">
             <el-table-column prop="Name" label="任务名称" width="200px" align="center" />
-            <el-table-column prop="ContentText" label="任务内容" align="center" min-width="520">
+            <el-table-column prop="ContentText" label="任务内容" align="center">
               <template v-slot="{row}">
-                <p v-for="(item, index) of row.Periods" :key="index" style="padding: 0 1rem; text-align: center;">
-                  {{`${index + 1}.`}}
-                  <span style="display: inline-block;width: 22rem;text-align: left;">
-                    {{`【${item.Days.map(day => (taskDaysDic[day])).join('、')}】`}}
-                  </span>
-                  {{`${item.Time} ${item.SwitchParam ? '开闸' : '合闸'}`}}
+                <p v-for="(item, index) of row.Periods" :key="index" style="padding: 0 20%; text-align: left;">
+                  {{`${index + 1}.`}}<span style="display: inline-block;width: 22rem;">{{`【${item.Days.map(day => (taskDaysDic[day])).join('、')}】`}}</span>{{`${item.Time.slice(0, -3)} ${item.SwitchParam ? '开闸' : '合闸'}`}}
                 </p>
               </template>
             </el-table-column>
