@@ -369,13 +369,13 @@
         }
       },
       switchClick (row) {
-        ElConfirm(`确定要对此电表进行${row.SwitchState ? '断闸' : '合闸'}操作`, '提示', { type: 'warning' }).then(() => {
+        ElConfirm(`确定要对此电表进行${row.SwitchState ? '断闸' : '合闸'}操作`, '提示').then(() => {
           this.controlDeviceSwitch({ row })
         }).catch(cancel => {
         })
       },
       cancelClick () {
-        ElConfirm('已经下发的命令无法撤销，确定终止下发命令吗？', '提示', { type: 'warning' }).then(() => {
+        ElConfirm('已经下发的命令无法撤销，确定终止下发命令吗？', '提示').then(() => {
           this.cancelDeviceControlTask()
         }).catch(cancel => {
         })
