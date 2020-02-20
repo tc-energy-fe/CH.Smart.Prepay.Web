@@ -207,8 +207,8 @@ const actions = {
         }
         if (editData.OffType === OFF_DELAY) {
           postData.BalanceContent = Object.assign({}, postData.BalanceContent, {
-            OffRangeStart: editData.OffRangeStart,
-            OffRangeEnd: editData.OffRangeEnd
+            OffRangeStart: `${editData.OffRangeStart}:00`,
+            OffRangeEnd: `${editData.OffRangeEnd}:00`
           })
         }
         if (state.isModify) {

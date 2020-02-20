@@ -65,7 +65,7 @@ const actions = {
       let data = res.Data || []
       let emeterList = data.map(item => {
         return Object.assign({}, item, {
-          EMeterStateText: isEmpty(item.SwitchState) ? '未知' : (item.SwitchState ? '合闸' : '开闸'),
+          EMeterStateText: isEmpty(item.SwitchState) ? '未知' : (item.SwitchState ? '合闸' : '断闸'),
           KeepStateText: isEmpty(item.KeepState) ? '未知' : (item.KeepState ? '保电' : '未保电'),
           FrozenStateText: isEmpty(item.FrozenState) ? '--' : state.searchFrozenStateOptions.find(option => option.value === item.FrozenState).label,
           DataTimeText: isEmpty(item.DataTime) ? '--' : moment(item.DataTime).format('YYYY-MM-DD HH:mm')

@@ -189,7 +189,7 @@
             <div>
               <label style="margin-right: 1rem;">开合闸</label>
               <el-radio-group :value="switchControlState" @input="updateStateData({item: 'switchControlState', value: $event})">
-                <el-radio :label="false">开闸</el-radio>
+                <el-radio :label="false">断闸</el-radio>
                 <el-radio :label="true">合闸</el-radio>
               </el-radio-group>
             </div>

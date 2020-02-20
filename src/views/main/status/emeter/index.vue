@@ -31,7 +31,7 @@
           class="emeter-overview__item"
           :icon="Icons.switchOff"
           unit="个"
-          name="开闸数"
+          name="断闸数"
           :color="{left: '#bfefbb', right: 'white', text: '#67c23a'}"
           :text="emeterStaticData.OFF"
         />

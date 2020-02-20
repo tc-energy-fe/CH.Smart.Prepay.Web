@@ -31,7 +31,7 @@
             <el-select :value="searchData.IsOn" @input="searchDataOnChange('IsOn', $event)">
               <el-option :value="-1" label="全部电表状态"></el-option>
               <el-option :value="true" label="合闸"></el-option>
-              <el-option :value="false" label="开闸"></el-option>
+              <el-option :value="false" label="断闸"></el-option>
             </el-select>
             <el-select :value="searchData.WarnType" @input="searchDataOnChange('WarnType', $event)">
               <el-option :value="-1" label="全部报警状态"></el-option>

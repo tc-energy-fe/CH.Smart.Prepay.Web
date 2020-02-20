@@ -25,7 +25,7 @@
             <el-table-column prop="ContentText" label="任务内容" align="center">
               <template v-slot="{row}">
                 <p v-for="(item, index) of row.Periods" :key="index" style="padding: 0 20%; text-align: left;">
-                  {{`${index + 1}.`}}<span style="display: inline-block;width: 22rem;">{{`【${item.Days.map(day => (taskDaysDic[day])).join('、')}】`}}</span>{{`${item.Time.slice(0, -3)} ${item.SwitchParam ? '开闸' : '合闸'}`}}
+                  {{`${index + 1}.`}}<span style="display: inline-block;width: 22rem;">{{`【${item.Days.map(day => (taskDaysDic[day])).join('、')}】`}}</span>{{`${item.Time} ${item.SwitchParam ? '合闸' : '断闸'}`}}
                 </p>
               </template>
             </el-table-column>
@@ -136,16 +136,27 @@
                   </eg-checkbox-group>
                 </div>
                 <div>
-                  <el-time-picker
-                    format="HH:mm"
+<!--                  <el-time-picker-->
+<!--                    format="HH:mm"-->
+<!--                    :value="item.Time"-->
+<!--                    @input="handleInputPeriod($event, index, 'Time')"-->
+<!--                    :clearable="false"-->
+<!--                    style="margin-right: 1rem;"-->
+<!--                  />-->
+                  <el-time-select
                     :value="item.Time"
                     @input="handleInputPeriod($event, index, 'Time')"
+                    :picker-options="{
+                      start: '00:00',
+                      step: '00:10',
+                      end: '24:00'
+                    }"
                     :clearable="false"
                     style="margin-right: 1rem;"
                   />
-                  <label style="margin-right: 1rem;">开合闸</label>
+                  <label style="margin-right: 1rem;">断合闸</label>
                   <el-radio-group :value="item.SwitchParam" @input="handleInputPeriod($event, index, 'SwitchParam')">
-                    <el-radio :label="true">开闸</el-radio>
+                    <el-radio :label="true">断闸</el-radio>
                     <el-radio :label="false">合闸</el-radio>
                   </el-radio-group>
                 </div>

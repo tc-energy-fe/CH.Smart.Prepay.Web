@@ -3,7 +3,6 @@ import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
 import initTree from '@/utils/tree'
-import moment from 'moment'
 
 const STATUS_ENABLED_VALUE = 0
 const STATUS_DISABLED_VALUE = 3
@@ -35,7 +34,7 @@ const state = {
   editPeriodList: [
     {
       SwitchParam: true,
-      Time: moment(moment().format('YYYY-MM-DD 06:00:00')).toDate(),
+      Time: '06:00',
       Days: [1, 2, 3, 4, 5, 6, 7]
     }
   ],
@@ -67,7 +66,7 @@ const actions = {
         value: [
           {
             SwitchParam: true,
-            Time: moment(moment().format('YYYY-MM-DD 06:00:00')).toDate(),
+            Time: '06:00',
             Days: [1, 2, 3, 4, 5, 6, 7]
           }
         ]
@@ -194,7 +193,7 @@ const actions = {
       })
       let periodsList = data.Periods.map(period => (
         Object.assign({}, period, {
-          Time: moment(`2020-01-01 ${period.Time}`).toDate()
+          Time: period.Time.slice(0, -3)
         })
       ))
       commit(types.SET_DATA, { item: 'editPeriodList', value: periodsList })
@@ -225,8 +224,9 @@ const actions = {
           GroupIds: editData.GroupIds,
           Status: editData.Status,
           Periods: state.editPeriodList.map(item => {
-            item.Time = moment(item.Time).format('HH:mm:ss')
-            return item
+            return Object.assign({}, item, {
+              Time: `${item.Time}:00`
+            })
           })
         }
         if (state.isModify) {

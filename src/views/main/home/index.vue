@@ -62,7 +62,7 @@
                       <span class="num" style="color: #f56c6c;">{{emeterStatus.OFF | miss}}</span>
                       <span class="unit">个</span>
                     </p>
-                    <p>开闸数</p>
+                    <p>断闸数</p>
                   </div>
                 </div>
               </div>

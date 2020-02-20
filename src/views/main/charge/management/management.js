@@ -103,7 +103,7 @@ const actions = {
       let data = res.Data || []
       data.forEach(item => {
         item.SettleTimeText = item.SettleTime ? moment(item.SettleTime).format('YYYY-MM-DD') : ''
-        item.IsOnText = isEmpty(item.IsOn) ? '' : (item.IsOn ? '合闸' : '开闸')
+        item.IsOnText = isEmpty(item.IsOn) ? '' : (item.IsOn ? '合闸' : '断闸')
         item.WarnTypeText = isEmpty(item.WarnType) ? '' : state.warnTypeList.find(w => w.value === item.WarnType).label
       })
       commit(types.SET_DATA, { item: 'balanceList', value: data })
