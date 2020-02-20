@@ -50,8 +50,8 @@ const actions = {
     let postData = {
       ProjectId: rootState.areaId,
       OperatorName: state.searchName,
-      Start: state.searchDateRange[0],
-      End: state.searchDateRange[1],
+      Start: moment(state.searchDateRange[0]).format('YYYY-MM-DD'),
+      End: moment(state.searchDateRange[1]).format('YYYY-MM-DD'),
       OperateType: state.searchOperateId,
       PageSize: state.pageSize,
       PageIndex: state.currentPage

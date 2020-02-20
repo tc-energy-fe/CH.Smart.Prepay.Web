@@ -53,7 +53,7 @@
       <eg-box class="config-room" v-show="tabIndex===2">
         <template v-slot:headerLeft>
           <eg-input
-            placeholder="房间编号/名称搜索"
+            placeholder="户号/房间信息搜索"
             :value="searchNameRoom"
             @input="updateStateData({item: 'searchNameRoom', value: $event})"
           />
@@ -66,7 +66,7 @@
         </template>
         <template v-slot:content>
           <el-table :data="roomList" v-loading="isLoadingRoomList">
-            <el-table-column prop="RoomNo" label="房间编号" align="center" />
+            <el-table-column prop="RoomNo" label="户号" align="center" />
             <el-table-column prop="FullName" label="房间信息" align="center" />
             <el-table-column prop="TaskName" label="任务名称" align="center" />
           </el-table>
@@ -156,8 +156,8 @@
                   />
                   <label style="margin-right: 1rem;">断合闸</label>
                   <el-radio-group :value="item.SwitchParam" @input="handleInputPeriod($event, index, 'SwitchParam')">
-                    <el-radio :label="true">断闸</el-radio>
-                    <el-radio :label="false">合闸</el-radio>
+                    <el-radio :label="false">断闸</el-radio>
+                    <el-radio :label="true">合闸</el-radio>
                   </el-radio-group>
                 </div>
               </div>
