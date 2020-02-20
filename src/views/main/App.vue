@@ -65,7 +65,7 @@
         </el-menu>
       </div>
       <div class="app-main">
-        <router-view v-if="!isLoadingMainGroupList"></router-view>
+        <router-view v-if="!isLoadingMainGroupList && userAreas[0]"></router-view>
       </div>
     </div>
   </div>
@@ -119,6 +119,7 @@
         'getGroupList'
       ]),
       projectOnChange (val) {
+        sessionStorage.setItem('projectId', val)
         this.updateFormData({ item: 'areaId', value: val })
         this.getGroupList()
       },

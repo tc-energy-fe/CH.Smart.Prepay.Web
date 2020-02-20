@@ -45,8 +45,8 @@ const actions = {
     let postData = {
       ProjectId: rootState.areaId,
       Name: state.searchName,
-      PageIndex: state.currentPageKeep,
-      PageSize: state.pageSizeKeep
+      PageIndex: state.currentPage,
+      PageSize: state.pageSize
     }
     let groupId = getters.currentNodeId
     if (!isEmpty(groupId) && groupId !== rootState.areaId) {

@@ -37,8 +37,8 @@ const actions = {
     let postData = {
       ProjectId: rootState.areaId,
       Name: state.searchName,
-      PageIndex: state.currentPageKeep,
-      PageSize: state.pageSizeKeep
+      PageIndex: state.currentPage,
+      PageSize: state.pageSize
     }
     if (!(state.searchState === TOTAL_OPTION || isEmpty(state.searchState))) {
       postData.Status = state.searchState

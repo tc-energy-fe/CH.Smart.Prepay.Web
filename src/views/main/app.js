@@ -52,7 +52,14 @@ const actions = {
         })
       }
       commit(types.SET_DATA, { item: 'userAreas', value: areas })
-      commit(types.SET_DATA, { item: 'areaId', value: areas[0].value || null })
+      let oldProj = sessionStorage.getItem('projectId')
+      if (oldProj) {
+        let hasProj = areas.some(a => a.value === Number(oldProj))
+        commit(types.SET_DATA, { item: 'areaId', value: hasProj ? Number(oldProj) : null })
+      } else {
+        commit(types.SET_DATA, { item: 'areaId', value: areas[0].value || null })
+        sessionStorage.setItem('projectId', areas[0].value || null)
+      }
       // 保存用户可访问的页面
       if (menus.length) {
         let customProps = {

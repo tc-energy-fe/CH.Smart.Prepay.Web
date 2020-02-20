@@ -36,10 +36,9 @@
           filterable
           :value="searchData.room"
           @change="searchDataOnChange('room', $event)"
-          :filter-method="searchRoomFilter"
         >
           <el-option
-            v-for="room in searchRoomFilterList"
+            v-for="room in searchRoomList"
             :value="room.Id"
             :label="room.FullName"
             :key="room.Id"
@@ -141,7 +140,6 @@
     name: 'statement-elecharge',
     data () {
       return {
-        searchRoomFilterText: '',
         Icons: {
           totalEle: Icons.icon_meter_total,
           totalMoney: Icons.tab_icon_money
@@ -171,9 +169,6 @@
         let type = this.searchData.dateType
         return type === 1 ? 'yyyy' : type === 2 ? 'yyyy-MM' : 'yyyy-MM-dd'
       },
-      searchRoomFilterList () {
-        return this.searchRoomList.filter(r => r.FullName.indexOf(this.searchRoomFilterText) > -1)
-      },
       paginationData () {
         return this.reportList.slice(this.pageSize * (this.currentPage - 1), this.pageSize * this.currentPage)
       }
@@ -197,9 +192,6 @@
       },
       searchDataOnChange (key, value) {
         this.updateObjectData({ obj: 'searchData', item: key, value })
-      },
-      searchRoomFilter (data) {
-        this.searchRoomFilterText = data
       },
       currentPageOnChange (value) {
         this.currentPage = value
