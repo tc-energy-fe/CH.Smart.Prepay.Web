@@ -52,7 +52,7 @@
       <eg-box v-else class="config-scheme">
         <template v-slot:headerLeft>
           <eg-input
-            placeholder="房间户号/名称搜索"
+            placeholder="户号/房间信息搜索"
             :value="searchRoomName"
             @input="updateFormData({ item: 'searchRoomName', value: $event })"
           ></eg-input>

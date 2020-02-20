@@ -25,11 +25,11 @@
           <el-table-column label="角色类型" prop="RoleTypeText" align="center"/>
           <el-table-column label="权限范围" align="center">
             <template v-slot="{row}">
-              <el-popover title="角色权限详情" popper-class="row-popper" placement="right" :popper-options="{ gpuAcceleration: true }">
+              <el-popover title="角色权限详情" trigger="hover" popper-class="row-popper" placement="right" :popper-options="{ gpuAcceleration: true }">
                 <div class="row-popper__content">
                   <el-tree :data="singleRoleMenusTreeData" default-expand-all/>
                 </div>
-                <eg-button slot="reference" type="text" @click="getSingleRoleData({id: row.RoleId, isEdit: false})">查看权限</eg-button>
+                <eg-button slot="reference" type="text" @mouseenter.native="getSingleRoleData({id: row.RoleId, isEdit: false})">查看权限</eg-button>
               </el-popover>
             </template>
           </el-table-column>
