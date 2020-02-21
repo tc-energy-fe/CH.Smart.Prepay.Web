@@ -88,14 +88,13 @@
       </template>
       <template v-slot:content>
         <template v-if="logTypeIsOperation">
-          <el-table :data="operateLogList" v-loading="isLoadingOperateLogList" key="operation">
+          <el-table :data="operateLogList" v-loading="isLoadingOperateLogList">
             <el-table-column label="操作人" prop="OperatorName" align="center"/>
             <el-table-column label="操作类型" prop="OTypeText" align="center"/>
             <el-table-column label="操作时间" prop="TimeText" align="center"/>
             <el-table-column label="操作内容" prop="Content" align="center"/>
           </el-table>
           <el-pagination
-            key="operation"
             background
             layout="total, ->, prev, pager, next, sizes, jumper"
             :current-page="currentPageOperate"
@@ -107,7 +106,7 @@
           />
         </template>
         <template v-if="logTypeIsRun">
-          <el-table :data="taskLogList" v-loading="isLoadingTaskLogList" key="task">
+          <el-table :data="taskLogList" v-loading="isLoadingTaskLogList">
             <el-table-column label="任务类别" prop="OTypeText" align="center"/>
             <el-table-column label="任务名称" prop="TaskName" align="center"/>
             <el-table-column label="任务对象" prop="OperatorObj" align="center"/>
@@ -115,7 +114,6 @@
             <el-table-column label="执行结果" prop="ControlResultText" align="center"/>
           </el-table>
           <el-pagination
-            key="task"
             background
             layout="total, ->, prev, pager, next, sizes, jumper"
             :current-page="currentPageTask"
