@@ -9,5 +9,13 @@ export default {
   getLogManageType: () => http({
     method: 'GET',
     url: '/LogManage/Type'
+  }),
+  getLogManageTaskType: () => http({
+    method: 'GET',
+    url: '/LogManage/Task/Type'
+  }),
+  getLogManageAllType: () => http({
+    method: 'GET',
+    url: '/LogManage/All/Type'
   })
 }
