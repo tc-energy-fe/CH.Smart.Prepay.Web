@@ -18,6 +18,8 @@
       <eg-box>
         <template v-slot:headerLeft>
           <el-date-picker
+            :clearable="false"
+            :editable="false"
             unlink-panels
             type="daterange"
             :value="searchPeriod"

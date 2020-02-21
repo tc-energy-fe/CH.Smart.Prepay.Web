@@ -15,7 +15,7 @@
         unit="个"
         name="在线数"
         :color="{left: '#bfefbb', right: 'white', text: '#67c23a'}"
-        :text="gatewayStaticData.Offline"
+        :text="gatewayStaticData.Online"
       />
       <overview-block
         class="gateway-overview__item"
@@ -23,7 +23,7 @@
         unit="个"
         name="离线数"
         :color="{left: '#f9cfcf', right: 'white', text: '#f56c6c'}"
-        :text="gatewayStaticData.Online"
+        :text="gatewayStaticData.Offline"
       />
     </div>
     <div class="gateway-list">

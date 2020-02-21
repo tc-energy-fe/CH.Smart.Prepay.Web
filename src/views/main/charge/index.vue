@@ -7,12 +7,14 @@
     name: 'charge',
     data () {
       return {
-        payDetailGroup: null
+        payDetailGroup: null,
+        isJumpToDetail: false
       }
     },
     mounted () {
       this.$on('toDetailPage', (name) => {
         this.payDetailGroup = name
+        this.isJumpToDetail = true
       })
     }
   }

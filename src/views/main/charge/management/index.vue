@@ -294,6 +294,12 @@
         if (isEmpty(this.currentNodeId)) {
           this.updateStateData({ item: 'currentNode', value: this.groupTree[0] || {} })
           this.showEdit({ isShow: false })
+        } else {
+          if (this.$parent.isJumpToDetail) {
+            this.$parent.isJumpToDetail = false
+          } else {
+            this.showEdit({ isShow: false })
+          }
         }
         this.updateStateData({ item: 'currentPage', value: 1 })
         this.getWarnType()
