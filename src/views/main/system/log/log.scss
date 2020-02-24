@@ -2,5 +2,8 @@
 .system-log {
     background-color: white;
     .log-box {
+        .eg-box__header {
+            padding-bottom: 1rem;
+        }
     }
 }

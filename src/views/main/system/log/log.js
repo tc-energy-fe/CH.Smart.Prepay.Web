@@ -5,23 +5,40 @@ import api from '@/api'
 import moment from 'moment'
 
 const TOTAL_OPTION_VALUE = 'total'
+const LOG_TYPE_OPERATION = 0
+const LOG_TYPE_RUN = 1
 
 const state = {
   reqCancels: new Map(),
-  searchName: '',
+  logType: LOG_TYPE_OPERATION,
+  searchOperator: '',
   searchOperateId: null,
-  searchOperateTypeList: [
-    { label: '全部操作类型', value: TOTAL_OPTION_VALUE }
+  searchOperateTypeList: [],
+  searchDateRangeOperate: [new Date(), new Date()],
+  searchTaskName: '',
+  searchTaskType: null,
+  searchTaskTypeList: [],
+  searchDateRangeTask: [new Date(), new Date()],
+  searchTaskResult: null,
+  searchTaskResultList: [
+    { label: '成功', value: true },
+    { label: '失败', value: false }
   ],
-  searchDateRange: [new Date(), new Date()],
-  logList: [],
-  currentPage: 1,
-  pageSize: 10,
-  totalCount: 0,
-  isLoadingLogList: false
+  operateLogList: [],
+  currentPageOperate: 1,
+  pageSizeOperate: 10,
+  totalCountOperate: 0,
+  isLoadingOperateLogList: false,
+  taskLogList: [],
+  currentPageTask: 1,
+  pageSizeTask: 10,
+  totalCountTask: 0,
+  isLoadingTaskLogList: false
 }
 
 const getters = {
+  logTypeIsOperation: (state) => state.logType === LOG_TYPE_OPERATION,
+  logTypeIsRun: (state) => state.logType === LOG_TYPE_RUN
 }
 
 const actions = {
@@ -37,43 +54,99 @@ const actions = {
           value: parseInt(key)
         }
       })
-      let initType = { label: '全部操作类型', value: TOTAL_OPTION_VALUE }
-      let searchOperateTypeList = [initType, ...operateTypeList]
+      let searchOperateTypeList = [...operateTypeList]
       commit(types.SET_DATA, { item: 'searchOperateTypeList', value: searchOperateTypeList })
-      commit(types.SET_DATA, { item: 'searchOperateId', value: searchOperateTypeList[0].value })
-      // dispatch('getLogListData')
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
   },
-  getLogListData ({ commit, state, rootState, getters, dispatch }) {
+  getLogTaskType ({ commit, state, getters, dispatch }) {
+    let getLogTaskTypeReq = api.log.getLogManageTaskType()
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getLogTaskTypeReq', value: getLogTaskTypeReq.cancel })
+    getLogTaskTypeReq.request.then(res => {
+      let data = res.Data || {}
+      let taskTypeList = Object.entries(data).map(([key, value]) => {
+        return {
+          label: value,
+          value: parseInt(key)
+        }
+      })
+      commit(types.SET_DATA, { item: 'searchTaskTypeList', value: taskTypeList })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    })
+  },
+  getOperateLogList ({ commit, state, rootState, getters, dispatch }) {
     let postData = {
       ProjectId: rootState.areaId,
-      OperatorName: state.searchName,
-      Start: moment(state.searchDateRange[0]).format('YYYY-MM-DD'),
-      End: moment(state.searchDateRange[1]).format('YYYY-MM-DD'),
+      LogType: state.logType,
+      OperatorName: state.searchOperator,
+      Start: moment(state.searchDateRangeOperate[0]).format('YYYY-MM-DD'),
+      End: moment(state.searchDateRangeOperate[1]).format('YYYY-MM-DD'),
       OperateType: state.searchOperateId,
-      PageSize: state.pageSize,
-      PageIndex: state.currentPage
+      PageSize: state.pageSizeOperate,
+      PageIndex: state.currentPageOperate
     }
-    if (state.searchOperateId === TOTAL_OPTION_VALUE) {
+    if (state.searchOperateId === TOTAL_OPTION_VALUE || isEmpty(state.searchOperateId)) {
       delete postData.OperateType
     }
-    let getLogListDataReq = api.log.postLogManage(postData)
-    commit(types.ADD_REQUEST_CANCEL, { item: 'getLogListDataReq', value: getLogListDataReq.cancel })
-    getLogListDataReq.request.then(res => {
+    let getOperateLogListReq = api.log.postLogManage(postData)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getOperateLogListReq', value: getOperateLogListReq.cancel })
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingOperateLogList', value: true })
+    getOperateLogListReq.request.then(res => {
       let data = res.Data || []
       let searchOperateTypeList = state.searchOperateTypeList
-      let logList = data.map(item => {
+      let operateLogList = data.map(item => {
         return Object.assign({}, item, {
           OTypeText: searchOperateTypeList.find(type => (type.value === item.OType)).label,
           TimeText: moment(item.Time).format('YYYY-MM-DD HH:mm')
         })
       })
-      commit(types.SET_DATA, { item: 'logList', value: logList })
-      commit(types.SET_DATA, { item: 'totalCount', value: res.Count })
+      commit(types.SET_DATA, { item: 'operateLogList', value: operateLogList })
+      commit(types.SET_DATA, { item: 'totalCountOperate', value: res.Count })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingOperateLogList', value: false })
+    })
+  },
+  getTaskLogList ({ commit, state, rootState, getters, dispatch }) {
+    let postData = {
+      ProjectId: rootState.areaId,
+      LogType: state.logType,
+      OperatorObj: state.searchTaskName,
+      Start: moment(state.searchDateRangeTask[0]).format('YYYY-MM-DD'),
+      End: moment(state.searchDateRangeTask[1]).format('YYYY-MM-DD'),
+      OperateType: state.searchTaskType,
+      IsSuccess: state.searchTaskResult,
+      PageSize: state.pageSizeTask,
+      PageIndex: state.currentPageTask
+    }
+    if (state.searchTaskType === TOTAL_OPTION_VALUE || isEmpty(state.searchTaskType)) {
+      delete postData.OperateType
+    }
+    if (state.searchTaskResult === TOTAL_OPTION_VALUE || isEmpty(state.searchTaskResult)) {
+      delete postData.IsSuccess
+    }
+    let getTaskLogListReq = api.log.postLogManage(postData)
+    commit(types.ADD_REQUEST_CANCEL, { item: 'getTaskLogListReq', value: getTaskLogListReq.cancel })
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingTaskLogList', value: true })
+    getTaskLogListReq.request.then(res => {
+      let data = res.Data || []
+      let searchTaskTypeList = state.searchTaskTypeList
+      let taskLogList = data.map(item => {
+        return Object.assign({}, item, {
+          OTypeText: searchTaskTypeList.find(type => (type.value === item.OType)).label,
+          TimeText: moment(item.Time).format('YYYY-MM-DD HH:mm'),
+          ControlResultText: item.ControlResult === 0 ? '成功' : '失败'
+        })
+      })
+      commit(types.SET_DATA, { item: 'taskLogList', value: taskLogList })
+      commit(types.SET_DATA, { item: 'totalCountTask', value: res.Count })
+    }).catch(err => {
+      commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingTaskLogList', value: false })
     })
   }
 }
