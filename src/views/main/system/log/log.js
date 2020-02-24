@@ -3,6 +3,7 @@ import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
 import moment from 'moment'
+import { taskCode } from '@/utils/staticType'
 
 const TOTAL_OPTION_VALUE = 'total'
 const LOG_TYPE_OPERATION = 0
@@ -138,7 +139,7 @@ const actions = {
         return Object.assign({}, item, {
           OTypeText: searchTaskTypeList.find(type => (type.value === item.OType)).label,
           TimeText: moment(item.Time).format('YYYY-MM-DD HH:mm'),
-          ControlResultText: item.ControlResult === 0 ? '成功' : '失败'
+          ControlResultText: taskCode[item.ControlResult]
         })
       })
       commit(types.SET_DATA, { item: 'taskLogList', value: taskLogList })

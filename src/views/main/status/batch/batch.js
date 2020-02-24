@@ -2,6 +2,7 @@ import Actions from '@/store/actions'
 import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
+import { taskCode } from '@/utils/staticType'
 
 const SETTING_TYPE_POWER = 2
 const SETTING_TYPE_KEEP = 0
@@ -262,7 +263,7 @@ const actions = {
           dispatch('showDialogSwitchResult', { isShow: true })
           dispatch('getDeviceCtrlSwitchList')
         } else {
-          ElAlert(resData.Data.StateDesc, '提示').then(() => {})
+          ElAlert(taskCode[resData.Data.State], '提示').then(() => {})
         }
         if (isBatch) {
           dispatch('showDialogControlSwitch', { isShow: false })
