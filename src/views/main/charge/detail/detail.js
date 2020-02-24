@@ -58,7 +58,7 @@ const actions = {
     getDetailListReq.request.then(res => {
       let data = res.Data || []
       data.forEach(item => {
-        item.PayTimeText = item.PayTime ? moment(item.PayTime).format('YYYY-MM-DD HH:mm:ss') : ''
+        item.PayTimeText = item.PayTime ? moment(item.PayTime).format('YYYY-MM-DD HH:mm') : ''
         item.ChargeTypeText = isEmpty(item.ChargeType) ? '' : state.chargeTypeList.find(w => w.value === item.ChargeType).label
         item.PayClientText = isEmpty(item.PayClient) ? '' : state.payClientList.find(w => w.value === item.PayClient).label
         item.PayTypeText = isEmpty(item.PayType) ? '' : state.payTypeList[item.PayType]

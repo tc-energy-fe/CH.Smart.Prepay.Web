@@ -169,7 +169,7 @@
             <label class="switch-edit__row-title align-top">执行房间</label>
             <div class="switch-edit__row-box" v-loading="isLoadingEditTree">
               <eg-input
-                placeholder="房间门牌号搜索"
+                placeholder="门牌编号搜索"
                 :value="editSearchRoomName"
                 @input="updateStateData({item: 'editSearchRoomName', value: $event})">
                 <i slot="suffix" class="iconfont icon-content_icon_search"/>

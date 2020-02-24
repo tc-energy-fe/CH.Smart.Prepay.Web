@@ -12,7 +12,8 @@ const state = {
   groupList: [],
   isModify: false,
   searchName: '',
-  editParentId: null,
+  editParentId: '',
+  editParentName: '',
   editData: {
     Id: null,
     Name: ''
@@ -42,12 +43,14 @@ const actions = {
     }
     commit(types.SET_DATA, { item: 'editData', value: { Id: null, Name: '' } })
     commit(types.SET_DATA, { item: 'editParentId', value: null })
+    commit(types.SET_DATA, { item: 'editParentName', value: '' })
     if (data) {
       commit(types.SET_DATA, { item: 'isModify', value: true })
       Object.keys(state.editData).forEach(k => {
         commit(types.UPDATE_OBJ_DATA, { obj: 'editData', item: k, value: data[k] })
       })
       commit(types.SET_DATA, { item: 'editParentId', value: data.ParentId })
+      commit(types.SET_DATA, { item: 'editParentName', value: data.ParentName || '' })
     } else {
       commit(types.SET_DATA, { item: 'isModify', value: false })
     }

@@ -149,8 +149,10 @@
       }
     },
     created () {
-      if (this.defaultRoom) {
-        this.searchDataOnChange('RoomFullName', this.defaultRoom)
+      if (this.$parent.isJumpToDetail) {
+        this.searchDataOnChange('RoomFullName', this.defaultRoom || '')
+      } else {
+        this.searchDataOnChange('RoomFullName', '')
       }
       if (this.groupTree.length) {
         this.$nextTick(function () {

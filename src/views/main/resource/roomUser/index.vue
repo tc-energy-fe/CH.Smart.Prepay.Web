@@ -54,7 +54,8 @@
                 <template slot-scope="{ row }">
                   <el-popover
                     v-if="row.ShareNum > 0"
-                    @show="getShareList(row.Id)"
+                    @show="shareOnShow"
+                    @after-enter="getShareList(row.Id)"
                     @hide="shareOnHide"
                   >
                     <eg-button slot="reference" type="text">{{row.ShareNum}}</eg-button>
@@ -194,6 +195,7 @@
         'showEdit',
         'updateObjectData',
         'editAccount',
+        'shareOnShow',
         'getShareList',
         'shareOnHide'
       ]),

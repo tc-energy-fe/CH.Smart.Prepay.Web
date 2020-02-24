@@ -183,7 +183,7 @@
             <label class="subsidy-edit__row-label">执行房间</label>
             <div class="edit-room__block">
               <eg-input
-                placeholder="房间名称搜索"
+                placeholder="门牌编号搜索"
                 v-model="editRoomSearchName"
               >
                 <i slot="suffix" class="iconfont icon-content_icon_search"></i>

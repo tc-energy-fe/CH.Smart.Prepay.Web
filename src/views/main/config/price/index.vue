@@ -264,7 +264,7 @@
               <label class="price-edit__lable">执行房间</label>
               <div class="price-edit__room" v-loading="isLoadingEditRoomList || isLoadingSchemeDetail">
                 <eg-input
-                  placeholder="房间名称搜索"
+                  placeholder="门牌编号搜索"
                   v-model="editRoomSearchName"
                 >
                   <i slot="suffix" class="iconfont icon-content_icon_search"></i>

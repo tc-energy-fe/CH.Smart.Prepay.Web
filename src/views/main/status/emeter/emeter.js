@@ -15,7 +15,7 @@ const state = {
   searchEMeterStateOptions: [
     { label: '全部', value: TOTAL_OPTION },
     { label: '合闸', value: true },
-    { label: '断闸/开闸', value: false }
+    { label: '断闸', value: false }
   ],
   searchFrozenStateOptions: [
     { label: '全部', value: TOTAL_OPTION },

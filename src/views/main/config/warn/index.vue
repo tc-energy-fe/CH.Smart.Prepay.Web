@@ -17,7 +17,7 @@
           <eg-button @click="getWarnSchemeList">查询</eg-button>
         </template>
         <template v-slot:headerRight>
-          <eg-button @click="showEdit">新建报警方案</eg-button>
+          <eg-button @click="showEdit">新建告警方案</eg-button>
         </template>
         <template v-slot:content>
           <el-table :data="warnList" v-loading="isLoadingWarnList">
@@ -53,7 +53,7 @@
             @input="updateStateData({item: 'searchNameRoom', value: $event})"
           />
           <eg-input
-            placeholder="余额报警方案搜索"
+            placeholder="余额告警方案搜索"
             :value="searchNameScheme"
             @input="updateStateData({item: 'searchNameScheme', value: $event})"
           />
@@ -63,7 +63,7 @@
           <el-table :data="roomList" v-loading="isLoadingRoomList">
             <el-table-column prop="RoomNo" label="户号" align="center" />
             <el-table-column prop="FullName" label="房间信息" align="center" />
-            <el-table-column prop="SchemeName" label="余额报警方案" align="center" />
+            <el-table-column prop="SchemeName" label="余额告警方案" align="center" />
           </el-table>
           <el-pagination
             background
@@ -82,7 +82,7 @@
       <eg-box class="edit-wrapper warn-edit">
         <template v-slot:headerLeft>
           <div class="edit-header">
-            <p class="edit-header__title">{{isModify ? '编辑' : '新建'}}余额报警方案</p>
+            <p class="edit-header__title">{{isModify ? '编辑' : '新建'}}余额告警方案</p>
             <eg-button type="text" @click="showEdit({isShow: false})">返回列表</eg-button>
           </div>
         </template>
@@ -173,7 +173,7 @@
             <label class="warn-edit__row-title align-top">执行房间</label>
             <div class="warn-edit__row-box">
               <eg-input
-                placeholder="房间名称搜索"
+                placeholder="门牌编号搜索"
                 :value="editSearchRoomName"
                 @input="updateStateData({item: 'editSearchRoomName', value: $event})">
                 <i slot="suffix" class="iconfont icon-content_icon_search"/>

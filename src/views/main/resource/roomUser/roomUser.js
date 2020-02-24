@@ -139,7 +139,7 @@ const actions = {
               }).finally(() => {
                 commit(types.SET_LOADING_STATUS, { item: 'isEditingAccount', value: false })
               })
-            })
+            }).catch(() => {})
           } else {
             commit(types.CHECKOUT_FAILURE, err)
           }
@@ -160,6 +160,8 @@ const actions = {
         commit(types.SET_LOADING_STATUS, { item: 'isEditingAccount', value: false })
       })
     }
+  },
+  shareOnShow ({ commit }) {
   },
   getShareList ({ state, getters, commit }, roomId) {
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingShareList', value: true })

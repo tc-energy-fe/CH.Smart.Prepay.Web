@@ -65,7 +65,7 @@
         <p class="project-edit__row">
           <label>上级区域</label>
           <el-select
-            :disabled="isModify"
+            v-if="!isModify"
             :value="editParentId"
             @change="updateFormData({ item: 'editParentId', value: $event })"
           >
@@ -79,6 +79,12 @@
               :label="item.FullName"
               :value="item.value">
             </el-option>
+          </el-select>
+          <el-select
+            v-else
+            disabled
+            :value="editParentName"
+          >
           </el-select>
         </p>
         <p class="project-edit__footer">
@@ -107,6 +113,7 @@
         'groupList',
         'isModify',
         'editParentId',
+        'editParentName',
         'editData',
         'isShowEdit',
         'currentPage',
