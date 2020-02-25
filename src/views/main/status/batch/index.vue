@@ -229,13 +229,13 @@
             @close="showDialogSwitchResult({isShow: false})"
           >
             <div class="dialog-result__info">
-              <p>下发成功：<span class="success-text">36</span></p>
-              <p>下发失败：<span class="warning-text">9</span></p>
+              <p>下发成功：<span class="success-text">{{switchBatchResultNumber.successNumber}}</span></p>
+              <p>下发失败：<span class="warning-text">{{switchBatchResultNumber.failureNumber}}</span></p>
             </div>
-            <el-table :data="[]">
-              <el-table-column prop="RoomFullName" label="房间信息" align="center" />
+            <el-table :data="switchBatchControlResult">
               <el-table-column prop="DeviceSN" label="电表" align="center" />
-              <el-table-column prop="Result" label="下发结果" align="center" />
+              <el-table-column prop="RoomFullName" label="房间信息" align="center" />
+              <el-table-column prop="ControlResult" label="下发结果" align="center" />
             </el-table>
             <template v-slot:footer>
               <eg-button type="minor" @click="showDialogSwitchResult({isShow: false})">关闭</eg-button>
@@ -287,14 +287,16 @@
         'switchControlDeviceIds',
         'switchControlState',
         'keepControlState',
-        'isControlling'
+        'isControlling',
+        'switchBatchControlResult'
       ]),
       ...mapGetters([
         'currentNodeId',
         'settingTypeIsPower',
         'settingTypeIsKeep',
         'settingTypeIsSwitch',
-        'finishedPercentSwitch'
+        'finishedPercentSwitch',
+        'switchBatchResultNumber'
       ]),
       ...Vuex.mapState({
         groupTree: 'mainGroupTreeHasRoot',
@@ -351,6 +353,7 @@
         this.updateStateData({ item: 'keepControlDeviceIds', value: keepControlDeviceIds })
       },
       handleSelectionChangeSwitch (selection) {
+        this.updateStateData({ item: 'switchControlSelectionDevices', value: selection })
         let switchControlDeviceIds = selection.map(item => item.DeviceId)
         this.updateStateData({ item: 'switchControlDeviceIds', value: switchControlDeviceIds })
       },

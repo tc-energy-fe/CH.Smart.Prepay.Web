@@ -60,7 +60,9 @@ const state = {
   switchControlState: false,
   isControlling: false,
   finishedNumberSwitch: 0,
-  taskIdSwitch: null
+  taskIdSwitch: null,
+  switchControlSelectionDevices: [],
+  switchBatchControlResult: []
 }
 
 const getters = {
@@ -71,6 +73,12 @@ const getters = {
   finishedPercentSwitch: (state, getters) => {
     let totalNumber = state.switchControlDeviceIds.length
     return totalNumber ? ((state.finishedNumberSwitch / totalNumber) * 100).toFixed(0) : 0
+  },
+  switchBatchResultNumber: (state, getters) => {
+    return {
+      successNumber: state.switchBatchControlResult.filter(item => item.ResultState === 0).length,
+      failureNumber: state.switchBatchControlResult.filter(item => item.ResultState !== 0).length
+    }
   }
 }
 
@@ -107,9 +115,11 @@ const actions = {
     }
     commit(types.SET_DATA, { item: 'dialogVisibleSwitchBatch', value: isShow })
   },
-  showDialogSwitchResult ({ commit, state, getters, dispatch }, { isShow }) {
+  showDialogSwitchResult ({ commit, state, getters, dispatch }, { isShow, result }) {
     if (!isShow) {
+      commit(types.SET_DATA, { item: 'switchBatchControlResult', value: [] })
     } else {
+      commit(types.SET_DATA, { item: 'switchBatchControlResult', value: result })
     }
     commit(types.SET_DATA, { item: 'dialogVisibleSwitchResult', value: isShow })
   },
@@ -250,17 +260,32 @@ const actions = {
       // 任务执行结束
       commit(types.SET_DATA, { item: 'isControlling', value: false })
       if (resData.State === 1) {
-        console.log(resData.Data)
         if (resData.Data.State === 0) {
           let devicesObject = resData.Data.Data
+          let selectionDevices = state.switchControlSelectionDevices
           let deviceList = Object.entries(devicesObject).map(([key, value]) => {
+            let DeviceId = parseInt(key)
+            let ResultState = value.State
+            if (value.State === 0) {
+              ResultState = value['Ctl.SWITCH'].State
+            } else {
+              ResultState = value.State
+            }
+            let deviceInfo = selectionDevices.find(item => item.DeviceId === DeviceId)
             return Object.assign({}, value, {
-              Id: parseInt(key)
+              Id: DeviceId,
+              ResultState,
+              ControlResult: taskCode[ResultState],
+              DeviceSN: deviceInfo.DeviceSN,
+              RoomFullName: deviceInfo.RoomFullName
             })
           })
-          console.log(deviceList)
           commit(types.SET_DATA, { item: 'finishedNumberSwitch', value: deviceList.length })
-          dispatch('showDialogSwitchResult', { isShow: true })
+          if (isBatch) {
+            dispatch('showDialogSwitchResult', { isShow: true, result: deviceList })
+          } else {
+            ElAlert(deviceList[0].ControlResult, '提示').then(() => {})
+          }
           dispatch('getDeviceCtrlSwitchList')
         } else {
           ElAlert(taskCode[resData.Data.State], '提示').then(() => {})
@@ -268,8 +293,14 @@ const actions = {
         if (isBatch) {
           dispatch('showDialogControlSwitch', { isShow: false })
         }
-      } else {
+      } else if (resData.State === 2) {
         ElAlert('任务失败', '提示').then(() => {})
+      } else if (resData.State === 3) {
+        ElAlert('任务超时', '提示').then(() => {})
+      } else if (resData.State === 4) {
+        ElAlert('任务取消', '提示').then(() => {})
+      } else if (resData.State === 5) {
+        ElAlert('任务未找到', '提示').then(() => {})
       }
     } else {
       // 任务执行中继续查询

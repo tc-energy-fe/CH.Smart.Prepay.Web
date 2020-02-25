@@ -8,6 +8,10 @@
           v-model="searchTypeIdValue"
         >
           <el-option
+            label="全部角色类型"
+            :value="'total'"
+          />
+          <el-option
             v-for="(item, index) of searchRoleTypeList"
             :key="index"
             :label="item.label"
@@ -25,7 +29,7 @@
             :value="item.value"
           />
         </el-select>
-        <eg-button @click="getUserListData">查询</eg-button>
+        <eg-button @click="searchClick">查询</eg-button>
       </template>
       <template v-slot:headerRight>
         <eg-button @click="showEdit">新建用户</eg-button>
@@ -231,6 +235,10 @@
         'updateStateData',
         'updateObjectData'
       ]),
+      searchClick () {
+        this.currentPageOnChange(1)
+        this.getUserListData()
+      },
       saveClick () {
         if (this.isModify) {
           this.saveUserData()
@@ -263,7 +271,13 @@
         this.getUserListData()
       },
       pageSize () {
-        this.getUserListData()
+        this.searchClick()
+      },
+      searchTypeId () {
+        this.searchClick()
+      },
+      searchStatusId () {
+        this.searchClick()
       },
       editGroupTreeData (newValue) {
         if (this.userGroupCheckedIds.length) {

@@ -7,7 +7,7 @@
           <eg-tab-button :label="2">房间方案查询</eg-tab-button>
         </eg-tab-group>
       </div>
-      <eg-box v-show="tabIndex===1" class="config-scheme">
+      <eg-box v-show="tabIndex === 1" class="config-scheme">
         <template v-slot:headerLeft>
           <eg-input
             placeholder="方案名称搜索"
@@ -45,7 +45,7 @@
           />
         </template>
       </eg-box>
-      <eg-box v-show="tabIndex===2" class="config-room">
+      <eg-box v-show="tabIndex === 2" class="config-room">
         <template v-slot:headerLeft>
           <eg-input
             placeholder="户号/房间信息搜索"
@@ -171,7 +171,7 @@
           </div>
           <div class="warn-edit__row">
             <label class="warn-edit__row-title align-top">执行房间</label>
-            <div class="warn-edit__row-box">
+            <div class="warn-edit__row-box" v-loading="isLoadingTreeData">
               <eg-input
                 placeholder="门牌编号搜索"
                 :value="editSearchRoomName"
@@ -232,7 +232,8 @@
         'isModify',
         'editData',
         'editTreeData',
-        'editSearchRoomName'
+        'editSearchRoomName',
+        'isLoadingTreeData'
       ]),
       ...mapGetters([
         'offTypeList',

@@ -199,7 +199,6 @@
 
 <script>
   import { createNamespacedHelpers } from 'vuex'
-  import moment from 'moment'
   const { mapGetters, mapActions, mapState } = createNamespacedHelpers('config/switch')
   export default {
     name: 'ConfigSwitch',
@@ -291,7 +290,7 @@
         let editPeriodList = JSON.parse(JSON.stringify(this.editPeriodList))
         editPeriodList.push({
           SwitchParam: true,
-          Time: moment(moment().format('YYYY-MM-DD 06:00:00')).toDate(),
+          Time: '06:00',
           Days: [1, 2, 3, 4, 5, 6, 7]
         })
         this.updateStateData({ item: 'editPeriodList', value: editPeriodList })

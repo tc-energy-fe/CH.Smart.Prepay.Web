@@ -42,7 +42,8 @@ const state = {
     OffRangeEnd: '11:00'
   },
   editTreeData: [],
-  editSearchRoomName: ''
+  editSearchRoomName: '',
+  isLoadingTreeData: false
 }
 
 const getters = {
@@ -145,6 +146,7 @@ const actions = {
       params.configId = configId
     }
     let getGroupListEditReq = !isEmpty(configId) ? api.group.getRoomConfigEditList(params) : api.group.getRoomConfigAddList(params)
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingTreeData', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'getGroupListEditReq', value: getGroupListEditReq.cancel })
     getGroupListEditReq.request.then(res => {
       let data = res.Data || []
@@ -152,6 +154,8 @@ const actions = {
       commit(types.SET_DATA, { item: 'editTreeData', value: editTreeData })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingTreeData', value: false })
     })
   },
   getSingleScheme ({ commit, state, rootState, getters, dispatch }, id) {
@@ -169,8 +173,8 @@ const actions = {
           WarnValue: data.BalanceContent.WarnValue,
           SNS: data.BalanceContent.SNS,
           OffType: data.BalanceContent.OffType,
-          OffRangeStart: data.BalanceContent.OffRangeStart.slice(0, -3),
-          OffRangeEnd: data.BalanceContent.OffRangeEnd.slice(0, -3)
+          OffRangeStart: data.BalanceContent.OffRangeStart ? data.BalanceContent.OffRangeStart.slice(0, -3) : '10:00',
+          OffRangeEnd: data.BalanceContent.OffRangeEnd ? data.BalanceContent.OffRangeEnd.slice(0, -3) : '11:00'
         }
       })
     }).catch(err => {

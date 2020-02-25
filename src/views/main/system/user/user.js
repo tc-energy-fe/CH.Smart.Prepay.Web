@@ -13,9 +13,7 @@ const state = {
   searchName: '',
   searchTypeId: TOTAL_OPTION_VALUE,
   searchStatusId: TOTAL_OPTION_VALUE,
-  searchRoleTypeList: [
-    { label: '全部角色类型', value: TOTAL_OPTION_VALUE }
-  ],
+  searchRoleTypeList: [],
   searchStatusList: [
     { label: '全部状态', value: TOTAL_OPTION_VALUE },
     { label: '启用', value: STATUS_ENABLED_VALUE },
@@ -88,10 +86,7 @@ const actions = {
           label: value,
           value: parseInt(key)
         }))
-        let initType = { label: '全部角色类型', value: TOTAL_OPTION_VALUE }
-        let searchRoleTypeList = [initType, ...roleTypeList]
-        commit(types.SET_DATA, { item: 'searchRoleTypeList', value: searchRoleTypeList })
-        commit(types.SET_DATA, { item: 'searchTypeId', value: searchRoleTypeList[0].value })
+        commit(types.SET_DATA, { item: 'searchRoleTypeList', value: roleTypeList })
         dispatch('getUserListData')
       } else {
       }
