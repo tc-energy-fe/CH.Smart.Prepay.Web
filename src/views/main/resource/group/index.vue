@@ -30,7 +30,11 @@
           <template v-slot:content>
             <el-table :data="paginationData" v-loading="isLoadingGroupList">
               <el-table-column label="区域名称" prop="Name" align="center"></el-table-column>
-              <el-table-column label="上级区域" prop="ParentName" align="center"></el-table-column>
+              <el-table-column label="上级区域" align="center">
+                <template slot-scope="{ row }">
+                  <span>{{ row.ParentName || '-' }}</span>
+                </template>
+              </el-table-column>
               <el-table-column label="操作" align="center">
                 <template slot-scope="{ row }">
                   <eg-button type="text" @click="showEdit({ data: row })" style="margin-right: 1.5rem;">编辑</eg-button>

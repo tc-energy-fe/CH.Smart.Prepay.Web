@@ -295,9 +295,7 @@
           this.updateStateData({ item: 'currentNode', value: this.groupTree[0] || {} })
           this.showEdit({ isShow: false })
         } else {
-          if (this.$parent.isJumpToDetail) {
-            this.$parent.isJumpToDetail = false
-          } else {
+          if (!this.$parent.isReturnToManage) {
             this.showEdit({ isShow: false })
           }
         }
@@ -306,7 +304,7 @@
       }
     },
     beforeDestroy () {
-      // this.showEdit({ isShow: false })
+      this.$parent.isReturnToManage = false
     }
   }
 </script>

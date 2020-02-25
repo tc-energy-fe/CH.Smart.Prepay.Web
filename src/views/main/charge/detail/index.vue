@@ -14,7 +14,11 @@
         @current-change="nodeOnChange"
       ></el-tree>
     </div>
-    <div class="main-content">
+    <div class="main-content charge-detail__content">
+      <div v-if="isFromManage" class="charge-detail__header">
+        <span class="charge-detail__title">缴退费明细</span>
+        <eg-button type="text" @click="returnToManage">返回</eg-button>
+      </div>
       <eg-box>
         <template v-slot:headerLeft>
           <el-date-picker
@@ -52,7 +56,7 @@
           </el-select>
           <eg-button @click="search">查询</eg-button>
         </template>
-        <template v-slot:content>
+        <div style="height: 100%;overflow: auto" slot="content">
           <el-table :data="detailList" v-loading="isLoadingDetailList">
             <el-table-column label="房间信息" prop="RoomFullName" align="center" min-width="140"></el-table-column>
             <el-table-column label="缴费人姓名" prop="Name" align="center"  min-width="110"></el-table-column>
@@ -73,7 +77,7 @@
             layout="total, ->, prev, pager, next, sizes, jumper"
             :total="totalCount"
           ></el-pagination>
-        </template>
+        </div>
       </eg-box>
     </div>
   </div>
@@ -86,7 +90,9 @@
   export default {
     name: 'charge-detail',
     data () {
-      return {}
+      return {
+        isJumpToManage: false
+      }
     },
     components: {},
     computed: {
@@ -109,6 +115,9 @@
       },
       defaultRoom () {
         return this.$parent.payDetailGroup
+      },
+      isFromManage () {
+        return this.$parent.isJumpToDetail
       }
     },
     methods: {
@@ -135,6 +144,10 @@
       pageSizeOnChange (value) {
         this.updateStateData({ item: 'pageSize', value })
         this.currentPageOnChange(1)
+      },
+      returnToManage () {
+        this.$parent.isReturnToManage = true
+        this.$router.push('/charge/management')
       }
     },
     watch: {
@@ -149,11 +162,7 @@
       }
     },
     created () {
-      if (this.$parent.isJumpToDetail) {
-        this.searchDataOnChange('RoomFullName', this.defaultRoom || '')
-      } else {
-        this.searchDataOnChange('RoomFullName', '')
-      }
+      this.searchDataOnChange('RoomFullName', this.isFromManage ? this.defaultRoom || '' : '')
       if (this.groupTree.length) {
         this.$nextTick(function () {
           this.$refs.tree.setCurrentKey(this.currentNodeId)
@@ -164,6 +173,9 @@
         this.search()
       }
     },
-    beforeDestroy () {}
+    beforeDestroy () {
+      this.$parent.isJumpToDetail = false
+      this.$parent.payDetailGroup = ''
+    }
   }
 </script>
