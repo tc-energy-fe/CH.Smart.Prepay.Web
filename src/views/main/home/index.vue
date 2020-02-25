@@ -125,14 +125,16 @@
             <el-radio-button :label="2">本月趋势</el-radio-button>
             <el-radio-button :label="1">本年趋势</el-radio-button>
           </el-radio-group>
-          <ele-line-chart
-            class="home-trend__chart"
-            :data="eleTrendData"
-            :custom-props="{
-              xAxisName: trendDateType === 2 ? '日' : '月',
-              yAxisName: 'kWh'
-            }"
-          ></ele-line-chart>
+          <div style="height: 100%;width: 100%;" v-nodata="!eleTrendData.length">
+            <ele-line-chart
+              class="home-trend__chart"
+              :data="eleTrendData"
+              :custom-props="{
+                xAxisName: trendDateType === 2 ? '日' : '月',
+                yAxisName: 'kWh'
+              }"
+            ></ele-line-chart>
+          </div>
         </div>
       </eg-box>
     </div>

@@ -1,2 +1,24 @@
 .charge-detail{
+
+  &__content{
+    display: flex;
+    flex-direction: column;
+
+    > .eg-box{
+      height: 0;
+      flex: 1;
+    }
+  }
+
+  &__header{
+    flex-shrink: 0;
+    padding: 1rem 0 0 1rem;
+    background-color: #FFF;
+
+    .charge-detail__title{
+      margin-right: 1rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+  }
 }

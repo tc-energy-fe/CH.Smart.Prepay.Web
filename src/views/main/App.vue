@@ -130,10 +130,12 @@
       },
       navCollapseOnChange () {
         this.isNavCollapse = !this.isNavCollapse
+        localStorage.setItem('isNavCollapse', JSON.stringify(this.isNavCollapse))
       }
     },
     created () {
       this.getUserManage()
+      this.isNavCollapse = JSON.parse(localStorage.getItem('isNavCollapse'))
     },
     beforeDestroy () {
     }

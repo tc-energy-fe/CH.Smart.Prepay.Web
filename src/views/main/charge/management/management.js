@@ -154,8 +154,8 @@ const actions = {
       GroupId: state.detailData.Id,
       ChargeType: state.editChargeType,
       Money: state.editMoney,
-      PayClient: 0,
-      PayType: state.editPayType
+      // PayType: state.editPayType,
+      PayClient: 0
     }
     if (isEmpty(postData.Money) || postData.Money === 0) {
       ElAlert('请填写金额！', '提示')

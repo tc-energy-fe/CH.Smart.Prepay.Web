@@ -8,7 +8,8 @@
     data () {
       return {
         payDetailGroup: null,
-        isJumpToDetail: false
+        isJumpToDetail: false,
+        isReturnToManage: false
       }
     },
     mounted () {

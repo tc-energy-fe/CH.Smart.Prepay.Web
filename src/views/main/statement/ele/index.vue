@@ -48,7 +48,7 @@
               :text="reportTotal.DeltaCostSum | currency"
             ></overview-block>
           </div>
-          <div class="ele-statistic__content--right">
+          <div v-nodata="!pieData.length" class="ele-statistic__content--right">
             <total-pie-chart :data="pieData"></total-pie-chart>
           </div>
         </div>
