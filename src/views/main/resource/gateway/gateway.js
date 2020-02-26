@@ -2,7 +2,9 @@ import Actions from '@/store/actions'
 import Mutations from '@/store/mutations'
 import api from '@/api'
 import * as types from '@/store/mutation-types'
-import { upload } from '@/utils/file'
+import { download, upload } from '@/utils/file'
+import axios from 'axios'
+import apiUrl from '@/api/apiUrl'
 
 const state = {
   reqCancels: new Map(),
@@ -147,6 +149,26 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
       commit(types.SET_LOADING_STATUS, { item: 'isImportGateway', value: false })
+    })
+  },
+  getTemplateFile ({ state, getters, commit }) {
+    let params = {
+      type: 2, // 网关设备
+      filename: '网关设备导入模板.xlsx'
+    }
+    let getTemplateFileReq = axios.get(`${apiUrl}/File/Templet`, { params })
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingTemplateFile', value: true })
+    getTemplateFileReq.then(res => {
+      let url = res.data
+      if (url) {
+        download(`${apiUrl.slice(0, -4)}${url}`, params.filename)
+      } else {
+        throw new Error('下载失败！')
+      }
+    }).catch((err) => {
+      ElAlert(err, '提示').then(() => {})
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingTemplateFile', value: false })
     })
   }
 }

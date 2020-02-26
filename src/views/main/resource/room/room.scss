@@ -82,4 +82,17 @@
   .room-edit__footer {
     padding: 2rem 0 0 5rem;
   }
+
+  .resource-room__import{
+    font-size: 1rem;
+
+    .room-import__static{
+      height: 2rem;
+      line-height: 2rem;
+
+      > span{
+        margin-right: 1rem;
+      }
+    }
+  }
 }

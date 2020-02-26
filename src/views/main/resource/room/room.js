@@ -2,7 +2,9 @@ import Actions from '@/store/actions'
 import Mutations from '@/store/mutations'
 import * as types from '@/store/mutation-types'
 import api from '@/api'
-import { upload } from '@/utils/file'
+import { download, upload } from '@/utils/file'
+import axios from 'axios'
+import apiUrl from '@/api/apiUrl'
 
 const state = {
   reqCancels: new Map(),
@@ -31,7 +33,11 @@ const state = {
   editParentName: '',
   isLoadingGatewayDeviceList: false,
   editDeviceName: '',
-  isShowEditDevice: false
+  isShowEditDevice: false,
+  isShowImportResult: false,
+  isImportingRoom: false,
+  importResultStatic: {},
+  importResultTableData: []
 }
 
 const getters = {
@@ -198,11 +204,13 @@ const actions = {
   uploadFile ({ state, commit, dispatch }) {
     upload().then(res => {
       let uploadFileReq = api.file.uploadFile(res)
+      commit(types.SET_LOADING_STATUS, { item: 'isImportingRoom', value: true })
       commit(types.ADD_REQUEST_CANCEL, { item: 'uploadFileReq', value: uploadFileReq.cancel })
       uploadFileReq.request.then(res => {
         dispatch('importRoom', res.Data)
       }).catch(err => {
         commit(types.CHECKOUT_FAILURE, err)
+        commit(types.SET_LOADING_STATUS, { item: 'isImportingRoom', value: false })
       }).finally(() => {
       })
     })
@@ -214,11 +222,43 @@ const actions = {
     })
     commit(types.ADD_REQUEST_CANCEL, { item: 'importRoomReq', value: importRoomReq.cancel })
     importRoomReq.request.then(res => {
-      commit(types.CHECKOUT_SUCCEED, res.State)
+      let data = res.Data || {}
+      commit(types.SET_DATA, {
+        item: 'importResultStatic',
+        value: {
+          total: data.TotalCount,
+          success: data.SuccessCount,
+          fail: data.FailCount,
+          repeat: data.RepeatCount
+        }
+      })
+      commit(types.SET_DATA, { item: 'importResultTableData', value: data.Errors || [] })
+      commit(types.SET_DATA, { item: 'isShowImportResult', value: true })
       dispatch('getRoomList')
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isImportingRoom', value: false })
+    })
+  },
+  getTemplateFile ({ state, getters, commit }) {
+    let params = {
+      type: 0, // 房间
+      filename: '房间导入模板.xlsx'
+    }
+    let getTemplateFileReq = axios.get(`${apiUrl}/File/Templet`, { params })
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingTemplateFile', value: true })
+    getTemplateFileReq.then(res => {
+      let url = res.data
+      if (url) {
+        download(`${apiUrl.slice(0, -4)}${url}`)
+      } else {
+        throw new Error('下载失败！')
+      }
+    }).catch((err) => {
+      ElAlert(err, '提示').then(() => {})
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingTemplateFile', value: false })
     })
   }
 }

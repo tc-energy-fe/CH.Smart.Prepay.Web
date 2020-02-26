@@ -23,6 +23,7 @@
         <eg-button @click="search">查询</eg-button>
       </template>
       <template v-slot:headerRight>
+        <eg-button style="margin-right: 1rem" @click="getTemplateFile" type="text">下载导入模板</eg-button>
         <eg-button style="margin-right: 1rem" @click="uploadFile">导入设备</eg-button>
         <eg-button @click="showAddEdit(true)">添加设备</eg-button>
       </template>
@@ -138,7 +139,8 @@
         'uploadFile',
         'showAddEdit',
         'updateObjectData',
-        'addGateway'
+        'addGateway',
+        'getTemplateFile'
       ]),
       search () {
         this.updateFormData({ item: 'currentPage', value: 1 })
