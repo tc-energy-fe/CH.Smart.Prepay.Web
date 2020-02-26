@@ -22,7 +22,11 @@ const state = {
     Name: '',
     TypeId: null,
     Address: ''
-  }
+  },
+  isShowImportResult: false,
+  isImportingRoom: false,
+  importResultStatic: {},
+  importResultTableData: []
 }
 
 const getters = {
@@ -143,7 +147,19 @@ const actions = {
     commit(types.SET_LOADING_STATUS, { item: 'isImportGateway', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'importGatewayReq', value: importGatewayReq.cancel })
     importGatewayReq.request.then(res => {
-      commit(types.CHECKOUT_SUCCEED, res.State)
+      let data = res.Data || {}
+      commit(types.SET_DATA, {
+        item: 'importResultStatic',
+        value: {
+          total: data.TotalCount,
+          success: data.SuccessCount,
+          fail: data.FailCount,
+          repeat: data.RepeatCount
+        }
+      })
+      commit(types.SET_DATA, { item: 'importResultTableData', value: data.Errors || [] })
+      commit(types.SET_DATA, { item: 'isShowImportResult', value: true })
+      commit(types.SET_DATA, { item: 'currentPage', value: 1 })
       dispatch('getGatewayList')
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)

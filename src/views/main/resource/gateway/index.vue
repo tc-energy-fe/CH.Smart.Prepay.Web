@@ -43,6 +43,35 @@
           layout="total, ->, prev, pager, next, sizes, jumper"
           :total="totalCount"
         ></el-pagination>
+        <el-dialog
+          width="35rem"
+          title="导入结果"
+          :visible="isShowImportResult"
+          @close="importResultOnClose"
+        >
+          <div class="resource-gateway__import">
+            <p class="gateway-import__static">
+              <label>导入总数：</label><span style="font-weight: bold">{{importResultStatic.total | currency}}</span>
+              <label>成功数：</label><span style="color: #67c23a;">{{importResultStatic.success | currency}}</span>
+              <label>失败数：</label><span style="color: #f56c6c;">{{importResultStatic.fail | currency}}</span>
+              <label>重复数：</label><span style="color: #3d7dff;">{{importResultStatic.repeat | currency}}</span>
+            </p>
+            <el-table :data="importResultTableData">
+              <el-table-column prop="Row" label="错误行数" align="center" width="100"></el-table-column>
+              <el-table-column prop="Error" label="错误信息" align="center"></el-table-column>
+            </el-table>
+            <el-pagination
+              @current-change="importCurrentOnChange"
+              @size-change="importPageSizeOnChange"
+              :page-sizes="[5, 10, 15]"
+              :current-page.sync="importCurrentPage"
+              :page-size="importPageSize"
+              layout="total, ->, prev, pager, next, sizes, jumper"
+              :total="importResultTableData.length"
+            ></el-pagination>
+          </div>
+          <eg-button type="minor" slot="footer" @click="importResultOnClose">关闭</eg-button>
+        </el-dialog>
       </template>
     </eg-box>
     <eg-box v-else>
@@ -110,6 +139,8 @@
     name: 'resource-gateway',
     data () {
       return {
+        importCurrentPage: 1,
+        importPageSize: 5
       }
     },
     components: {},
@@ -124,7 +155,11 @@
         'pageSize',
         'totalCount',
         'isShowEdit',
-        'editData'
+        'editData',
+        'isShowImportResult',
+        'isImportingRoom',
+        'importResultStatic',
+        'importResultTableData'
       ]),
       ...mapGetters([
         'projectId'
@@ -152,6 +187,16 @@
       },
       editDataOnChange (key, value) {
         this.updateObjectData({ obj: 'editData', item: key, value })
+      },
+      importResultOnClose () {
+        this.updateFormData({ item: 'isShowImportResult', value: false })
+        this.importCurrentPage = 1
+      },
+      importCurrentOnChange (val) {
+        this.importCurrentPage = val
+      },
+      importPageSizeOnChange (val) {
+        this.importPageSize = val
       }
     },
     watch: {

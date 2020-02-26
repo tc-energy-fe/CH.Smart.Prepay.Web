@@ -234,6 +234,7 @@ const actions = {
       })
       commit(types.SET_DATA, { item: 'importResultTableData', value: data.Errors || [] })
       commit(types.SET_DATA, { item: 'isShowImportResult', value: true })
+      commit(types.SET_DATA, { item: 'currentPage', value: 1 })
       dispatch('getRoomList')
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)

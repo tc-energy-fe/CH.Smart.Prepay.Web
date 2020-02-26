@@ -53,4 +53,17 @@
   .meter-detail__footer{
     text-align: center;
   }
+
+  .resource-meter__import{
+    font-size: 1rem;
+
+    .meter-import__static{
+      height: 2rem;
+      line-height: 2rem;
+
+      > span{
+        margin-right: 1rem;
+      }
+    }
+  }
 }
