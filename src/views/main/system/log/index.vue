@@ -18,7 +18,7 @@
             @input="updateStateData({item: 'searchOperateId', value: $event})"
           >
             <el-option
-              label="--"
+              label="全部类型"
               value="total"
             />
             <el-option
@@ -49,7 +49,7 @@
             @input="updateStateData({item: 'searchTaskType', value: $event})"
           >
             <el-option
-              label="--"
+              label="全部类别"
               value="total"
             />
             <el-option
@@ -73,7 +73,7 @@
             @input="updateStateData({item: 'searchTaskResult', value: $event})"
           >
             <el-option
-              label="--"
+              label="全部结果"
               value="total"
             />
             <el-option
@@ -133,7 +133,7 @@
   import { createNamespacedHelpers } from 'vuex'
   const { mapState, mapGetters, mapActions } = createNamespacedHelpers('system/log')
   export default {
-    name: 'Log',
+    name: 'SystemLog',
     data () {
       return {
       }

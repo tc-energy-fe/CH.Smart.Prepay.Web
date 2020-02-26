@@ -38,27 +38,27 @@
         }
       }
     }
-    .app-header--right{
+    .app-header--right {
       height: 100%;
       float: right;
       padding-right: 2rem;
       display: flex;
       align-items: center;
+      color: $main-color;
       > span{
         line-height: 1;
+      }
+      .app-header_user {
         color: $main-color;
       }
-      .app-header_user{
-        cursor: pointer;
-      }
-      .app-header_split{
+      .app-header_split {
         display: block;
         width: 0;
         height: 1.5rem;
         border-left: 2px solid #e3f0ff;
         margin: 1.5rem;
       }
-      .app-logout{
+      .app-logout  {
         display: flex;
         align-items: center;
         height: $header-height;

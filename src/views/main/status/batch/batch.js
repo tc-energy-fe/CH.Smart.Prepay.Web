@@ -271,14 +271,19 @@ const actions = {
             } else {
               ResultState = value.State
             }
-            let deviceInfo = selectionDevices.find(item => item.DeviceId === DeviceId)
-            return Object.assign({}, value, {
+            let extraSwitchInfo = {
               Id: DeviceId,
               ResultState,
-              ControlResult: taskCode[ResultState],
-              DeviceSN: deviceInfo.DeviceSN,
-              RoomFullName: deviceInfo.RoomFullName
-            })
+              ControlResult: taskCode[ResultState]
+            }
+            if (isBatch) {
+              let deviceInfo = selectionDevices.find(item => item.DeviceId === DeviceId)
+              Object.assign(extraSwitchInfo, {
+                DeviceSN: deviceInfo.DeviceSN,
+                RoomFullName: deviceInfo.RoomFullName
+              })
+            }
+            return Object.assign({}, value, extraSwitchInfo)
           })
           commit(types.SET_DATA, { item: 'finishedNumberSwitch', value: deviceList.length })
           if (isBatch) {

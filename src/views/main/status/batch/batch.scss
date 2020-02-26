@@ -54,6 +54,7 @@
                     height: inherit;
                     background-color: $main-color;
                     border-radius: inherit;
+                    transition: all 400ms;
                 }
             }
             &__text {

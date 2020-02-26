@@ -96,12 +96,17 @@ const actions = {
   },
   getUserListData ({ commit, state, getters, dispatch }) {
     let params = {
+      roleType: state.searchTypeId,
+      status: state.searchStatusId,
       q: state.searchName,
       pageSize: state.pageSize,
       pageIndex: state.currentPage
     }
-    if (state.searchTypeId === null || state.searchTypeId === TOTAL_OPTION_VALUE) {
-      delete params.type
+    if (isEmpty(state.searchTypeId) || state.searchTypeId === TOTAL_OPTION_VALUE) {
+      delete params.roleType
+    }
+    if (isEmpty(state.searchStatusId) || state.searchStatusId === TOTAL_OPTION_VALUE) {
+      delete params.status
     }
     let getUserListReq = api.user.getUserManage(params)
     commit(types.SET_DATA, { item: 'isLoadingUserList', value: true })
