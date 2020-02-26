@@ -1,0 +1,22 @@
+
+.user-info {
+    background-color: white;
+    .info-edit {
+        &__row {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 1rem;
+            min-height: 2.5rem;
+            padding-left: 2rem;
+            @include setEqualInterval(1rem);
+            &-title {
+                width: 6rem;
+            }
+            input:-webkit-autofill {
+                color: $font-color !important;
+                background-color: white !important;
+            }
+        }
+    }
+}

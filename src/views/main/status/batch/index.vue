@@ -157,7 +157,11 @@
                 <el-table-column type="selection" align="center" :reserve-selection="true" />
                 <el-table-column prop="RoomFullName" label="房间信息" align="center" />
                 <el-table-column prop="DeviceSN" label="电表" align="center" />
-                <el-table-column prop="SwitchStateText" label="电表状态" align="center" />
+                <el-table-column prop="SwitchStateText" label="电表状态" align="center">
+                  <template v-slot="{row}">
+                    <span :style="{color: row.SwitchState === false ? '#f56c6c' : ''}">{{row.SwitchStateText}}</span>
+                  </template>
+                </el-table-column>
                 <el-table-column width="150px" label="操作" align="center">
                   <template v-slot="{row}">
                     <eg-button v-if="row.SwitchState === undefined" type="text" @click="showDialogSwitch({isShow: true, row})">设置</eg-button>

@@ -238,6 +238,13 @@ const routes = [
       }
     ]
   },
+  {
+    path: '/user',
+    component: () => {
+      Store.registerModule('user', require('@/views/main/user/user').default)
+      return import('../views/main/user/index')
+    }
+  },
   // 404Page
   {
     path: '*',

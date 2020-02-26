@@ -142,7 +142,7 @@
   import { createNamespacedHelpers } from 'vuex'
   const { mapState, mapGetters, mapActions } = createNamespacedHelpers('system/user')
   export default {
-    name: 'User',
+    name: 'SystemUser',
     data () {
       return {
         STATUS_ENABLED_VALUE: 0,

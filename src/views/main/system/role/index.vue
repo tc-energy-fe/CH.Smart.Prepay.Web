@@ -112,7 +112,7 @@
   import { createNamespacedHelpers } from 'vuex'
   const { mapState, mapGetters, mapActions } = createNamespacedHelpers('system/role')
   export default {
-    name: 'Role',
+    name: 'SystemRole',
     data () {
       return {
       }
