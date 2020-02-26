@@ -182,7 +182,7 @@
       </eg-box>
       <eg-box class="management-trend">
         <p class="management-edit__title" slot="headerLeft">近7天用电趋势</p>
-        <div style="height: 13rem" slot="content" v-loading="isLoadingSevenDayData">
+        <div style="height: 13rem" slot="content" v-loading="isLoadingSevenDayData" v-nodata="!sevenDayData.length">
           <my-line-chart
             :data="sevenDayData"
             :customProps="customProps"

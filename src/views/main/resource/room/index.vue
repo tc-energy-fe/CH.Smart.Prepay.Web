@@ -30,6 +30,13 @@
             <eg-button @click="getRoomList">查询</eg-button>
           </template>
           <template v-slot:headerRight>
+            <eg-button
+              style="margin-right: 1rem;"
+              @click="getTemplateFile"
+              type="text"
+              v-loading.fullscreen.lock="isImportingRoom"
+              element-loading-text="正在导入房间..."
+            >下载导入模板</eg-button>
             <eg-button style="margin-right: 1rem;" @click="uploadFile">导入房间</eg-button>
             <eg-button @click="showEdit">新建房间</eg-button>
           </template>
@@ -58,6 +65,35 @@
           </template>
         </eg-box>
       </div>
+      <el-dialog
+        width="35rem"
+        title="导入结果"
+        :visible="isShowImportResult"
+        @close="importResultOnClose"
+      >
+        <div class="resource-room__import">
+          <p class="room-import__static">
+            <label>导入总数：</label><span style="font-weight: bold">{{importResultStatic.total | currency}}</span>
+            <label>成功数：</label><span style="color: #67c23a;">{{importResultStatic.success | currency}}</span>
+            <label>失败数：</label><span style="color: #f56c6c;">{{importResultStatic.fail | currency}}</span>
+            <label>重复数：</label><span style="color: #3d7dff;">{{importResultStatic.repeat | currency}}</span>
+          </p>
+          <el-table :data="importResultTableData">
+            <el-table-column prop="Row" label="错误行数" align="center" width="100"></el-table-column>
+            <el-table-column prop="Error" label="错误信息" align="center"></el-table-column>
+          </el-table>
+          <el-pagination
+            @current-change="importCurrentOnChange"
+            @size-change="importPageSizeOnChange"
+            :page-sizes="[5, 10, 15]"
+            :current-page.sync="importCurrentPage"
+            :page-size="importPageSize"
+            layout="total, ->, prev, pager, next, sizes, jumper"
+            :total="importResultTableData.length"
+          ></el-pagination>
+        </div>
+        <eg-button type="minor" slot="footer" @click="importResultOnClose">关闭</eg-button>
+      </el-dialog>
     </template>
     <eg-box class="room-edit" v-else>
       <template v-slot:headerLeft>
@@ -163,7 +199,9 @@
     name: 'resource-room',
     data () {
       return {
-        pageSize: 10
+        pageSize: 10,
+        importCurrentPage: 1,
+        importPageSize: 5
       }
     },
     components: {},
@@ -186,7 +224,11 @@
         'editDeviceName',
         'editParentName',
         'editGatewayDeviceName',
-        'isShowEditDevice'
+        'isShowEditDevice',
+        'isShowImportResult',
+        'isImportingRoom',
+        'importResultStatic',
+        'importResultTableData'
       ]),
       ...mapGetters([
         'projectId',
@@ -221,13 +263,24 @@
         'getGatewayList',
         'updateFormData',
         'updateObjectData',
-        'editGatewayOnChange'
+        'editGatewayOnChange',
+        'getTemplateFile'
       ]),
       pageSizeOnChange (val) {
         this.pageSize = val
       },
       editGroupNodeOnChange (val) {
         this.updateFormData({ item: 'editParentId', value: val.value })
+      },
+      importResultOnClose () {
+        this.updateFormData({ item: 'isShowImportResult', value: false })
+        this.importCurrentPage = 1
+      },
+      importCurrentOnChange (val) {
+        this.importCurrentPage = val
+      },
+      importPageSizeOnChange (val) {
+        this.importPageSize = val
       }
     },
     watch: {
