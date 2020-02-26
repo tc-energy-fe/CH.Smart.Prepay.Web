@@ -57,6 +57,7 @@ const actions = {
       })
       let searchOperateTypeList = [...operateTypeList]
       commit(types.SET_DATA, { item: 'searchOperateTypeList', value: searchOperateTypeList })
+      dispatch('getOperateLogList')
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
@@ -73,6 +74,7 @@ const actions = {
         }
       })
       commit(types.SET_DATA, { item: 'searchTaskTypeList', value: taskTypeList })
+      dispatch('getTaskLogList')
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
     })
@@ -80,7 +82,7 @@ const actions = {
   getOperateLogList ({ commit, state, rootState, getters, dispatch }) {
     let postData = {
       ProjectId: rootState.areaId,
-      LogType: state.logType,
+      LogType: LOG_TYPE_OPERATION,
       OperatorName: state.searchOperator,
       Start: moment(state.searchDateRangeOperate[0]).format('YYYY-MM-DD'),
       End: moment(state.searchDateRangeOperate[1]).format('YYYY-MM-DD'),
@@ -114,7 +116,7 @@ const actions = {
   getTaskLogList ({ commit, state, rootState, getters, dispatch }) {
     let postData = {
       ProjectId: rootState.areaId,
-      LogType: state.logType,
+      LogType: LOG_TYPE_RUN,
       OperatorObj: state.searchTaskName,
       Start: moment(state.searchDateRangeTask[0]).format('YYYY-MM-DD'),
       End: moment(state.searchDateRangeTask[1]).format('YYYY-MM-DD'),

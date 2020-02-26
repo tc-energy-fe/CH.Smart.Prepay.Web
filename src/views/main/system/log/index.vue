@@ -230,9 +230,9 @@
     created () {
       this.getLogOperateType()
       this.getLogTaskType()
-      if (this.projectId) {
-        this.searchMethod()
-      }
+      // if (this.projectId) {
+      //   this.searchMethod()
+      // }
     },
     beforeDestroy () {
     }
