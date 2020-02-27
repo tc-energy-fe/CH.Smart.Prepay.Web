@@ -12,11 +12,11 @@ const TOTAL_OPTION = null
 const state = {
   reqCancels: new Map(),
   currentNode: {},
-  settingType: SETTING_TYPE_KEEP,
+  settingType: SETTING_TYPE_SWITCH,
   settingTypeRadioList: [
-    { label: SETTING_TYPE_POWER, text: '超功率设置', disabled: true },
+    { label: SETTING_TYPE_SWITCH, text: '开合闸设置' },
     { label: SETTING_TYPE_KEEP, text: '保电设置' },
-    { label: SETTING_TYPE_SWITCH, text: '开合闸设置' }
+    { label: SETTING_TYPE_POWER, text: '超功率设置', disabled: true }
   ],
   searchNameKeep: '',
   searchKeepType: TOTAL_OPTION,
@@ -127,7 +127,7 @@ const actions = {
     let postData = {
       ProjectId: rootState.areaId,
       Name: state.searchNameKeep,
-      DeviceContrlType: state.settingType,
+      DeviceContrlType: SETTING_TYPE_KEEP,
       PageIndex: state.currentPageKeep,
       PageSize: state.pageSizeKeep
     }
@@ -164,7 +164,7 @@ const actions = {
     let postData = {
       ProjectId: rootState.areaId,
       Name: state.searchNameSwitch,
-      DeviceContrlType: state.settingType,
+      DeviceContrlType: SETTING_TYPE_SWITCH,
       PageIndex: state.currentPageSwitch,
       PageSize: state.pageSizeSwitch
     }
@@ -225,9 +225,7 @@ const actions = {
       let data = res.Data || {}
       if (res.State === 0) {
         let isBatch = isEmpty(singleDeviceIdSwitch) && isEmpty(row)
-        if (isBatch) {
-          dispatch('showDialogControlSwitch', { isShow: true, taskId: data.Id || null })
-        }
+        dispatch('showDialogControlSwitch', { isShow: true, taskId: data.Id })
         dispatch('handleSwitchTaskInfo', { resData: data, isBatch: isBatch })
       }
     }).catch(err => {
@@ -295,9 +293,7 @@ const actions = {
         } else {
           ElAlert(taskCode[resData.Data.State], '提示').then(() => {})
         }
-        if (isBatch) {
-          dispatch('showDialogControlSwitch', { isShow: false })
-        }
+        dispatch('showDialogControlSwitch', { isShow: false })
       } else if (resData.State === 2) {
         ElAlert('任务失败', '提示').then(() => {})
       } else if (resData.State === 3) {
