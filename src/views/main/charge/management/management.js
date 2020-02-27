@@ -65,13 +65,28 @@ const actions = {
     }
     commit(types.SET_DATA, { item: 'isShowEdit', value: isShow })
   },
-  getWarnType ({ state, commit, dispatch }) {
+  getWarnType ({ state, rootState, commit, dispatch }) {
     let getBalanceWarnTypeReq = api.charge.getBalanceWarnType()
     commit(types.ADD_REQUEST_CANCEL, { item: 'getBalanceWarnTypeReq', value: getBalanceWarnTypeReq.cancel })
     commit(types.SET_LOADING_STATUS, { item: 'isLoadingBalanceWarnType', value: true })
     getBalanceWarnTypeReq.request.then(res => {
       let data = res.Data || {}
+      let homeState = rootState.home
+      let homeClickWarnType = null
+      if (homeState) {
+        homeClickWarnType = homeState.barClickWarnType
+      }
       commit(types.SET_DATA, { item: 'warnTypeList', value: Object.entries(data).map(w => ({ value: Number(w[0]), label: w[1] })) })
+      if (homeClickWarnType) {
+        state.warnTypeList.forEach(w => {
+          if (w.label === homeClickWarnType) {
+            commit(types.UPDATE_OBJ_DATA, { obj: 'searchData', item: 'WarnType', value: w.value })
+          }
+        })
+        commit('home/SET_DATA', { item: 'barClickWarnType', value: null }, { root: true })
+      } else {
+        commit(types.UPDATE_OBJ_DATA, { obj: 'searchData', item: 'WarnType', value: -1 })
+      }
       dispatch('getBalanceList')
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)

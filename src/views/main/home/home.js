@@ -15,7 +15,9 @@ const state = {
   warnData: [],
   isLoadingWarnData: false,
   trendDateType: 2,
-  eleTrendData: []
+  eleTrendData: [],
+  isLoadingEleTrendData: false,
+  barClickWarnType: null
 }
 
 const getters = {}
@@ -103,7 +105,7 @@ const actions = {
     getWarnDataReq.request.then(res => {
       let data = res.Data || {}
       let warnData = [
-        { name: '余额不足', value: data.BalanceLow },
+        // { name: '余额不足', value: data.BalanceLow },
         { name: '欠费警告', value: data.BalanceOwe },
         { name: '冻结异常', value: data.FrozenErr }
       ]

@@ -115,12 +115,12 @@
     </div>
     <div class="home__block home-warn">
       <eg-box title="预警统计">
-        <warn-bar-chart slot="content" :data="warnData"></warn-bar-chart>
+        <warn-bar-chart v-loading="isLoadingWarnData" slot="content" :data="warnData" @bar-click="warnBarOnClick"></warn-bar-chart>
       </eg-box>
     </div>
     <div class="home__block home-trend">
       <eg-box title="电量趋势">
-        <div class="home-trend__content" slot="content">
+        <div class="home-trend__content" slot="content" v-loading="isLoadingEleTrendData">
           <el-radio-group :value="trendDateType" @input="trendDateTypeOnChange">
             <el-radio-button :label="2">本月趋势</el-radio-button>
             <el-radio-button :label="1">本年趋势</el-radio-button>
@@ -169,7 +169,9 @@
         'incomeChartData',
         'warnData',
         'trendDateType',
-        'eleTrendData'
+        'eleTrendData',
+        'isLoadingWarnData',
+        'isLoadingEleTrendData'
       ]),
       ...mapGetters([]),
       projectId () {
@@ -194,11 +196,20 @@
       trendDateTypeOnChange (value) {
         this.updateFormData({ item: 'trendDateType', value })
         this.getEleTrendData()
+      },
+      warnBarOnClick (params) {
+        if (params.componentType === 'series') {
+          if (params.seriesType === 'bar') {
+            console.log(params)
+            this.updateFormData({ item: 'barClickWarnType', value: params.name })
+            this.$router.push('/charge/management')
+          }
+        }
       }
     },
     watch: {
-      projectId (newValue) {
-        if (!isEmpty(newValue)) {
+      projectId (newValue, oldValue) {
+        if (!isEmpty(newValue) && newValue !== oldValue) {
           this.getGatewayStatus()
           this.getEmeterStatus()
           this.getIncomeEle()

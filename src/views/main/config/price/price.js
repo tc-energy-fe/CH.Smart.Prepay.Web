@@ -71,13 +71,13 @@ const actions = {
         StepPrice: false,
         SettlDay: null,
         PricePeriod: Array.apply(null, Array(3)).map(() => ({
-          EleUpLine: 0,
-          AvgPrice: 0,
-          EleDownLine: 0,
-          Point: 0,
-          Peak: 0,
-          Flat: 0,
-          Valley: 0
+          EleUpLine: null,
+          AvgPrice: null,
+          EleDownLine: null,
+          Point: null,
+          Peak: null,
+          Flat: null,
+          Valley: null
         }))
       }]
     })
@@ -411,13 +411,13 @@ const mutations = {
       StepPrice: false,
       SettlDay: null,
       PricePeriod: Array.apply(null, Array(3)).map(() => ({
-        EleUpLine: 0,
-        AvgPrice: 0,
-        EleDownLine: 0,
-        Point: 0,
-        Peak: 0,
-        Flat: 0,
-        Valley: 0
+        EleUpLine: null,
+        AvgPrice: null,
+        EleDownLine: null,
+        Point: null,
+        Peak: null,
+        Flat: null,
+        Valley: null
       }))
     })
   },

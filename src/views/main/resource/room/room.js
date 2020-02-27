@@ -77,6 +77,8 @@ const actions = {
       Object.keys(state.editData).forEach(k => {
         commit(types.UPDATE_OBJ_DATA, { obj: 'editData', item: k, value: data[k] })
       })
+      commit(types.SET_DATA, { item: 'editGatewayId', value: data.GatewayId })
+      commit(types.SET_DATA, { item: 'editGatewayDeviceId', value: data.EMeterId })
       commit(types.SET_DATA, { item: 'editGatewayDeviceName', value: data.EMeterSN || '--' })
       commit(types.SET_DATA, { item: 'editParentName', value: data.ParentFullName || '--' })
       commit(types.SET_DATA, { item: 'editParentId', value: data.ParentId })
@@ -114,18 +116,21 @@ const actions = {
     commit(types.ADD_REQUEST_CANCEL, { item: 'getGatewayListReq', value: getGatewayListReq.cancel })
     getGatewayListReq.request.then(res => {
       let data = res.Data || []
-      commit(types.SET_DATA, { item: 'editGatewayId', value: data[0] ? data[0].GatewayId : null })
+      let gatewayId = state.editGatewayId
+      if (isEmpty(gatewayId)) {
+        commit(types.SET_DATA, { item: 'editGatewayId', value: -1 })
+      }
       commit(types.SET_DATA, { item: 'gatewayList', value: data })
       dispatch('getGatewayDeviceList')
     }).catch(err => {
-      console.error(err)
+      commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
       commit(types.SET_LOADING_STATUS, { item: 'isLoadingGatewayList', value: false })
     })
   },
   getGatewayDeviceList ({ state, getters, commit, dispatch }) {
     let gid = state.editGatewayId
-    if (isEmpty(gid)) {
+    if (isEmpty(gid) || gid === -1) {
       commit(types.SET_DATA, { item: 'editGatewayDeviceId', value: null })
       commit(types.SET_DATA, { item: 'gatewayDeviceList', value: [] })
       return
@@ -144,7 +149,7 @@ const actions = {
       }
       commit(types.SET_DATA, { item: 'gatewayDeviceList', value: deviceList })
     }).catch(err => {
-      console.error(err)
+      commit(types.CHECKOUT_FAILURE, err)
     }).finally(() => {
       commit(types.SET_LOADING_STATUS, { item: 'isLoadingGatewayDeviceList', value: false })
     })

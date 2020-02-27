@@ -86,7 +86,7 @@
               @current-change="importCurrentOnChange"
               @size-change="importPageSizeOnChange"
               :page-sizes="[5, 10, 15]"
-              :current-page.sync="importCurrentPage"
+              :current-page="importCurrentPage"
               :page-size="importPageSize"
               layout="total, ->, prev, pager, next, sizes, jumper"
               :total="importResultTableData.length"

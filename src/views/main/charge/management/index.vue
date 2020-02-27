@@ -180,9 +180,9 @@
           <el-table-column prop="Date" label="抄读时间" align="center" min-width="180"></el-table-column>
         </el-table>
       </eg-box>
-      <eg-box class="management-trend">
+      <eg-box class="management-trend" v-loading="isLoadingSevenDayData">
         <p class="management-edit__title" slot="headerLeft">近7天用电趋势</p>
-        <div style="height: 13rem" slot="content" v-loading="isLoadingSevenDayData" v-nodata="!sevenDayData.length">
+        <div style="height: 13rem" slot="content" v-nodata="!sevenDayData.length">
           <my-line-chart
             :data="sevenDayData"
             :customProps="customProps"

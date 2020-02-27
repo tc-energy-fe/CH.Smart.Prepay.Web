@@ -24,7 +24,7 @@
               v-model="searchNo"
             ></eg-input>
             <eg-input
-              placeholder="门牌搜索"
+              placeholder="门牌号搜索"
               v-model="searchName"
             ></eg-input>
             <eg-button @click="getRoomList">查询</eg-button>
@@ -114,7 +114,7 @@
         </p>
         <div class="room-edit__row">
           <label>所属区域</label>
-          <template  v-if="!isModify">
+          <template v-if="!isModify">
             <div class="room-edit__group">
               <el-tree
                 :key="'editTree'"
@@ -136,7 +136,7 @@
           <div>
             <div class="" v-if="isModify">
               <eg-input style="margin-right: 1rem;" :value="editGatewayDeviceName" disabled></eg-input>
-              <eg-button type="text" @click="updateFormData({item:'isShowEditDevice', value:true})">更改绑定设备</eg-button>
+              <eg-button type="text" @click="updateFormData({item:'isShowEditDevice', value:true})">更改绑定仪表</eg-button>
             </div>
             <div
               v-show="!isModify || isShowEditDevice"
@@ -157,7 +157,7 @@
                   </el-option>
                 </el-select>
                 <eg-input
-                  placeholder="名称搜索"
+                  placeholder="表号搜索"
                   v-model="editDeviceName"
                 >
                   <i class="iconfont icon-content_icon_search" slot="suffix"></i>

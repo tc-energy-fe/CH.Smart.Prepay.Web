@@ -88,6 +88,9 @@
     mounted () {
       this.draw()
       window.addEventListener('resize', this.resize)
+      this.chart && this.chart.on('click', (params) => {
+        this.$emit('bar-click', params)
+      })
     },
     beforeDestroy () {
       window.removeEventListener('resize', this.resize)
