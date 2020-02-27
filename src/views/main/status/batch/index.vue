@@ -199,7 +199,7 @@
             </div>
             <template v-slot:footer>
               <eg-button type="minor" @click="showDialogSwitch({isShow: false})">取消</eg-button>
-              <eg-button @click="controlDeviceSwitch" v-loading.fullscreen="isControlling">下发命令</eg-button>
+              <eg-button @click="controlDeviceSwitch">下发命令</eg-button>
             </template>
           </el-dialog>
           <el-dialog

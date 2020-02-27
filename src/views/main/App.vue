@@ -20,8 +20,7 @@
         </el-select>
       </div>
       <div class="app-header--right">
-        <span>欢迎您，</span>
-        <router-link class="app-header_user" to="/user">{{account.Name || '管理员'}}</router-link>
+        <router-link class="app-header_user" to="/user">{{`欢迎您，${account.Name || '管理员'}`}}</router-link>
         <i class="app-header_split"></i>
         <div class="app-logout" @click="logout">
           <img :src="Icons.logout">
