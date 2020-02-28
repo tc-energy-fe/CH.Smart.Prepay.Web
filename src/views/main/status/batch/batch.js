@@ -59,6 +59,7 @@ const state = {
   switchControlDeviceIds: [],
   switchControlState: false,
   isControlling: false,
+  controlNumberSwitch: 0,
   finishedNumberSwitch: 0,
   taskIdSwitch: null,
   switchControlSelectionDevices: [],
@@ -71,7 +72,7 @@ const getters = {
   settingTypeIsKeep: (state) => state.settingType === SETTING_TYPE_KEEP,
   settingTypeIsSwitch: (state) => state.settingType === SETTING_TYPE_SWITCH,
   finishedPercentSwitch: (state, getters) => {
-    let totalNumber = state.switchControlDeviceIds.length
+    let totalNumber = state.controlNumberSwitch
     return totalNumber ? ((state.finishedNumberSwitch / totalNumber) * 100).toFixed(0) : 0
   },
   switchBatchResultNumber: (state, getters) => {
@@ -213,8 +214,11 @@ const actions = {
   },
   controlDeviceSwitch ({ commit, state, getters, rootState, rootGetters, dispatch }, { row }) {
     let singleDeviceIdSwitch = state.switchControlSingleDeviceId
+    let isBatch = isEmpty(singleDeviceIdSwitch) && isEmpty(row)
+    let DeviceIds = isEmpty(singleDeviceIdSwitch) ? (row ? [row.DeviceId] : state.switchControlDeviceIds) : [singleDeviceIdSwitch]
+    commit(types.SET_DATA, { item: 'controlNumberSwitch', value: DeviceIds.length })
     let postData = {
-      DeviceIds: isEmpty(singleDeviceIdSwitch) ? (row ? [row.DeviceId] : state.switchControlDeviceIds) : [singleDeviceIdSwitch],
+      DeviceIds: DeviceIds,
       Param: isEmpty(singleDeviceIdSwitch) ? (row ? !row.SwitchState : state.switchControlState) : state.switchControlState,
       Type: SETTING_TYPE_SWITCH
     }
@@ -224,7 +228,6 @@ const actions = {
     controlDeviceSwitchReq.request.then(res => {
       let data = res.Data || {}
       if (res.State === 0) {
-        let isBatch = isEmpty(singleDeviceIdSwitch) && isEmpty(row)
         dispatch('showDialogControlSwitch', { isShow: true, taskId: data.Id })
         dispatch('handleSwitchTaskInfo', { resData: data, isBatch: isBatch })
       }
@@ -290,10 +293,13 @@ const actions = {
             ElAlert(deviceList[0].ControlResult, '提示').then(() => {})
           }
           dispatch('getDeviceCtrlSwitchList')
+          setTimeout(() => {
+            dispatch('showDialogControlSwitch', { isShow: false })
+          }, 2000)
         } else {
+          dispatch('showDialogControlSwitch', { isShow: false })
           ElAlert(taskCode[resData.Data.State], '提示').then(() => {})
         }
-        dispatch('showDialogControlSwitch', { isShow: false })
       } else if (resData.State === 2) {
         ElAlert('任务失败', '提示').then(() => {})
       } else if (resData.State === 3) {
