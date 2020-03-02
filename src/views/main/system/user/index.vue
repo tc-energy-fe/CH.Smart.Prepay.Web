@@ -2,10 +2,15 @@
   <div class="main-container system-user">
     <eg-box v-if="!isShowEdit" class="user-box">
       <template v-slot:headerLeft>
-        <eg-input placeholder="用户名称搜索" v-model="searchNameValue"/>
+        <eg-input
+          placeholder="用户名称搜索"
+          :value="searchName"
+          @input="updateStateData({item: 'searchName', value: $event})"
+        />
         <el-select
           placeholder="角色类型"
-          v-model="searchTypeIdValue"
+          :value="searchTypeId"
+          @input="updateStateData({item: 'searchTypeId', value: $event})"
         >
           <el-option
             label="全部角色类型"
@@ -20,7 +25,8 @@
         </el-select>
         <el-select
           placeholder="启用状态"
-          v-model="searchStatusIdValue"
+          :value="searchStatusId"
+          @input="updateStateData({item: 'searchStatusId', value: $event})"
         >
           <el-option
             v-for="(item, index) of searchStatusList"
@@ -72,22 +78,40 @@
       <template v-slot:content>
         <div class="user-edit__row">
           <label class="user-edit__row-title">用户姓名</label>
-          <eg-input width-type="medium" v-model="editUserName"/>
+          <eg-input
+            width-type="medium"
+            :value="editData.UserName"
+            @input="updateObjectData({obj: 'editData', item: 'UserName', value: $event})"
+          />
           <i class="iconfont icon-content_icon_required"/>
         </div>
         <div class="user-edit__row">
           <label class="user-edit__row-title">手机号</label>
-          <eg-input width-type="medium" v-model="editPhoneNo"/>
+          <eg-input
+            width-type="medium"
+            is-integer
+            :value="editData.PhoneNo"
+            @input="updateObjectData({obj: 'editData', item: 'PhoneNo', value: $event})"
+          />
           <i class="iconfont icon-content_icon_required"/>
         </div>
         <div class="user-edit__row">
           <label class="user-edit__row-title">登录名</label>
-          <eg-input :disabled="isModify" width-type="medium" v-model="editAccountName"/>
+          <eg-input
+            :disabled="isModify"
+            width-type="medium"
+            :value="editData.AccountName"
+            @input="updateObjectData({obj: 'editData', item: 'AccountName', value: $event})"
+          />
           <i class="iconfont icon-content_icon_required"/>
         </div>
         <div class="user-edit__row">
           <label class="user-edit__row-title">密码</label>
-          <eg-input width-type="medium" v-model="editPassword"/>
+          <eg-input
+            width-type="medium"
+            :value="editData.Password"
+            @input="updateObjectData({obj: 'editData', item: 'Password', value: $event})"
+          />
           <i class="iconfont icon-content_icon_required"/>
         </div>
         <div class="user-edit__row">
@@ -95,7 +119,8 @@
           <el-select
             class="width-medium"
             placeholder="角色名称"
-            v-model="editRoleId"
+            :value="editData.RoleId"
+            @input="updateObjectData({obj: 'editData', item: 'RoleId', value: $event})"
           >
             <el-option
               v-for="(item, index) of editRoleList"
@@ -108,7 +133,10 @@
         </div>
         <div class="user-edit__row">
           <label class="user-edit__row-title">启用状态</label>
-          <el-radio-group v-model="editStatus">
+          <el-radio-group
+            :value="editData.Status"
+            @input="updateObjectData({obj: 'editData', item: 'Status', value: $event})"
+          >
             <el-radio :label="STATUS_ENABLED_VALUE">启用</el-radio>
             <el-radio :label="STATUS_DISABLED_VALUE">停用</el-radio>
           </el-radio-group>
@@ -116,14 +144,13 @@
         </div>
         <div class="user-edit__row">
           <label class="user-edit__row-title align-top">区域权限</label>
-          <div class="user-edit__row-box">
+          <div class="user-edit__row-box" v-loading="isLoadingProjectGroupList || isLoadingSingleUser">
             <el-tree
               ref="editTree"
               :data="editGroupTreeData"
               node-key="value"
               show-checkbox
               default-expand-all
-              @check="handleCheck"
             />
           </div>
           <i class="iconfont icon-content_icon_required"/>
@@ -162,6 +189,8 @@
         'pageSize',
         'totalCount',
         'isLoadingUserList',
+        'isLoadingProjectGroupList',
+        'isLoadingSingleUser',
         'isModify',
         'isShowEdit',
         'editData',
@@ -172,52 +201,6 @@
       ]),
       userId () {
         return this.$store.state.userId
-      },
-      searchNameValue: {
-        get () { return this.searchName },
-        set (value) { this.updateStateData({ item: 'searchName', value }) }
-      },
-      searchTypeIdValue: {
-        get () { return this.searchTypeId },
-        set (value) { this.updateStateData({ item: 'searchTypeId', value }) }
-      },
-      searchStatusIdValue: {
-        get () { return this.searchStatusId },
-        set (value) { this.updateStateData({ item: 'searchStatusId', value }) }
-      },
-      editUserName: {
-        get () { return this.editData.UserName },
-        set (value) { this.updateObjectData({ obj: 'editData', item: 'UserName', value }) }
-      },
-      editPhoneNo: {
-        get () { return this.editData.PhoneNo },
-        set (value) { this.updateObjectData({ obj: 'editData', item: 'PhoneNo', value }) }
-      },
-      editAccountName: {
-        get () { return this.editData.AccountName },
-        set (value) { this.updateObjectData({ obj: 'editData', item: 'AccountName', value }) }
-      },
-      editPassword: {
-        get () { return this.editData.Password },
-        set (value) { this.updateObjectData({ obj: 'editData', item: 'Password', value }) }
-      },
-      editRoleId: {
-        get () { return this.editData.RoleId },
-        set (value) { this.updateObjectData({ obj: 'editData', item: 'RoleId', value }) }
-      },
-      editStatus: {
-        get () { return this.editData.Status },
-        set (value) { this.updateObjectData({ obj: 'editData', item: 'Status', value }) }
-      },
-      userGroupCheckedIds () {
-        let checkedIds = []
-        this.editData.ProjectGroups.forEach(item => {
-          checkedIds.push(item.Id)
-          if (item.Groups) {
-            item.Groups.forEach(group => { checkedIds.push(group.Id) })
-          }
-        })
-        return checkedIds
       }
     },
     methods: {
@@ -240,24 +223,24 @@
         this.getUserListData()
       },
       saveClick () {
+        let checkedLeafNodes = this.$refs.editTree.getCheckedNodes(true)
+        let isIncludeGroups = checkedLeafNodes.some(node => node.Level !== 0)
+        let ProjectGroups = []
+        if (isIncludeGroups) {
+          // 包含项目和区域
+          ProjectGroups = [{
+            Groups: checkedLeafNodes.map(node => { return { Id: node.Id } })
+          }]
+        } else {
+          // 仅包含项目
+          ProjectGroups = checkedLeafNodes.map(node => { return { Id: node.Id } })
+        }
+        this.updateStateData({ item: 'editCheckedProjectGroups', value: ProjectGroups })
         if (this.isModify) {
           this.saveUserData()
         } else {
           this.addUserData()
         }
-      },
-      handleCheck (node, { checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys }) {
-        let projectLevelNodes = checkedNodes.filter(node => (node.Level === 0))
-        let groupLevelNodes = checkedNodes.filter(node => (node.Level !== 0))
-        let ProjectGroups = projectLevelNodes.map(project => {
-          let targetItem = {
-            Id: project.Id,
-            Name: project.Name
-          }
-          groupLevelNodes.length && (targetItem.Groups = groupLevelNodes.filter(group => (group.ProjectId === project.Id)).map(item => ({ Id: item.Id })))
-          return targetItem
-        })
-        this.updateObjectData({ obj: 'editData', item: 'ProjectGroups', value: ProjectGroups })
       }
     },
     watch: {
@@ -279,23 +262,18 @@
       searchStatusId () {
         this.searchClick()
       },
-      editGroupTreeData (newValue) {
-        if (this.userGroupCheckedIds.length) {
-          this.$nextTick(function () {
-            this.userGroupCheckedIds.forEach(id => {
-              this.$refs.editTree.setChecked(id, true, false)
-            })
-          })
-        }
-      },
-      userGroupCheckedIds (newValue) {
-        if (this.editGroupTreeData.length) {
-          this.$nextTick(function () {
-            newValue.forEach(id => {
-              this.$refs.editTree.setChecked(id, true, false)
-            })
-          })
-        }
+      'editData.ProjectGroups' (newValue) {
+        let checkedKeys = []
+        newValue.forEach(project => {
+          if (project.Groups) {
+            checkedKeys = checkedKeys.concat(project.Groups.map(group => group.Id))
+          } else {
+            checkedKeys.push(project.Id)
+          }
+        })
+        this.$nextTick(function () {
+          this.$refs.editTree && this.$refs.editTree.setCheckedKeys(checkedKeys, true)
+        })
       }
     },
     created () {
