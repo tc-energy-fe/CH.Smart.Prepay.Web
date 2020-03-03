@@ -65,6 +65,7 @@
       </div>
       <div class="app-main">
         <router-view v-if="!isLoadingMainGroupList && userAreas[0] && userMenus[0]"></router-view>
+        <router-view v-else name="info"/>
       </div>
     </div>
   </div>

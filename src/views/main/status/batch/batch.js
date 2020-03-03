@@ -287,15 +287,15 @@ const actions = {
             return Object.assign({}, value, extraSwitchInfo)
           })
           commit(types.SET_DATA, { item: 'finishedNumberSwitch', value: deviceList.length })
-          if (isBatch) {
-            dispatch('showDialogSwitchResult', { isShow: true, result: deviceList })
-          } else {
-            ElAlert(deviceList[0].ControlResult, '提示').then(() => {})
-          }
           dispatch('getDeviceCtrlSwitchList')
           setTimeout(() => {
+            if (isBatch) {
+              dispatch('showDialogSwitchResult', { isShow: true, result: deviceList })
+            } else {
+              ElAlert(deviceList[0].ControlResult, '提示').then(() => {})
+            }
             dispatch('showDialogControlSwitch', { isShow: false })
-          }, 2000)
+          }, 1000)
         } else {
           dispatch('showDialogControlSwitch', { isShow: false })
           ElAlert(taskCode[resData.Data.State], '提示').then(() => {})
