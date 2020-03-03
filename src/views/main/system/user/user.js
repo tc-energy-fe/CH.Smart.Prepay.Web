@@ -24,6 +24,8 @@ const state = {
   pageSize: 10,
   totalCount: 0,
   isLoadingUserList: false,
+  isLoadingProjectGroupList: false,
+  isLoadingSingleUser: false,
   isShowEdit: false,
   isModify: false,
   editData: {
@@ -37,7 +39,8 @@ const state = {
     ProjectGroups: []
   },
   editRoleList: [],
-  editGroupTreeData: []
+  editGroupTreeData: [],
+  editCheckedProjectGroups: []
 }
 
 const getters = {
@@ -45,7 +48,7 @@ const getters = {
 
 const actions = {
   ...Actions,
-  showEdit ({ commit, state, getters, dispatch }, { isShow = true, row } = { isShow: true }) {
+  showEdit ({ commit, state, rootState, getters, dispatch }, { isShow = true, row } = { isShow: true }) {
     if (!isShow) {
       // 清空表单
       commit(types.SET_DATA, {
@@ -61,6 +64,7 @@ const actions = {
           ProjectGroups: []
         }
       })
+      commit(types.SET_DATA, { item: 'editCheckedProjectGroups', value: [] })
     } else {
       if (row) {
         // 编辑模式
@@ -71,6 +75,8 @@ const actions = {
       } else {
         // 添加模式
         commit(types.SET_DATA, { item: 'isModify', value: false })
+        dispatch('getProjectGroupList', rootState.userId)
+        dispatch('getRoleListData', rootState.userId)
       }
     }
     commit(types.SET_DATA, { item: 'isShowEdit', value: isShow })
@@ -148,35 +154,45 @@ const actions = {
   },
   getProjectGroupList ({ commit, state, getters, dispatch }, uid = 1109) {
     let getProjectGroupReq = api.project.getProjectGroupByUser(uid)
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingProjectGroupList', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'getProjectGroupReq', value: getProjectGroupReq.cancel })
     getProjectGroupReq.request.then(res => {
       let data = res.Data || []
-      let groupTempList = []
+      let editGroupTreeData = []
       data.forEach(item => {
-        groupTempList.push({
+        let projectItem = {
           Id: item.Id,
           Name: item.Name,
+          value: item.Id,
+          label: item.Name,
           Path: '/',
-          Level: 0
-        })
-        if (item.Groups) {
-          groupTempList.push(...item.Groups)
+          Level: 0,
+          children: []
         }
+        if (item.Groups) {
+          let groupsOfProject = item.Groups.map(group => { return Object.assign({}, group, { ProjectId: item.Id }) })
+          projectItem.children = initTree(groupsOfProject, { rootLevel: 1 })
+        }
+        editGroupTreeData.push(projectItem)
       })
-      let editGroupTreeData = initTree(groupTempList)
       commit(types.SET_DATA, { item: 'editGroupTreeData', value: editGroupTreeData })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingProjectGroupList', value: false })
     })
   },
   getSingleUserData ({ commit, state, getters, dispatch }, id) {
     let getSingleUserReq = api.user.getUserManageDetail(id)
+    commit(types.SET_LOADING_STATUS, { item: 'isLoadingSingleUser', value: true })
     commit(types.ADD_REQUEST_CANCEL, { item: 'getSingleUserReq', value: getSingleUserReq.cancel })
     getSingleUserReq.request.then(res => {
       let data = res.Data || {}
       commit(types.SET_DATA, { item: 'editData', value: Object.assign({}, state.editData, data) })
     }).catch(err => {
       commit(types.CHECKOUT_FAILURE, err)
+    }).finally(() => {
+      commit(types.SET_LOADING_STATUS, { item: 'isLoadingSingleUser', value: false })
     })
   },
   validateData ({ commit, state, getters, dispatch }) {
@@ -197,18 +213,18 @@ const actions = {
       ElAlert('角色名称为空！', '表单错误').then(() => {})
       return false
     }
-    if (editData.ProjectGroups.length === 0) {
-      ElAlert('区域权限为空！', '表单错误').then(() => {})
-      return false
-    }
+    // if (editData.ProjectGroups.length === 0) {
+    //   ElAlert('区域权限为空！', '表单错误').then(() => {})
+    //   return false
+    // }
     if (!state.isModify) {
       if (editData.Password.trim() === '') {
         ElAlert('新建用户默认密码为 123456！', '提示').then(() => {})
       }
     } else {
-      if (editData.Password.trim() === '') {
-        ElAlert('编辑用户密码不会重置', '提示').then(() => {})
-      }
+      // if (editData.Password.trim() === '') {
+      //   ElAlert('编辑用户密码不会重置', '提示').then(() => {})
+      // }
     }
     return true
   },
@@ -223,14 +239,7 @@ const actions = {
           RoleId: editData.RoleId,
           PhoneNo: editData.PhoneNo,
           Status: editData.Status,
-          ProjectGroups: editData.ProjectGroups.map(project => {
-            let targetItem = {
-              Id: project.Id,
-              Name: project.Name
-            }
-            project.Groups && (targetItem.Groups = project.Groups.map(group => ({ Id: group.Id })))
-            return targetItem
-          })
+          ProjectGroups: state.editCheckedProjectGroups
         }
         let addUserDataReq = api.user.postUserManage(postData)
         commit(types.ADD_REQUEST_CANCEL, { item: 'addUserDataReq', value: addUserDataReq.cancel })
@@ -255,14 +264,7 @@ const actions = {
           RoleId: editData.RoleId,
           PhoneNo: editData.PhoneNo,
           Status: editData.Status,
-          ProjectGroups: editData.ProjectGroups.map(project => {
-            let targetItem = {
-              Id: project.Id,
-              Name: project.Name
-            }
-            project.Groups && (targetItem.Groups = project.Groups.map(group => ({ Id: group.Id })))
-            return targetItem
-          })
+          ProjectGroups: state.editCheckedProjectGroups
         }
         if (editData.Password.trim() !== '') {
           postData.Password = editData.Password
