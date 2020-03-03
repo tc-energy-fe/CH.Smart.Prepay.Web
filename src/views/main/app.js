@@ -50,16 +50,21 @@ const actions = {
           area.value = area.Id
           area.label = area.Name
         })
+        let oldProj = sessionStorage.getItem('projectId')
+        if (oldProj) {
+          let hasProj = areas.some(a => a.value === Number(oldProj))
+          commit(types.SET_DATA, { item: 'areaId', value: hasProj ? Number(oldProj) : areas[0].value })
+        } else {
+          commit(types.SET_DATA, { item: 'areaId', value: areas[0].value })
+          sessionStorage.setItem('projectId', areas[0].value)
+        }
+      } else {
+        commit(types.SET_DATA, { item: 'areaId', value: null })
+        sessionStorage.setItem('projectId', null)
+        ElAlert('请联系管理员为当前用户分配项目权限！', '提示').then(() => {})
+        return
       }
       commit(types.SET_DATA, { item: 'userAreas', value: areas })
-      let oldProj = sessionStorage.getItem('projectId')
-      if (oldProj) {
-        let hasProj = areas.some(a => a.value === Number(oldProj))
-        commit(types.SET_DATA, { item: 'areaId', value: hasProj ? Number(oldProj) : null })
-      } else {
-        commit(types.SET_DATA, { item: 'areaId', value: areas[0].value || null })
-        sessionStorage.setItem('projectId', areas[0].value || null)
-      }
       // 保存用户可访问的页面
       if (menus.length) {
         let customProps = {
@@ -70,6 +75,7 @@ const actions = {
         commit(types.SET_DATA, { item: 'userMenus', value: menusTree })
       } else {
         commit(types.SET_DATA, { item: 'userMenus', value: [] })
+        ElAlert('请联系管理员为当前用户分配页面权限！', '提示').then(() => {})
       }
       dispatch('getGroupList')
     }).catch(err => {

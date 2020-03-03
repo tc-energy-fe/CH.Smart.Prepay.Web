@@ -23,7 +23,14 @@
           type="password"
           placeholder="点击此处输入">
       </p>
-      <p class="login-form__submit" @click="loginOnClick">登<span class="space"></span>录</p>
+      <p class="login-form__submit" @click="loginOnClick">
+        <template v-if="isLogin">
+          <span>登录中...</span>
+        </template>
+        <template v-else>
+          登<span class="space"></span>录
+        </template>
+      </p>
     </div>
   </div>
 </template>
@@ -76,6 +83,9 @@
         }
 
         // 发起请求
+        if (this.isLogin) {
+          return
+        }
         let loginReq = api.getToken(postData)
         this.isLogin = true
         this.loginCancel.set('login', loginReq.cancel)

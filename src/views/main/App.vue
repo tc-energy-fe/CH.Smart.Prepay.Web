@@ -64,7 +64,7 @@
         </el-menu>
       </div>
       <div class="app-main">
-        <router-view v-if="!isLoadingMainGroupList && userAreas[0]"></router-view>
+        <router-view v-if="!isLoadingMainGroupList && userAreas[0] && userMenus[0]"></router-view>
       </div>
     </div>
   </div>
