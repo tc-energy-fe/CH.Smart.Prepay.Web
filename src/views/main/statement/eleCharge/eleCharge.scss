@@ -1,11 +1,11 @@
 .statement-elecharge{
 
   .elecharge-content__search{
-    display: flow-root;
     width: 100%;
     padding: $normal-padding;
     background-color: #FFF;
     @include setEqualInterval(1rem);
+    @include clearFix;
 
     > *{
       float: left;
@@ -24,8 +24,12 @@
         display: flex;
         flex-direction: column;
         width: 35%;
-        height: 100%;
         @include setEqualInterval(1rem, down);
+
+        > .overview-block{
+          flex-shrink: 1;
+          flex-grow: 1;
+        }
       }
 
       &--right{
@@ -36,7 +40,7 @@
   }
 
   .eleCharge-report{
-    height: initial;
+    height: auto;
     margin-top: 1rem;
   }
 }

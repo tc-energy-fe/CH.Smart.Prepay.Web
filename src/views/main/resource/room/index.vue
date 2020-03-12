@@ -134,7 +134,7 @@
         <div class="room-edit__row">
           <label>绑定仪表</label>
           <div>
-            <div class="" v-if="isModify">
+            <div style="margin-bottom: 1rem;" v-if="isModify">
               <eg-input style="margin-right: 1rem;" :value="editGatewayDeviceName" disabled></eg-input>
               <eg-button type="text" @click="updateFormData({item:'isShowEditDevice', value:true})">更改绑定仪表</eg-button>
             </div>

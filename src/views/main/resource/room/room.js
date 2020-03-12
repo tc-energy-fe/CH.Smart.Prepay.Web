@@ -166,11 +166,6 @@ const actions = {
     }
     if (state.isModify) {
       postData.Id = editData.Id
-      if (state.isShowEditDevice) {
-        if (!isEmpty(state.editGatewayDeviceId) && state.editGatewayDeviceId !== -1) {
-          postData.EMeterId = state.editGatewayDeviceId
-        }
-      }
     } else {
       let parentId = state.editParentId
       if (isEmpty(parentId) || parentId === -1) {
@@ -179,9 +174,9 @@ const actions = {
       } else {
         postData.ParentId = parentId
       }
-      if (!isEmpty(state.editGatewayDeviceId) && state.editGatewayDeviceId !== -1) {
-        postData.EMeterId = state.editGatewayDeviceId
-      }
+    }
+    if (!isEmpty(state.editGatewayDeviceId) && state.editGatewayDeviceId !== -1) {
+      postData.EMeterId = state.editGatewayDeviceId
     }
     let editRoomReq = state.isModify ? api.group.modifyRoom(postData) : api.group.addRoom(postData)
     commit(types.ADD_REQUEST_CANCEL, { item: 'editRoomReq', value: editRoomReq.cancel })

@@ -88,6 +88,11 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   tr:nth-child(even) {
     background-color: $background-color;
   }
+
+  .el-table__header, .el-table__body{
+    // IE下table收缩
+    width: 100% !important;
+  }
 }
 
 // pagination

@@ -4,6 +4,7 @@
   width: 100%;
   min-width: 1000px;
   $header-height: 3rem;
+
   .app-header{
     position: absolute;
     top: 0;
@@ -12,11 +13,13 @@
     height: $header-height;
     box-shadow: 0 5px 5px #e5e5e5;
     @include clearFix;
+
     .app-header--left{
       height: 100%;
       float: left;
       display: flex;
       align-items: center;
+
       .app-title{
         display: flex;
         align-items: center;
@@ -31,6 +34,10 @@
         font-weight: bold;
         > *{
           color: $main-color;
+        }
+        >span{
+          display: block;
+          flex: 1;
         }
         > .iconfont{
           margin-left: auto;

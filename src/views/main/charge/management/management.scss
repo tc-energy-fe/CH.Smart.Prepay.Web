@@ -9,6 +9,8 @@
 
       &--left{
         width: 50%;
+        flex-grow: 1;
+        flex-shrink: 1;
         padding: 1.5rem;
         margin-right: 1rem;
         background-color: $background-color;
@@ -33,6 +35,8 @@
 
       &--right{
         width: 50%;
+        flex-grow: 1;
+        flex-shrink: 1;
         padding: 1.5rem;
         background-color: $background-color;
 
@@ -53,12 +57,12 @@
   }
 
   .management-recent{
-    height: initial;
+    height: auto;
     margin-bottom: 1rem;
   }
 
   .management-trend{
-    height: initial;
+    height: auto;
   }
 
   .management-edit__title{

@@ -125,7 +125,7 @@
             <el-radio-button :label="2">本月趋势</el-radio-button>
             <el-radio-button :label="1">本年趋势</el-radio-button>
           </el-radio-group>
-          <div style="height: 100%;width: 100%;" v-nodata="!eleTrendData.length">
+          <div style="flex: 1;width: 100%;" v-nodata="!eleTrendData.length">
             <ele-line-chart
               class="home-trend__chart"
               :data="eleTrendData"

@@ -59,13 +59,13 @@
     border: 1px solid $border-color;
     border-radius: $common-border-radius;
     padding: 1rem;
-    margin-top: 1rem;
     overflow: auto;
   }
   .room-edit__device{
     display: flex;
     flex-direction: column;
     .room-edit__device--top{
+      display: flex;
       flex-shrink: 0;
       padding-bottom: .5rem;
       > .el-select{

@@ -1,11 +1,11 @@
 .statement-income{
 
   .income-content__search{
-    display: flow-root;
     width: 100%;
     padding: $normal-padding;
     background-color: #FFF;
     @include setEqualInterval(1rem);
+    @include clearFix;
 
     > *{
       float: left;
@@ -13,7 +13,7 @@
   }
 
   .income-statistic{
-    height: initial;
+    height: auto;
     margin-top: 1rem;
 
     .eg-box__content{
@@ -36,7 +36,7 @@
 
   .income-detail{
     position: relative;
-    height: initial;
+    height: auto;
     margin-top: 1rem;
 
     .income-detail__header--center{

@@ -18,6 +18,8 @@
         }
     }
     .main-content {
+        height: 100%;
+
         .warn-info {
             display: flex;
             @include setEqualInterval(2rem);
