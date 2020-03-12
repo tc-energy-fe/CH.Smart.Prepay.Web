@@ -126,7 +126,7 @@
       logout () {
         sessionStorage.removeItem('Token')
         sessionStorage.removeItem('FileToken')
-        location.replace(location.origin + '/login')
+        location.replace(location.protocol + '//' + location.host + '/login')
       },
       navCollapseOnChange () {
         this.isNavCollapse = !this.isNavCollapse

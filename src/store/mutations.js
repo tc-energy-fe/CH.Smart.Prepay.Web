@@ -66,11 +66,11 @@ const Mutations = {
     console.log(err)
     if (err.code === -2) {
       ElAlert('未登录或者登录信息过期！', '提示').then(() => {
-        location.replace(location.origin + '/login')
+        location.replace(location.protocol + '//' + location.host + '/login')
       })
     } else if (err.code === -15) {
       ElAlert('账号异地登录！', '错误').then(() => {
-        location.replace(location.origin + '/login')
+        location.replace(location.protocol + '//' + location.host + '/login')
       })
     } else if (!err.hasOwnProperty('code')) {
       ElAlert('数据错误或数据异常！', '错误').then(() => {})

@@ -98,7 +98,7 @@
             username: username,
             password: this.password
           }))
-          location.replace(location.origin + '/')
+          location.replace(location.protocol + '//' + location.host + '/')
         }).catch(err => {
           console.error(err)
           if (!err.hasOwnProperty('code')) {
