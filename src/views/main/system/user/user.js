@@ -205,7 +205,7 @@ const actions = {
       ElAlert('登录名为空！', '表单错误').then(() => {})
       return false
     }
-    if (editData.PhoneNo.trim() === '') {
+    if (editData.PhoneNo === '') {
       ElAlert('电话号码为空！', '表单错误').then(() => {})
       return false
     }
