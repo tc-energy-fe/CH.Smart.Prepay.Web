@@ -42,6 +42,7 @@
       </template>
       <template v-slot:content>
         <el-table :data="userList" v-loading="isLoadingUserList">
+          <el-table-column label="登录名" prop="AccountName" align="center"/>
           <el-table-column label="用户名称" prop="UserName" align="center"/>
           <el-table-column label="手机号" prop="PhoneNo" align="center"/>
           <el-table-column label="角色类型" prop="RoleTypeText" align="center"/>
@@ -272,7 +273,7 @@
           }
         })
         this.$nextTick(function () {
-          this.$refs.editTree && this.$refs.editTree.setCheckedKeys(checkedKeys, true)
+          this.$refs.editTree && this.$refs.editTree.setCheckedKeys(checkedKeys)
         })
       }
     },
