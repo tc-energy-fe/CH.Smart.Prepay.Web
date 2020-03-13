@@ -61,7 +61,8 @@ const actions = {
     dispatch('currentPageOnChange', 1)
     let params = {
       ProjectId: getters.projectId,
-      Name: state.searchName
+      Name: state.searchName,
+      IsReverse: false // 不反推
     }
     let groupId = getters.currentNodeId
     if (!isEmpty(groupId) && groupId !== getters.projectId) {
