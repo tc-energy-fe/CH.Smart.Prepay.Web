@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "build-test": "vue-cli-service build --mode buildtest",
+    "serve-production": "vue-cli-service serve --mode serveproduction",
     "lint": "vue-cli-service lint",
     "analyze": "vue-cli-service build --report"
   },

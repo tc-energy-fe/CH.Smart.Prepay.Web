@@ -212,7 +212,7 @@ const actions = {
       dispatch('showDialogKeep', { isShow: false })
     })
   },
-  controlDeviceSwitch ({ commit, state, getters, rootState, rootGetters, dispatch }, { row }) {
+  controlDeviceSwitch ({ commit, state, getters, rootState, rootGetters, dispatch }, { row, ForceDel = false }) {
     let singleDeviceIdSwitch = state.switchControlSingleDeviceId
     let isBatch = isEmpty(singleDeviceIdSwitch) && isEmpty(row)
     let DeviceIds = isEmpty(singleDeviceIdSwitch) ? (row ? [row.DeviceId] : state.switchControlDeviceIds) : [singleDeviceIdSwitch]
@@ -220,7 +220,8 @@ const actions = {
     let postData = {
       DeviceIds: DeviceIds,
       Param: isEmpty(singleDeviceIdSwitch) ? (row ? !row.SwitchState : state.switchControlState) : state.switchControlState,
-      Type: SETTING_TYPE_SWITCH
+      Type: SETTING_TYPE_SWITCH,
+      ForceDel: ForceDel || false
     }
     let controlDeviceSwitchReq = api.deviceCtrl.postDeviceCtrlHardware(postData)
     commit(types.SET_DATA, { item: 'isControlling', value: true })
@@ -233,7 +234,13 @@ const actions = {
       }
     }).catch(err => {
       commit(types.SET_DATA, { item: 'isControlling', value: false })
-      commit(types.CHECKOUT_FAILURE, err)
+      if (err.code === -27) {
+        ElConfirm('房间有欠费，是否继续合闸？', '错误').then(() => {
+          dispatch('controlDeviceSwitch', { row, ForceDel: true })
+        }).catch(() => {})
+      } else {
+        commit(types.CHECKOUT_FAILURE, err)
+      }
     }).finally(() => {
       dispatch('showDialogSwitch', { isShow: false })
     })
