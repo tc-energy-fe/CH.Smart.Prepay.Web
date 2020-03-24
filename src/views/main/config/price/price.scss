@@ -48,10 +48,21 @@
           @include setEqualInterval(1rem)
         }
         .price-block__price-row{
-          display: flex;
-          align-items: center;
-          @include setEqualInterval(1rem);
           margin-bottom: .5rem;
+
+          .price-block__price-input, .price-block__price-head{
+            display: flex;
+            align-items: center;
+            @include setEqualInterval(1rem);
+          }
+
+          .price-block__price-head{
+            > p{
+              width: 11.25rem;
+              padding: .5rem 0;
+              text-align: center;
+            }
+          }
         }
       }
     }

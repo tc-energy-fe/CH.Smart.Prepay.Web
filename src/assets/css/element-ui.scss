@@ -138,6 +138,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 // date-picker date-range, time-range
 .el-range-editor.el-date-editor--daterange,
 .el-range-editor.el-date-editor--timerange {
+  height: 2.5rem;
   border: $common-border;
   &:hover {
     border: $common-border;
@@ -145,7 +146,10 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   &.is-active {
     border-color: $border-color-active;
   }
-  .el-range-input {
+  .el-input__icon, .el-range-separator{
+    line-height: 2.1rem;
+  }
+  .el-range-input, .el-range-separator {
     font-size: $font-size;
   }
   .el-range-separator {

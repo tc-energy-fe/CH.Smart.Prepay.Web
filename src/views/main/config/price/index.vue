@@ -225,34 +225,39 @@
                     </eg-input>
                     <!-- 分时电价 -->
                     <template v-else>
-                      <eg-input
-                        placeholder="尖电价"
-                        :value="pC.PricePeriod[0].Point"
-                        suffixText="元"
-                        is-number
-                        @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Point', value: $event })">
-                      </eg-input>
-                      <eg-input
-                        placeholder="峰电价"
-                        :value="pC.PricePeriod[0].Peak"
-                        suffixText="元"
-                        is-number
-                        @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Peak', value: $event })">
-                      </eg-input>
-                      <eg-input
-                        placeholder="平电价"
-                        :value="pC.PricePeriod[0].Flat"
-                        suffixText="元"
-                        is-number
-                        @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Flat', value: $event })">
-                      </eg-input>
-                      <eg-input
-                        placeholder="谷电价"
-                        :value="pC.PricePeriod[0].Valley"
-                        suffixText="元"
-                        is-number
-                        @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Valley', value: $event })">
-                      </eg-input>
+                      <div class="price-block__price-head">
+                        <p>尖电价</p><p>峰电价</p><p>平电价</p><p>谷电价</p>
+                      </div>
+                      <div class="price-block__price-input">
+                        <eg-input
+                          placeholder="尖电价"
+                          :value="pC.PricePeriod[0].Point"
+                          suffixText="元"
+                          is-number
+                          @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Point', value: $event })">
+                        </eg-input>
+                        <eg-input
+                          placeholder="峰电价"
+                          :value="pC.PricePeriod[0].Peak"
+                          suffixText="元"
+                          is-number
+                          @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Peak', value: $event })">
+                        </eg-input>
+                        <eg-input
+                          placeholder="平电价"
+                          :value="pC.PricePeriod[0].Flat"
+                          suffixText="元"
+                          is-number
+                          @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Flat', value: $event })">
+                        </eg-input>
+                        <eg-input
+                          placeholder="谷电价"
+                          :value="pC.PricePeriod[0].Valley"
+                          suffixText="元"
+                          is-number
+                          @input="editPriceContentPeriodDataOnChange({ pCIndex, pIndex: 0, key: 'Valley', value: $event })">
+                        </eg-input>
+                      </div>
                     </template>
                   </div>
                 </div>

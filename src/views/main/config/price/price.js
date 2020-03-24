@@ -74,10 +74,10 @@ const actions = {
           EleUpLine: null,
           AvgPrice: null,
           EleDownLine: null,
-          Point: null,
-          Peak: null,
-          Flat: null,
-          Valley: null
+          Point: 0,
+          Peak: 0,
+          Flat: 0,
+          Valley: 0
         }))
       }]
     })
@@ -414,10 +414,10 @@ const mutations = {
         EleUpLine: null,
         AvgPrice: null,
         EleDownLine: null,
-        Point: null,
-        Peak: null,
-        Flat: null,
-        Valley: null
+        Point: 0,
+        Peak: 0,
+        Flat: 0,
+        Valley: 0
       }))
     })
   },
